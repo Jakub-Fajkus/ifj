@@ -7,7 +7,7 @@
 
 int main(int argc, char *argv[]) {
     printf("readInt %d \n",readInt());
-    printf("readDouble %f \n",readDouble());
+    printf("readDouble %lf \n",readDouble());
     printf("readString %s \n",readString());
 
 //    print( /*some multi argument magic using va_list*/ );
