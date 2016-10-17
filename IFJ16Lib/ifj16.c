@@ -15,13 +15,13 @@ void Error7() {
 // end local
 
 int readInt() {
-    char c;
+    int c;
     char *string;
     int newInt, i = 1; // only '\0'
     string = (char *) malloc(CHAR_SIZE * i);
     while (((c = getchar()) != EOF) && (c != '\n')) {
-        if ((((int) c) >= ((int) '0')) && (((int) c) <= ((int) '9'))) {
-            string[i - 1] = c;
+        if (((c) >= ((int) '0')) && ((c) <= ((int) '9'))) {
+            string[i - 1] = (char) c;
             i++;
             string = realloc(string, CHAR_SIZE * i);
         } else {
@@ -36,31 +36,31 @@ int readInt() {
 }
 
 double readDouble() {
-    char c;
+    int c;
     char *string;
     double newDouble;
     int i = 1, exponentIndex = -1; // only '\0'
     string = (char *) malloc(CHAR_SIZE * i);
     while (((c = getchar()) != EOF) && (c != '\n')) {
         if (
-                (((int) c >= (int) '0') && ((int) c <= (int) '9')) ||
-                ((int) c == (int) '.' && exponentIndex < 0)
-                ) {
-            string[i - 1] = c;
+                ((c >= (int) '0') && (c <= (int) '9')) ||
+                (c == (int) '.' && exponentIndex < 0)
+           ) {
+            string[i - 1] = (char) c;
             i++;
             string = realloc(string, CHAR_SIZE * i);
         } else {
-            if (((int) c == 'e' || (int) c == 'E') && exponentIndex == -1 && i>1) {
-                exponentIndex = i-1;
+            if ((c == 'e' || c == 'E') && exponentIndex == -1 && i > 1) {
+                exponentIndex = i - 1;
 
-                string[i - 1] = c;
+                string[i - 1] = (char) c;
                 i++;
                 string = realloc(string, CHAR_SIZE * i);
-            } else if (((int) c == '+' || (int) c == '-') && exponentIndex == i-2){
-                string[i - 1] = c;
+            } else if ((c == '+' || c == '-') && exponentIndex == i - 2) {
+                string[i - 1] = (char) c;
                 i++;
                 string = realloc(string, CHAR_SIZE * i);
-            }else {
+            } else {
                 free(string);
                 Error7();
             }
@@ -73,12 +73,12 @@ double readDouble() {
 }
 
 char *readString() { // nepoužívám scanf abych měl vždycky přesně naalokovanou velikost stringu
-    char c;
+    int c;
     char *string;
     int i = 1; // only '\0'
     string = (char *) malloc(CHAR_SIZE * i);
     while (((c = getchar()) != EOF) && (c != '\n')) {
-        string[i - 1] = c;
+        string[i - 1] = (char) c;
         i++;
         string = realloc(string, CHAR_SIZE * i);
     }
@@ -91,7 +91,7 @@ void print( /*some multi argument magic using va_list*/ ) {
 }
 
 int length(char *s) {
-    return strlen(s);
+    return (int) strlen(s);
 }
 
 char *substr(char *s, int i, int n) {
