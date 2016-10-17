@@ -12,6 +12,11 @@ void Error7() {
     fprintf(stderr, "Input Error \n");
     exit(7);
 }
+
+void Error10() {
+    fprintf(stderr, "Other Error \n");
+    exit(10);
+}
 // end local
 
 int readInt() {
@@ -95,7 +100,21 @@ int length(char *s) {
 }
 
 char *substr(char *s, int i, int n) {
-    return "test";
+
+    if ( s == NULL || n <= 0 || i < 0 )
+        Error10();
+
+    int length = strlen(s);
+    if ( i + n > length )
+        Error10();
+
+    char *newSubstr = malloc(sizeof(char *) +1);
+    if (newSubstr == NULL)
+        Error10();
+
+    strncpy(newSubstr, s+i, n);
+    newSubstr[n] = '\0';
+    return newSubstr;
 }
 
 int compare(char *s1, char *s2) {
