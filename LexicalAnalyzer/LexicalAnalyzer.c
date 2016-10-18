@@ -37,9 +37,11 @@ void doubleNum(TOKEN *, char * , int);
 
 void doubleNumE(TOKEN *, char * , int);
 
-void id1(TOKEN *, int);
+void id(TOKEN *, int);
 
-void id2(TOKEN *, char *, int);
+void idFull(TOKEN *, char *);
+
+void magicRecognizer(TOKEN*,char*);
 
 bool testValid(int);
 // end local
@@ -191,6 +193,8 @@ void string1(TOKEN *token) {
         c = getc(fp);
         if (c == '"' && canEnd) {
             str[i] = '\0';
+            token->type = LITERAL_STRING;
+            token->data.literalString.name = str;
             break;
         } else if (c == EOF) {
             free(str);
@@ -199,7 +203,7 @@ void string1(TOKEN *token) {
         } else {
             str[i] = (char)c;
             i++;
-            str = realloc(str,sizeof(char) * i);
+            str = realloc(str,sizeof(char) * (i+1));
         }
 
         if(c == '\\' && canEnd){
@@ -219,17 +223,17 @@ void num(TOKEN *token, int c) {
         if(c >= '0' && c <= '9'){
             str[i] = (char)c;
             i++;
-            str = realloc(str, sizeof(char) * i);
+            str = realloc(str, sizeof(char) * (i+1));
         }else if (c == '.'){
             str[i] = '.';
             i++;
-            str = realloc(str, sizeof(char) * i);
+            str = realloc(str, sizeof(char) * (i+1));
             doubleNum(token,str,i);
             break;
         } else if (c == 'e' || c == 'E'){
             str[i] = 'E';
             i++;
-            str = realloc(str, sizeof(char) * i);
+            str = realloc(str, sizeof(char) * (i+1));
             doubleNumE(token,str, i);
         } else if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '$' || c == '_'){ // proměnná za číslem (bez oddělovače) je lexikální chyba...asi?
             free(str);
@@ -238,7 +242,7 @@ void num(TOKEN *token, int c) {
         } else if (testValid(c)){
             ungetc(c,fp);
             str[i] = '\0';
-            token->type = NUMBER_INTEGER;
+            token->type = LITERAL_INTEGER;
             sscanf(str,"%d",&(token->data.numberInteger.value));
             break;
         } else {
@@ -267,11 +271,11 @@ void doubleNum(TOKEN * token, char * str, int i){
         if(c >= '0' && c <= '9'){
             str[i] = (char)c;
             i++;
-            str = realloc(str, sizeof(char) * i);
+            str = realloc(str, sizeof(char) * (i+1));
         } else if (c == 'e' || c == 'E'){
             str[i] = 'E';
             i++;
-            str = realloc(str, sizeof(char) * i);
+            str = realloc(str, sizeof(char) * (i+1));
             doubleNumE(token,str, i);
         } else if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '$' || c == '_' || c == '.') {
             free(str);
@@ -280,7 +284,7 @@ void doubleNum(TOKEN * token, char * str, int i){
         } else if (testValid(c)){
             ungetc(c,fp);
             str[i] = '\0';
-            token->type = NUMBER_DOUBLE;
+            token->type = LITERAL_DOUBLE;
             sscanf(str,"%lf",&(token->data.numberDouble.value));
             break;
         } else {
@@ -309,15 +313,15 @@ void doubleNumE(TOKEN * token, char * str, int i){
             canOperator = false;
             str[i] = (char)c;
             i++;
-            str = realloc(str, sizeof(char) * i);
-        }  else if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '$' || c == '_' || c == '.' || c == 'e' || c == 'E') {
+            str = realloc(str, sizeof(char) * (i+1));
+        }  else if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '$' || c == '_' || c == '.') {
             free(str);
             token->type = LEX_ERROR;
             return;
         } else if (testValid(c) && hasNumber){
             ungetc(c,fp);
             str[i] = '\0';
-            token->type = NUMBER_DOUBLE;
+            token->type = LITERAL_DOUBLE;
             sscanf(str,"%lf",&(token->data.numberDouble.value));
             break;
         }  else {
@@ -328,20 +332,90 @@ void doubleNumE(TOKEN * token, char * str, int i){
     }
 }
 
-void id1(TOKEN *token, int c) {
+void id(TOKEN *token, int c) {
     char *str = (char*)malloc(sizeof(char) *2);
     str[0] = (char)c;
     int i = 1;
-//    if()
+    while(true){
+        c = getc(fp);
+        if((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || c == '$' || (c >= '0' && c <= '9')){
+            str[i] = (char)c;
+            i++;
+            str = realloc(str, sizeof(char) * (i+1));
+        }else if (c == '.'){
+            str[i] = '\0';
+            idFull(token,str);
+        }else if (testValid(c)){
+            ungetc(c, fp);
+            str[i] = '\0';
+            magicRecognizer(token, str);
+            break;
+        }else{
+            free(str);
+            token->type = LEX_ERROR;
+            return;
+        }
+    }
 }
 
-void id2(TOKEN *token, char *str, int i) {
+void idFull(TOKEN *token, char *str1) {
+    char *str2 = (char*)malloc(sizeof(char) );
+    int c, i = 0;
+
+    c = getc(fp);
+    if((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || c == '$'){
+        str2[i] = (char)c;
+        i++;
+        str2 = realloc(str2, sizeof(char) * (i+1));
+    }else {
+        free(str2);
+        token->type = LEX_ERROR;
+        return;
+    }
+
+    while(true){
+        c = getc(fp);
+        if((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || c == '$' || (c >= '0' && c <= '9')){
+            str2[i] = (char)c;
+            i++;
+            str2 = realloc(str2, sizeof(char) * (i+1));
+//        }else if (c == '.'){   todo co teď?????
+//            str2[i] = '\0';
+//            idFull(token,str2);
+        }else if (testValid(c)){
+            ungetc(c, fp);
+            str2[i] = '\0';
+            token->type = IDENTIFIER_FULL;
+            token->data.identifierFull.class = str1;
+            token->data.identifierFull.name = str2;
+            break;
+        }else{
+            free(str2);
+            token->type = LEX_ERROR;
+            return;
+        }
+    }
+}
+
+void magicRecognizer(TOKEN* token,char* str){
+    if(
+            strcmp(str,"break") || strcmp(str,"class") || strcmp(str,"continue") || strcmp(str,"do") ||
+            strcmp(str,"double") || strcmp(str,"else") || strcmp(str,"false") || strcmp(str,"for") ||
+            strcmp(str,"if") || strcmp(str,"int") || strcmp(str,"return ") || strcmp(str,"String ") ||
+            strcmp(str,"static") || strcmp(str,"true") || strcmp(str,"void") || strcmp(str,"while" )
+      ) {
+        token->type = KEYWORD;
+        token->data.keyword.name = str;
+    } else {
+        token->type = IDENTIFIER;
+        token->data.identifier.name = str;
+    }
 
 }
 
 bool testValid(int c) {
     if (c == EOF || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' ||
-        c == '$' || c >= '0' && c <= '9' || c == '"' || c == '\t' || c == '\n' ||
+        c == '$' || (c >= '0' && c <= '9') || c == '"' || c == '\t' || c == '\n' ||
         c == ' ' || c == '/' || c == '*' || c == '+' || c == '-' || c == '<' ||
         c == '>' || c == '=' || c == '!' || c == ';' || c == '(' || c == '{' ||
         c == ')' || c == '}' || c == ',') {

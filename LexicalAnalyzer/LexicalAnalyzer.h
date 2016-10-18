@@ -12,12 +12,10 @@ typedef enum {
     KEYWORD,
     IDENTIFIER_FULL,
     IDENTIFIER,
-    LITERAL_INTEGER,
-    LITERAL_DOUBLE,
     LITERAL_BOOL,
     LITERAL_STRING,
-    NUMBER_INTEGER,
-    NUMBER_DOUBLE,
+    LITERAL_INTEGER,
+    LITERAL_DOUBLE,
     OPERATOR_ARITHMETIC,
     OPERATOR_LOGIC,
     OPERATOR_ASSIGN,
@@ -34,6 +32,14 @@ typedef struct {
 
 typedef struct {
     char *name;
+} KEYWORD_INFO;
+
+typedef struct {
+    bool value;
+} LITERAL_BOOL_INFO;
+
+typedef struct {
+    char *name;
 } SHORT_ID_INFO;
 
 typedef struct {
@@ -42,23 +48,41 @@ typedef struct {
 
 typedef struct {
     int value;
-} NUMBER_INTEGER_INFO;
+} LITERAL_INTEGER_INFO;
 
 typedef struct {
     double value;
-} NUMBER_DOUBLE_INFO;
+} LITERAL_DOUBLE_INFO;
+
+typedef struct {
+    char * name ;
+} LITERAL_STRING_INFO;
 
 typedef struct {
     char name;
 } OPERATOR_ARITHMETIC_INFO;
+
+typedef struct {
+    char *class;
+    char *name;
+} IDENTIFIER_FULL_INFO;
+
+typedef struct {
+    char *name;
+} IDENTIFIER_INFO;
 
 typedef union {
     SHORT_ID_INFO shortID;
     BRACKET_INFO bracket;
     OPERATOR_LOGIC_INFO operatorLogic;
     OPERATOR_ARITHMETIC_INFO operatorArithmetic;
-    NUMBER_DOUBLE_INFO numberDouble;
-    NUMBER_INTEGER_INFO numberInteger;
+    LITERAL_DOUBLE_INFO numberDouble;
+    LITERAL_INTEGER_INFO numberInteger;
+    IDENTIFIER_INFO identifier;
+    IDENTIFIER_FULL_INFO identifierFull;
+    LITERAL_STRING_INFO literalString;
+    LITERAL_BOOL_INFO literalBool;
+    KEYWORD_INFO keyword;
 } DATA;
 
 typedef struct {
