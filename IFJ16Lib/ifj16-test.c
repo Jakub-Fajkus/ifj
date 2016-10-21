@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
     printf("substr %s \n", substr("aaa", 0, 1));
     printf("compare %d \n", compare("abc", "abc"));
     printf("find %d \n", find("abc", "a"));
-    printf("sort %s \n", sort("bac"));
-
+    printf("sort %s \n", sort("bbabafrvabb"));
+    //printf("median from %s is %c","adc",medianIndex("adc"));
     return 0;
 }	

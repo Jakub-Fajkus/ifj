@@ -126,5 +126,53 @@ int find(char *s, char *search) {
 }
 
 char *sort(char *s) {
-    return "aa";
+
+    int right = length(s);
+    char *arr; /* our array for return as sorted string */
+    arr = (char*) malloc(sizeof(char)*right);
+
+
+    int k = 0;  /* copy elements into that */
+    while(k <= right-1){
+        arr[k] = s[k];
+        k++;
+    }
+
+    quickSort(arr,0,right); /* call our quick sort */
+
+    return arr;
+}
+
+void quickSort(char *arr, int left, int right){
+
+    if(left < right){
+        int border = left;
+        for(int i = left+1; i < right; i++){
+            if(arr[i] < arr[left]){
+                swap(arr, i, ++border);
+            }
+        }
+        swap(arr, left, border);
+        quickSort(arr, left, border);
+        quickSort(arr, border + 1, right);
+    }
+}
+
+char medianIndex(char *s){
+    char pole[3] = {s[0],s[length(s)/2],s[length(s)-1]};
+    for (int i = 0; i < 3; ++i) {
+        if(pole[i] > pole[i+1]){
+            char tmp = pole[i];
+            pole[i] = pole[i+1];
+            pole[i+1] = tmp;
+        }
+    }
+
+    return pole[1];
+}
+
+void swap(char *arr, int left, int right){
+    char tmp = arr[right];
+    arr[right] = arr[left];
+    arr[left] = tmp;
 }

@@ -24,4 +24,11 @@ int compare(char *, char *);
 
 int find(char *, char *);
 
-char *sort(char *);
+char *sort(char *s);
+
+
+void quickSort(char *arr, int left, int right);
+
+char medianIndex(char *s);
+
+void swap(char *arr, int left, int right);
