@@ -4,6 +4,8 @@
 //
 
 #include "ifj16.h"
+#include "../IAL/ial.h"
+#include <string.h>
 
 #define CHAR_SIZE    sizeof(char)
 
@@ -19,7 +21,7 @@ void Error10() {
 }
 // end local
 
-int readInt() {
+int ifj16_readInt() {
     int c;
     char *string;
     int newInt, i = 1; // only '\0'
@@ -40,7 +42,7 @@ int readInt() {
     return newInt;
 }
 
-double readDouble() {
+double ifj16_readDouble() {
     int c;
     char *string;
     double newDouble;
@@ -77,7 +79,7 @@ double readDouble() {
     return newDouble;
 }
 
-char *readString() { // nepoužívám scanf abych měl vždycky přesně naalokovanou velikost stringu
+char *ifj16_readString() { // nepoužívám scanf abych měl vždycky přesně naalokovanou velikost stringu
     int c;
     char *string;
     int i = 1; // only '\0'
@@ -91,20 +93,20 @@ char *readString() { // nepoužívám scanf abych měl vždycky přesně naaloko
     return string;
 }
 
-void print( /*some multi argument magic using va_list*/ ) {
-
+void ifj16_print(char *s) {
+    printf(s);
 }
 
-int length(char *s) {
+int ifj16_length(char *s) {
     return (int) strlen(s);
 }
 
-char *substr(char *s, int i, int n) {
+char *ifj16_substr(char *s, int i, int n) {
 
     if ( s == NULL || n <= 0 || i < 0 )
         Error10();
 
-    int length = strlen(s);
+    int length = (int)strlen(s);
     if ( i + n > length )
         Error10();
 
@@ -117,62 +119,14 @@ char *substr(char *s, int i, int n) {
     return newSubstr;
 }
 
-int compare(char *s1, char *s2) {
+int ifj16_compare(char *s1, char *s2) {
     return 0;
 }
 
-int find(char *s, char *search) {
-    return 0;
+int ifj16_find(char *s, char *search) {
+    return boyer_moore((unsigned char*)s, (unsigned int)strlen(s), (unsigned char*)search, (unsigned int)strlen(search));
 }
 
-char *sort(char *s) {
-
-    int right = length(s);
-    char *arr; /* our array for return as sorted string */
-    arr = (char*) malloc(sizeof(char)*right);
-
-
-    int k = 0;  /* copy elements into that */
-    while(k <= right-1){
-        arr[k] = s[k];
-        k++;
-    }
-
-    quickSort(arr,0,right); /* call our quick sort */
-
-    return arr;
-}
-
-void quickSort(char *arr, int left, int right){
-
-    if(left < right){
-        int border = left;
-        for(int i = left+1; i < right; i++){
-            if(arr[i] < arr[left]){
-                swap(arr, i, ++border);
-            }
-        }
-        swap(arr, left, border);
-        quickSort(arr, left, border);
-        quickSort(arr, border + 1, right);
-    }
-}
-
-char medianIndex(char *s){
-    char pole[3] = {s[0],s[length(s)/2],s[length(s)-1]};
-    for (int i = 0; i < 3; ++i) {
-        if(pole[i] > pole[i+1]){
-            char tmp = pole[i];
-            pole[i] = pole[i+1];
-            pole[i+1] = tmp;
-        }
-    }
-
-    return pole[1];
-}
-
-void swap(char *arr, int left, int right){
-    char tmp = arr[right];
-    arr[right] = arr[left];
-    arr[left] = tmp;
+char *ifj16_sort(char *s) {
+    return quickSortWrapper(s);
 }

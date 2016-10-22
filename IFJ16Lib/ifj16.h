@@ -1,6 +1,5 @@
-//
-// Created by rockuo on 9.10.16.
-//
+#ifndef	_IFJ16_H_
+#define	_IFJ16_H_
 
 #include<stdio.h>
 #include<stdlib.h>
@@ -8,27 +7,22 @@
 #include<stdarg.h>
 #include<stdbool.h>
 
-int readInt();
+int ifj16_readInt();
 
-double readDouble();
+double ifj16_readDouble();
 
-char *readString();
+char *ifj16_readString();
 
-void print( /*some multi argument magic using va_list*/ );
+void ifj16_print(char *s);
 
-int length(char *);
+int ifj16_length(char *);
 
-char *substr(char *, int, int);
+char *ifj16_substr(char *, int, int);
 
-int compare(char *, char *);
+int ifj16_compare(char *, char *);
 
-int find(char *, char *);
+int ifj16_find(char *, char *);
 
-char *sort(char *s);
+char *ifj16_sort(char *s);
 
-
-void quickSort(char *arr, int left, int right);
-
-char medianIndex(char *s);
-
-void swap(char *arr, int left, int right);
+#endif
