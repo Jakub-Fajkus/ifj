@@ -66,7 +66,7 @@ void start(TOKEN *token) {
     if (c == EOF) {
         token->type = END_OF_FILE;
     } else if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || c == '$') {
-
+        id(token, c);
     } else if (c >= '0' && c <= '9') {
         num(token,c);
     } else if (c == '"') {
@@ -345,6 +345,7 @@ void id(TOKEN *token, int c) {
         }else if (c == '.'){
             str[i] = '\0';
             idFull(token,str);
+            break;
         }else if (testValid(c)){
             ungetc(c, fp);
             str[i] = '\0';
@@ -399,11 +400,12 @@ void idFull(TOKEN *token, char *str1) {
 
 void magicRecognizer(TOKEN* token,char* str){
     if(
-            strcmp(str,"break") || strcmp(str,"class") || strcmp(str,"continue") || strcmp(str,"do") ||
-            strcmp(str,"double") || strcmp(str,"else") || strcmp(str,"false") || strcmp(str,"for") ||
-            strcmp(str,"if") || strcmp(str,"int") || strcmp(str,"return ") || strcmp(str,"String ") ||
-            strcmp(str,"static") || strcmp(str,"true") || strcmp(str,"void") || strcmp(str,"while" )
-      ) {
+            strcmp(str,"break") == 0 || strcmp(str,"class") == 0 || strcmp(str,"continue") == 0 || strcmp(str,"do") == 0 ||
+            strcmp(str,"double") == 0 || strcmp(str,"else") == 0 || strcmp(str,"false") == 0 || strcmp(str,"for") == 0 ||
+            strcmp(str,"if") == 0 || strcmp(str,"int") == 0 || strcmp(str,"return") == 0 || strcmp(str,"String") == 0 ||
+            strcmp(str,"static") == 0 || strcmp(str,"true") == 0 || strcmp(str,"void") == 0 || strcmp(str,"while" ) == 0
+    ) {
+//        printf("keyword");
         token->type = KEYWORD;
         token->data.keyword.name = str;
     } else {

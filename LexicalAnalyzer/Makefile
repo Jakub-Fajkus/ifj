@@ -1,9 +1,9 @@
 
-PRJ=LexicalAnalyzerto
+PRJ=LexicalAnalyzer
 #
 PROGS=$(PRJ)-test
 CC=gcc
-CFLAGS=-Wall -std=c99 -pedantic -lm
+CFLAGS=-Wall -std=c99 -pedantic -lm -g
 
 all: $(PROGS)
 
