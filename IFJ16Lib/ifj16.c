@@ -105,12 +105,11 @@ char *ifj16_substr(char *s, int i, int n) {
 
     if ( s == NULL || n <= 0 || i < 0 )
         Error10();
-
     int length = (int)strlen(s);
     if ( i + n > length )
         Error10();
 
-    char *newSubstr = malloc(sizeof(char *) +1);
+    char *newSubstr = malloc( CHAR_SIZE * (n-i+1) );
     if (newSubstr == NULL)
         Error10();
 
