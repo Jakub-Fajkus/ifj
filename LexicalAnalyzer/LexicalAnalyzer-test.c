@@ -63,13 +63,13 @@ void test1();
 void printEnumValue(int value);
 void printToken(TOKEN *token);
 
-int main(int argc, char *argv[]) {
+//int main(int argc, char *argv[]) {
 
 //    destroyStream();
 
-    test1();
-    return 0;
-}
+//    test1();
+//    return 0;
+//}
 
 void test1(){
     initializeStream("test1.txt");

@@ -5,7 +5,6 @@
 
 #include "ifj16.h"
 #include "../IAL/ial.h"
-#include <string.h>
 
 #define CHAR_SIZE    sizeof(char)
 
@@ -94,7 +93,7 @@ char *ifj16_readString() { // nepoužívám scanf abych měl vždycky přesně n
 }
 
 void ifj16_print(char *s) {
-    printf(s);
+    printf("%s", s);
 }
 
 int ifj16_length(char *s) {
