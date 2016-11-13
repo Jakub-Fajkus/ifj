@@ -764,3 +764,32 @@ SYMBOL_TABLE_VARIABLE* getVariable(SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBO
     //the variable was either found(is global) or not found at all
     return variable;
 }
+
+void initializeSymbolTable(SYMBOL_TABLE_NODEPtr **symbolTable) {
+    *symbolTable = malloc(sizeof(SYMBOL_TABLE_NODEPtr));
+    **symbolTable = malloc(sizeof(struct SYMBOL_TABLE_NODE));
+    BSTInit(*symbolTable);
+}
+
+SYMBOL_TABLE_VARIABLE* createVariable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, VARIABLE_VALUE value, bool initialize) {
+    SYMBOL_TABLE_VARIABLE *variable = malloc(sizeof(SYMBOL_TABLE_VARIABLE));
+    variable->name = name;
+    variable->type = type;
+
+    if (type == TYPE_INT) {
+        variable->value.intValue = value.intValue;
+    } else if (type == TYPE_DOUBLE) {
+        variable->value.doubleValue = value.doubleValue;
+    } else {
+        variable->value.stringValue = value.stringValue;
+    }
+
+    return variable;
+}
+
+TREE_NODE_DATA createVariableData(SYMBOL_TABLE_VARIABLE *variable) {
+    TREE_NODE_DATA *treeData = malloc(sizeof(TREE_NODE_DATA));
+    treeData->type = TREE_NODE_VARIABLE;
+    treeData->item = malloc(sizeof(SYMBOL_TABLE_ITEM));
+    treeData->item->variable = variable;
+}

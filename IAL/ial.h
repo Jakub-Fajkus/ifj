@@ -160,4 +160,10 @@ SYMBOL_TABLE_VARIABLE* getVariableFromTable(SYMBOL_TABLE_NODEPtr *symbolTable, c
  * @return
  */
 SYMBOL_TABLE_VARIABLE* getVariable(SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBOL_TABLE_NODEPtr *globalSymbolTable, SYMBOL_TABLE_FUNCTION *calledFunction, char* name);
+
+void initializeSymbolTable(SYMBOL_TABLE_NODEPtr **symbolTable);
+
+SYMBOL_TABLE_VARIABLE* createVariable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, VARIABLE_VALUE value1, bool initialize);
+
+TREE_NODE_DATA createVariableData(SYMBOL_TABLE_VARIABLE *variable);
 #endif
