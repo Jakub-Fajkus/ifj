@@ -1,12 +1,11 @@
 //
-// Created by rockuo on 9.10.16.
+// Created by Jakub Fajkus on 14.11.16.
 //
 
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
-#include<stdarg.h>
-#include<stdbool.h>
+#ifndef IFJ_LEXICALANALYZERSTRUCTURES_H
+#define IFJ_LEXICALANALYZERSTRUCTURES_H
+
+#include <stdbool.h>
 
 typedef enum {
     KEYWORD,
@@ -90,10 +89,4 @@ typedef struct {
     DATA data;
 } TOKEN;
 
-void initializeStream(char *);
-
-void destroyStream();
-
-TOKEN *getToken();
-
-
+#endif //IFJ_LEXICALANALYZERSTRUCTURES_H

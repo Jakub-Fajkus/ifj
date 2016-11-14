@@ -3,7 +3,7 @@
 //
 
 #include "ifj16.h"
-#include "../IAL/ial.h"
+#include "ial.h"
 
 void testQuickSort();
 void testFind();

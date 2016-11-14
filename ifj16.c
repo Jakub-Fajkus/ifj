@@ -4,7 +4,7 @@
 //
 
 #include "ifj16.h"
-#include "../IAL/ial.h"
+#include "ial.h"
 
 #define CHAR_SIZE    sizeof(char)
 

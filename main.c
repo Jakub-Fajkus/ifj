@@ -2,10 +2,10 @@
 // Created by Jakub Fajkus on 13.11.16.
 //
 
-#include "IAL/ial.h"
-#include "IFJ16Lib/ifj16.h"
-#include "LexicalAnalyzer/LexicalAnalyzer.h"
-#include "SyntacticalAnalyzer/SyntacticalAnalyzer.h"
+#include "ifj16.h"
+#include "SymbolTable.h"
+#include "LexicalAnalyzer.h"
+#include "SyntacticalAnalyzer.h"
 
 void simulateSymbolTable();
 
@@ -22,18 +22,18 @@ void simulateSymbolTable() {
     SYMBOL_TABLE_NODEPtr *globalSymbolTable;
     initializeSymbolTable(&globalSymbolTable);
 
-    TREE_NODE_DATA *firstClassRecord = malloc(sizeof(TREE_NODE_DATA));
-    firstClassRecord->item = malloc(sizeof(SYMBOL_TABLE_ITEM));
-    firstClassRecord->item->variable = malloc(sizeof(SYMBOL_TABLE_VARIABLE));
-    firstClassRecord->item->variable->name = "*";
-    BSTInsert(globalSymbolTable, "class1.*", *firstClassRecord);
+    createAndInsertIntVariable(globalSymbolTable, "class1.firstVariable", 71, true);
+    createAndInsertIntVariable(globalSymbolTable, "class1.*", 0, false);
+    createAndInsertDoubleVariable(globalSymbolTable, "class1.double", 1.34, true);
+    createAndInsertStringVariable(globalSymbolTable, "class1.string", "ahoj", true);
 
-    VARIABLE_VALUE value;
-    value.intValue = 71;
-    SYMBOL_TABLE_VARIABLE *firstClassVariable = createVariable(globalSymbolTable, "class1.firstVariable", TYPE_INT, value, true);
-    TREE_NODE_DATA treeData = createVariableData(firstClassVariable);
-
-    BSTInsert(globalSymbolTable, firstClassVariable->name, treeData);
+    //try find a variable
     TREE_NODE_DATA foundNode;
     int found = BSTSearch(*globalSymbolTable, "class1.firstVariable", &foundNode);
+
+    TREE_NODE_DATA foundNode2;
+    int found2 = BSTSearch(*globalSymbolTable, "class1.*", &foundNode2);
+
+    TREE_NODE_DATA foundNode3;
+    int found3 = BSTSearch(*globalSymbolTable, "bulllshit", &foundNode3);
 }

@@ -4,7 +4,7 @@
 
 #include "ial.h"
 #include <string.h>
-#include "../IFJ16Lib/ifj16.h"
+#include "ifj16.h"
 
 int main(int argc, char *argv[]) {
 
