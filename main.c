@@ -6,6 +6,7 @@
 #include "SymbolTable.h"
 #include "LexicalAnalyzer.h"
 #include "SyntacticalAnalyzer.h"
+#include "Stack.h"
 
 void simulateSymbolTable();
 
@@ -22,10 +23,10 @@ void simulateSymbolTable() {
     SYMBOL_TABLE_NODEPtr *globalSymbolTable;
     initializeSymbolTable(&globalSymbolTable);
 
-    createAndInsertIntVariable(globalSymbolTable, "class1.firstVariable", 71, true);
-    createAndInsertIntVariable(globalSymbolTable, "class1.*", 0, false);
-    createAndInsertDoubleVariable(globalSymbolTable, "class1.double", 1.34, true);
-    createAndInsertStringVariable(globalSymbolTable, "class1.string", "ahoj", true);
+    createAndInsertIntVariable(globalSymbolTable, "class1.firstVariable", true);
+    createAndInsertIntVariable(globalSymbolTable, "class1.*", false);
+    createAndInsertDoubleVariable(globalSymbolTable, "class1.double", true);
+    createAndInsertStringVariable(globalSymbolTable, "class1.string", true);
 
     //try find a variable
     TREE_NODE_DATA foundNode;
@@ -36,4 +37,7 @@ void simulateSymbolTable() {
 
     TREE_NODE_DATA foundNode3;
     int found3 = BSTSearch(*globalSymbolTable, "bulllshit", &foundNode3);
+
+    TREE_NODE_DATA foundNode4;
+    int found4 = BSTSearch(*globalSymbolTable, "class1.*", &foundNode3);
 }

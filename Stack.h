@@ -10,12 +10,11 @@
 #define STACK_SIZE_LIMIT 100000
 
 typedef enum STACK_ELEMENT_TYPE {
-    STACK_ELEMENT_FUNCTION_CALL,
+    STACK_ELEMENT_TYPE_EXPRESSION
     //todo: use for expressions(exp, operator, <, > ...)
 }STACK_ELEMENT_TYPE;
 
 typedef union STACK_ELEMENT_DATA {
-    SYMBOL_TABLE_FUNCTION_CALL functionCall;
     //todo: use for expressions
 
 }STACK_ELEMENT_DATA;

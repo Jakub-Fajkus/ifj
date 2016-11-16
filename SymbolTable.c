@@ -207,43 +207,26 @@ void initializeSymbolTable(SYMBOL_TABLE_NODEPtr **symbolTable) {
     BSTInit(*symbolTable);
 }
 
-SYMBOL_TABLE_VARIABLE* createVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value, bool initialized) {
+SYMBOL_TABLE_VARIABLE* createVariable(char *name, DATA_TYPE type, bool initialized) {
     SYMBOL_TABLE_VARIABLE *variable = malloc(sizeof(SYMBOL_TABLE_VARIABLE));
     variable->name = name;
     variable->type = type;
-
-    if (type == TYPE_INT) {
-        variable->value.intValue = value.intValue;
-    } else if (type == TYPE_DOUBLE) {
-        variable->value.doubleValue = value.doubleValue;
-    } else {
-        variable->value.stringValue = value.stringValue;
-    }
     variable->usages = 0;
     variable->initialized = initialized;
 
     return variable;
 }
 
-SYMBOL_TABLE_VARIABLE* createIntVariable(char *name, int value, bool initialized) {
-    VARIABLE_VALUE valueStruct;
-    valueStruct.intValue = value;
-
-    return createVariable(name, TYPE_INT, valueStruct, initialized);
+SYMBOL_TABLE_VARIABLE* createIntVariable(char *name, bool initialized) {
+    return createVariable(name, TYPE_INT, initialized);
 }
 
-SYMBOL_TABLE_VARIABLE* createDoubleVariable(char *name, double value, bool initialized) {
-    VARIABLE_VALUE valueStruct;
-    valueStruct.doubleValue = value;
-
-    return createVariable(name, TYPE_DOUBLE, valueStruct, initialized);
+SYMBOL_TABLE_VARIABLE* createDoubleVariable(char *name, bool initialized) {
+    return createVariable(name, TYPE_DOUBLE, initialized);
 }
 
-SYMBOL_TABLE_VARIABLE* createStringVariable(char *name, char* value, bool initialized) {
-    VARIABLE_VALUE valueStruct;
-    valueStruct.stringValue = value;
-
-    return createVariable(name, TYPE_STRING, valueStruct, initialized);
+SYMBOL_TABLE_VARIABLE* createStringVariable(char *name, bool initialized) {
+    return createVariable(name, TYPE_STRING, initialized);
 }
 
 TREE_NODE_DATA* createVariableData(SYMBOL_TABLE_VARIABLE *variable) {
@@ -255,24 +238,44 @@ TREE_NODE_DATA* createVariableData(SYMBOL_TABLE_VARIABLE *variable) {
     return treeData;
 }
 
-void createAndInsertVariable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, VARIABLE_VALUE value, bool initialized) {
-    SYMBOL_TABLE_VARIABLE *variable = createVariable(name, type, value, initialized);
+void createAndInsertVariable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, bool initialized) {
+    SYMBOL_TABLE_VARIABLE *variable = createVariable(name, type, initialized);
     TREE_NODE_DATA *treeData = createVariableData(variable);
     BSTInsert(symbolTable, variable->name, *treeData);
 }
 
-void createAndInsertIntVariable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, int value, bool initialized) {
-    VARIABLE_VALUE val;
-    val.intValue = value;
-    createAndInsertVariable(symbolTable, name, TYPE_INT, val, initialized);
+void createAndInsertIntVariable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, bool initialized) {
+    createAndInsertVariable(symbolTable, name, TYPE_INT, initialized);
 }
-void createAndInsertDoubleVariable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, double value, bool initialized) {
-    VARIABLE_VALUE val;
-    val.doubleValue = value;
-    createAndInsertVariable(symbolTable, name, TYPE_DOUBLE, val, initialized);
+void createAndInsertDoubleVariable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, bool initialized) {
+    createAndInsertVariable(symbolTable, name, TYPE_DOUBLE, initialized);
 }
-void createAndInsertStringVariable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, char* value, bool initialized) {
-    VARIABLE_VALUE val;
-    val.stringValue = value;
-    createAndInsertVariable(symbolTable, name, TYPE_STRING, val, initialized);
+void createAndInsertStringVariable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, bool initialized) {
+    createAndInsertVariable(symbolTable, name, TYPE_STRING, initialized);
+}
+
+SYMBOL_TABLE_FUNCTION* createFunction(char *name, DATA_TYPE type, unsigned int usages, tDLList *parameters) {
+    SYMBOL_TABLE_FUNCTION *function = malloc(sizeof(SYMBOL_TABLE_FUNCTION));
+
+    function->type = type;
+    function->name = name;
+    function->usages = usages;
+    function->parameters = parameters;
+
+    return function;
+}
+
+TREE_NODE_DATA* createFunctionData(SYMBOL_TABLE_FUNCTION *function) {
+    TREE_NODE_DATA *treeData = malloc(sizeof(TREE_NODE_DATA));
+    treeData->type = TREE_NODE_FUNCTION;
+    treeData->item = malloc(sizeof(SYMBOL_TABLE_ITEM));
+    treeData->item->function = function;
+
+    return treeData;
+}
+
+void createAndInsertFunction(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, unsigned int usages, tDLList *parameters) {
+    SYMBOL_TABLE_FUNCTION *function = createFunction(name, type, usages, parameters);
+    TREE_NODE_DATA *treeData = createFunctionData(function);
+    BSTInsert(symbolTable, function->name, *treeData);
 }
