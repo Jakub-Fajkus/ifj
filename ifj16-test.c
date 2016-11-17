@@ -8,23 +8,23 @@
 void testQuickSort();
 void testFind();
 
-int main(int argc, char *argv[]) {
-
-    printf("readInt %d \n",ifj16_readInt());
-    printf("readDouble %lf \n",ifj16_readDouble());
-    printf("readString %s \n",ifj16_readString());
+//int main(int argc, char *argv[]) {
 //
-    ifj16_print("toto je string!\n");
-
-    printf("length %d \n",ifj16_length("aaa"));
-    printf("substr %s \n", ifj16_substr("aaa", 0, 1));
-    printf("compare %d \n", ifj16_compare("abc", "abc"));
-
-    testQuickSort();
-    testFind();
-
-    return 0;
-}
+//    printf("readInt %d \n",ifj16_readInt());
+//    printf("readDouble %lf \n",ifj16_readDouble());
+//    printf("readString %s \n",ifj16_readString());
+////
+//    ifj16_print("toto je string!\n");
+//
+//    printf("length %d \n",ifj16_length("aaa"));
+//    printf("substr %s \n", ifj16_substr("aaa", 0, 1));
+//    printf("compare %d \n", ifj16_compare("abc", "abc"));
+//
+//    testQuickSort();
+//    testFind();
+//
+//    return 0;
+//}
 
 void testQuickSort() {
     char *str;

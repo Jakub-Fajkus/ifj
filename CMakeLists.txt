@@ -3,15 +3,6 @@ project(ifj)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c99")
 
-set(SOURCE_FILES
-        ifj16.c
-        ial.c
-        LexicalAnalyzer.c LexicalAnalyzer-test.c
-        SyntacticalAnalyzer.c SyntacticalAnalyzer.h
-        main.c
-        DoubleLinkedList.h DoubleLinkedList.c
-        Stack.c Stack.h
-        SymbolTable.c SymbolTable.h
-        BasicStructures.h LexicalAnalyzerStructures.h Debug.c Debug.h)
+file(GLOB ifj_SRC "*.h" "*.c")
 
-add_executable(ifj ${SOURCE_FILES})
+add_executable(ifj ${ifj_SRC})
