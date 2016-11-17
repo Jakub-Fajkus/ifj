@@ -4,6 +4,7 @@
 
 #include "SymbolTable.h"
 #include "ifj16.h"
+#include "BasicStructures.h"
 
 void BSTInit (SYMBOL_TABLE_NODEPtr *RootPtr) {
     *RootPtr = NULL;
@@ -46,9 +47,14 @@ void BSTInsert (SYMBOL_TABLE_NODEPtr* RootPtr, char* K, TREE_NODE_DATA Content)	
 
     //the key is the root
     if (K == (*RootPtr)->key) {
-        (*RootPtr)->data = (TREE_NODE_DATA*)malloc(sizeof(TREE_NODE_DATA));
-        (*RootPtr)->data->item = Content.item;
-        (*RootPtr)->data->type = Content.type;
+//        (*RootPtr)->data = (TREE_NODE_DATA*)malloc(sizeof(TREE_NODE_DATA));
+//        (*RootPtr)->data->item = Content.item;
+//        (*RootPtr)->data->type = Content.type;
+
+        //aktalizacni semantika!
+        printf("redeclaration of %s", K);
+        exit(3);
+
     } else if (K < (*RootPtr)->key) {
         //the has lower value than the root
         BSTInsert(&(*RootPtr)->lPtr, K, Content);
@@ -151,19 +157,48 @@ void BSTDispose (SYMBOL_TABLE_NODEPtr *RootPtr) {
 
 SYMBOL_TABLE_VARIABLE* getVariableFromTable(SYMBOL_TABLE_NODEPtr *symbolTable, char* name)
 {
-    TREE_NODE_DATA nodeData;
+    TREE_NODE_DATA *nodeData = getNodeDataFromTable(symbolTable, name);
 
-    if (true == BSTSearch(*symbolTable, name, &nodeData)) {
-        if (nodeData.type != TREE_NODE_VARIABLE) {
-            printf("ERROR: getVariableFromTable: searched for variable %s, but it is not a variable", name);
-            exit(1);
-        }
+    if(nodeData == NULL) {
+        return NULL;
+    }
+
+    if (nodeData->type != TREE_NODE_VARIABLE) {
+        printf("internal error, requested %s is not a variable", name);
+        exit(99);
+    }
+
+    return nodeData->item->variable;
+}
+
+SYMBOL_TABLE_FUNCTION* getFunctionFromTable(SYMBOL_TABLE_NODEPtr *symbolTable, char* name)
+{
+    TREE_NODE_DATA *nodeData = getNodeDataFromTable(symbolTable, name);
+
+    if(nodeData == NULL) {
+        return NULL;
+    }
+
+    if (nodeData->type != TREE_NODE_FUNCTION) {
+        printf("internal error, requested %s is not a function", name);
+        exit(99);
+    }
+
+    return nodeData->item->function;
+}
+
+TREE_NODE_DATA *getNodeDataFromTable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name) {
+    TREE_NODE_DATA *nodeData = malloc(sizeof(TREE_NODE_DATA));
+
+    if (true == BSTSearch(*symbolTable, name, nodeData)) {
         //found
-        return nodeData.item->variable;
+        return nodeData;
     } else {
 //        not found
         return NULL;
     }
+
+    return NULL;
 }
 
 SYMBOL_TABLE_VARIABLE* getVariable(SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBOL_TABLE_NODEPtr *globalSymbolTable, SYMBOL_TABLE_FUNCTION *calledFunction, char* name)
@@ -239,6 +274,12 @@ TREE_NODE_DATA* createVariableData(SYMBOL_TABLE_VARIABLE *variable) {
 }
 
 void createAndInsertVariable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, bool initialized) {
+    //if the variable already exists
+    if (NULL != getVariableFromTable(symbolTable, name)) {
+        printf("redeclaration of variable %s", name);
+        exit(3);
+    }
+
     SYMBOL_TABLE_VARIABLE *variable = createVariable(name, type, initialized);
     TREE_NODE_DATA *treeData = createVariableData(variable);
     BSTInsert(symbolTable, variable->name, *treeData);
@@ -274,8 +315,31 @@ TREE_NODE_DATA* createFunctionData(SYMBOL_TABLE_FUNCTION *function) {
     return treeData;
 }
 
-void createAndInsertFunction(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, unsigned int usages, tDLList *parameters) {
+SYMBOL_TABLE_FUNCTION* createAndInsertFunction(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, unsigned int usages, tDLList *parameters) {
+    //if the function already exists
+    if (NULL != getFunctionFromTable(symbolTable, name)) {
+        printf("redeclaration of function %s", name);
+        exit(3);
+    }
+
     SYMBOL_TABLE_FUNCTION *function = createFunction(name, type, usages, parameters);
     TREE_NODE_DATA *treeData = createFunctionData(function);
     BSTInsert(symbolTable, function->name, *treeData);
+
+    return function;
+}
+
+void addFunctionParameter(SYMBOL_TABLE_FUNCTION *function, char *name, DATA_TYPE type) {
+    if (function->parameters == NULL) {
+        function->parameters = malloc(sizeof(tDLList));
+        DLInitList(function->parameters);
+    }
+
+    LIST_ELEMENT element;
+    element.type = LIST_ELEMENT_TYPE_FUNCTION_PARAMETER;
+    element.data.parameter = malloc(sizeof(FUNCTION_PARAMETER));
+    element.data.parameter->name = name;
+    element.data.parameter->type = type;
+
+    DLInsertLast(function->parameters, element);
 }

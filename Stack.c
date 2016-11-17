@@ -11,7 +11,6 @@ void stackInit ( tStack* s) {
     if (s == NULL) {
         printf("stack is null!");
         exit(99);
-        return;
     }
 
     // stack is empty

@@ -12,6 +12,6 @@ set(SOURCE_FILES
         DoubleLinkedList.h DoubleLinkedList.c
         Stack.c Stack.h
         SymbolTable.c SymbolTable.h
-        BasicStructures.h LexicalAnalyzerStructures.h)
+        BasicStructures.h LexicalAnalyzerStructures.h Debug.c Debug.h)
 
 add_executable(ifj ${SOURCE_FILES})

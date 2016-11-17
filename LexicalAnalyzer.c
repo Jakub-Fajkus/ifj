@@ -48,6 +48,11 @@ bool testValid(int);
 
 void initializeStream(char *file) {
     fp = fopen(file, "r");
+
+    if(fp == NULL) {
+        printf("could not open source file");
+        exit(99);
+    }
 }
 
 void destroyStream() {

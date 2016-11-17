@@ -32,7 +32,7 @@ typedef struct {
     char *name; //name of the function
     DATA_TYPE type; //return type of the function
     unsigned int usages; //number of usages of the function
-    tDLList *parameters;
+    tDLList *parameters; //parameters of the function
 } SYMBOL_TABLE_FUNCTION;
 
 //the symbol table can contain 3 types of nodes
@@ -67,6 +67,10 @@ void BSTDispose(SYMBOL_TABLE_NODEPtr *);
  * @return SYMBOL_TABLE_VARIABLE|null
  */
 SYMBOL_TABLE_VARIABLE* getVariableFromTable(SYMBOL_TABLE_NODEPtr *symbolTable, char* name);
+
+SYMBOL_TABLE_FUNCTION* getFunctionFromTable(SYMBOL_TABLE_NODEPtr *symbolTable, char* name);
+
+TREE_NODE_DATA *getNodeDataFromTable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name);
 
 /**
  * Get variable from local symbol table. If the variable does not exist in the local symbol table, get it from the global table.
@@ -167,19 +171,32 @@ void createAndInsertDoubleVariable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name
  */
 void createAndInsertStringVariable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, bool initialized);
 
-
+/**
+ * Create SYMBOL_TABLE_FUNCTION structure.
+ * @param name
+ * @param type
+ * @param usages
+ * @param parameters
+ * @return
+ */
 SYMBOL_TABLE_FUNCTION* createFunction(char *name, DATA_TYPE type, unsigned int usages, tDLList *parameters);
 
+/**
+ * Wrap SYMBOL_TABLE_FUNCTION into TREE_NODE_DATA which can be inserted into a tree.
+ * @param function
+ * @return
+ */
 TREE_NODE_DATA* createFunctionData(SYMBOL_TABLE_FUNCTION *function);
 
 /**
- * todo: must throw an error if the function already exists(same as variables!)
  * @param symbolTable
  * @param name
  * @param type
  * @param usages
  * @param parameters
  */
-void createAndInsertFunction(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, unsigned int usages, tDLList *parameters);
+SYMBOL_TABLE_FUNCTION *createAndInsertFunction(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, unsigned int usages, tDLList *parameters);
+
+void addFunctionParameter(SYMBOL_TABLE_FUNCTION *function, char *name, DATA_TYPE type);
 
 #endif //IFJ_SYMBOLTABLE_H

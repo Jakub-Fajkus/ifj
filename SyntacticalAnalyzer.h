@@ -10,5 +10,11 @@
 typedef struct FRAME {
 }FRAME;
 
+/**
+ * Run the whole syntactical analysis
+ *
+ * @param fileName
+ */
+void runSyntacticalAnalysis(char *fileName);
 
 #endif //IFJ_SYNTACTICANALYZER_H

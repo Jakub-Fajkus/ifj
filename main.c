@@ -7,12 +7,15 @@
 #include "LexicalAnalyzer.h"
 #include "SyntacticalAnalyzer.h"
 #include "Stack.h"
+#include "LexicalAnalyzerStructures.h"
 
 void simulateSymbolTable();
 
 int main(int argc, char *argv[])
 {
     simulateSymbolTable();
+
+    runSyntacticalAnalysis("test1.txt");
 
     printf("\n\n\nXXXXKONECXXXX");
     return 0;
@@ -29,15 +32,22 @@ void simulateSymbolTable() {
     createAndInsertStringVariable(globalSymbolTable, "class1.string", true);
 
     //try find a variable
-    TREE_NODE_DATA foundNode;
-    int found = BSTSearch(*globalSymbolTable, "class1.firstVariable", &foundNode);
+//    TREE_NODE_DATA foundNode;
+    SYMBOL_TABLE_VARIABLE *variable1 = getVariableFromTable(globalSymbolTable, "class1.firstVariable");
+//    int found = BSTSearch(*globalSymbolTable, "class1.firstVariable", &foundNode);
 
-    TREE_NODE_DATA foundNode2;
-    int found2 = BSTSearch(*globalSymbolTable, "class1.*", &foundNode2);
+//    TREE_NODE_DATA foundNode2;
+    SYMBOL_TABLE_VARIABLE *variable2 = getVariableFromTable(globalSymbolTable, "class1.*");
+//    int found2 = BSTSearch(*globalSymbolTable, "class1.*", &foundNode2);
 
-    TREE_NODE_DATA foundNode3;
-    int found3 = BSTSearch(*globalSymbolTable, "bulllshit", &foundNode3);
+//    TREE_NODE_DATA foundNode3;
+//    int found3 = BSTSearch(*globalSymbolTable, "bulllshit", &foundNode3);
+    SYMBOL_TABLE_VARIABLE *variable3 = getVariableFromTable(globalSymbolTable, "bullshit");
 
-    TREE_NODE_DATA foundNode4;
-    int found4 = BSTSearch(*globalSymbolTable, "class1.*", &foundNode3);
+    SYMBOL_TABLE_FUNCTION *function1 = createAndInsertFunction(globalSymbolTable, "class1.function1", TYPE_VOID, 0, NULL);
+    SYMBOL_TABLE_FUNCTION *function1Found = getFunctionFromTable(globalSymbolTable, "class1.function1");
+
+    addFunctionParameter(function1, "firstParameter", TYPE_INT);
+    addFunctionParameter(function1, "secondParameter", TYPE_DOUBLE);
+    addFunctionParameter(function1, "thirdParameter", TYPE_STRING);
 }
