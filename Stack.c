@@ -2,7 +2,6 @@
 // Created by Jakub Fajkus on 14.11.16.
 //
 
-#include <ntsid.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "Stack.h"

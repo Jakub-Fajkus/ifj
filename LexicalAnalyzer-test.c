@@ -33,6 +33,7 @@
 
 #define stringLiteral(stringValue) { \
     TOKEN *token = getToken(); \
+    printf("STRING_LITERAL: '%s'", token->data.literalString.name); \
     assert(token->type == LITERAL_STRING); \
     assert(strcmp(token->data.literalString.name, stringValue) == 0);}
 
@@ -63,13 +64,13 @@
 void test1();
 void printEnumValue(int value);
 
-//int main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
 
-//    destroyStream();
+    test1();
+    destroyStream();
 
-//    test1();
-//    return 0;
-//}
+    return 0;
+}
 
 void test1(){
     initializeStream("test1.txt");
