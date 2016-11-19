@@ -12,6 +12,7 @@ void DLError() {
 ** Tato funkce bude volána z některých dále implementovaných operací.
 **/
     printf ("*ERROR* The program has performed an illegal operation.\n");
+    exit(99);
     return;
 }
 
