@@ -201,7 +201,8 @@ void string1(TOKEN *token) {
             char *newStr = (char *) malloc(sizeof(char) * strlen(str));
             i = 0;
             while (true) {
-                if (i >= (strlen(str) - 1)) {
+//                TODO
+                if (i > (strlen(str) - 1)) {
                     break;
                 }
                 c = str[i];
@@ -223,17 +224,18 @@ void string1(TOKEN *token) {
                         int c2 = str[i+1], c3 = str[i+2];
                         if(c >= '0' && c<='3' && c2>= '0' && c2 <= '7' && c3 >= '0' && c3 <= '7' ){
                             // TODO
-                            newStr[j] = str[i];//provizorni
+                            newStr[j] = (char)c;//provizorni
                         } else{
                             //fucked
                         }
                     }
                 } else {
-                    newStr[j] = str[i];
+                    newStr[j] = (char)c;
                 }
                 j++;
 
             }
+            printf("\n.....%s....\n",newStr);
             token->type = LITERAL_STRING;
             token->data.literalString.name = newStr;
             break;
