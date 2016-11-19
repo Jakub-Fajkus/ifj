@@ -5,6 +5,7 @@
 
 
 #include "LexicalAnalyzer.h"
+#include "LexicalAnalyzerStructures.h"
 
 FILE *fp;
 
@@ -63,6 +64,9 @@ void destroyStream() {
 TOKEN *getToken() {
     TOKEN *token = (TOKEN *) malloc(sizeof(TOKEN));
     start(token);
+    if(token->type == LEX_ERROR){
+        Error1();
+    }
     return token;
 }
 
