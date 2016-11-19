@@ -29,4 +29,9 @@ typedef union {
     char *stringValue;
 } VARIABLE_VALUE;
 
+typedef struct {
+    DATA_TYPE var_type;
+    VARIABLE_VALUE var_value;
+} VARIABLE;
+
 #endif //IFJ_BASICSTRUCTURES_H
