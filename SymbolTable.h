@@ -28,14 +28,19 @@ typedef struct {
     bool initialized; //whether the variable ahs been initialized(has value)
 } SYMBOL_TABLE_VARIABLE;
 
+// forward declaration of the structure SYMBOL_TABLE_NODE
+//this states that the structure SYMBOL_TABLE_NODE will be declared later and before that, it will be called SYMBOL_TABLE_NODE_FORWARD
+typedef struct SYMBOL_TABLE_NODE SYMBOL_TABLE_NODE_FORWARD_DECLARATION;
+
 typedef struct {
     char *name; //name of the function
     DATA_TYPE type; //return type of the function
     unsigned int usages; //number of usages of the function
     tDLList *parameters; //parameters of the function
+    struct SYMBOL_TABLE_NODE *localSymbolTable; //local symbol table of the function
 } SYMBOL_TABLE_FUNCTION;
 
-//the symbol table can contain 3 types of nodes
+//the symbol table can contain 2 types of nodes
 typedef union{
     SYMBOL_TABLE_FUNCTION *function; //function node - for function definition in class
     SYMBOL_TABLE_VARIABLE *variable; //variable node - for variable definition in class or in a function
@@ -142,7 +147,7 @@ TREE_NODE_DATA* createVariableData(SYMBOL_TABLE_VARIABLE *variable);
  * @param type
  * @param initialized
  */
-void createAndInsertVariable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, bool initialized);
+SYMBOL_TABLE_VARIABLE* createAndInsertVariable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, bool initialized);
 
 /**
  * Wrapper around createAndInsertVariable
@@ -151,7 +156,7 @@ void createAndInsertVariable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA
  * @param name
  * @param initialized
  */
-void createAndInsertIntVariable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, bool initialized);
+SYMBOL_TABLE_VARIABLE * createAndInsertIntVariable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, bool initialized);
 
 /**
  * Wrapper around createAndInsertVariable
@@ -160,7 +165,7 @@ void createAndInsertIntVariable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, b
  * @param name
  * @param initialized
  */
-void createAndInsertDoubleVariable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, bool initialized);
+SYMBOL_TABLE_VARIABLE * createAndInsertDoubleVariable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, bool initialized);
 
 /**
  * Wrapper around createAndInsertVariable
@@ -169,7 +174,7 @@ void createAndInsertDoubleVariable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name
  * @param name
  * @param initialized
  */
-void createAndInsertStringVariable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, bool initialized);
+SYMBOL_TABLE_VARIABLE * createAndInsertStringVariable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, bool initialized);
 
 /**
  * Create SYMBOL_TABLE_FUNCTION structure.
