@@ -34,4 +34,9 @@ typedef struct {
     VARIABLE_VALUE var_value;
 } VARIABLE;
 
+typedef struct {
+    VARIABLE *variable;
+    char *var_name;
+} FRAME_ELEMENT;
+
 #endif //IFJ_BASICSTRUCTURES_H
