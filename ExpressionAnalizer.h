@@ -27,8 +27,8 @@ typedef enum EA_TERMINAL_TYPE_ENUM{
     EA_IS_EQUAL = 11,
     EA_IS_NOT_EQUAL = 12,
     EA_START_END = 13,
-    EA_UNKNOWN,
-    EA_EMPTY
+    EA_EMPTY,
+    EA_UNKNOWN
 } EA_TERMINAL_TYPE;
 
 #include "Stack.h" //include it after EA_TERMINAL_TYPE_ENUM which is needed by Stack.h

@@ -99,7 +99,6 @@ void parseExpression(tDLList *tokenList, tDLList *threeAddressCode) {
 
     bool lookingForTerminal = true;
     STACK_ELEMENT stackElement;
-    TOKEN *activeToken = NULL;
     tStack *stack = NULL;
     tStack *backStack = NULL;
     EA_TERMINAL_DATA terminalData;
@@ -151,10 +150,9 @@ void parseExpression(tDLList *tokenList, tDLList *threeAddressCode) {
 
                             stackPush(stack, stackElement);
                             break;
-                        case 'S':
-                            return;
                         default:
                             Error();
+                            exit(99);
                     }
                     break;
                 }
@@ -170,7 +168,16 @@ void parseExpression(tDLList *tokenList, tDLList *threeAddressCode) {
                 lookingForTerminal = true;
                 //TODO Generovat 3 adresny kod
             default:
-                Error();
+                while(true){
+                    stackTop(stack,&stackElement);
+                    if(stackElement.type == EA_TERMINAL){
+                        if(stackElement.data.terminalData.type == EA_START_END) {
+                            return;
+                        } else{
+                            Error();
+                        }
+                    }
+                }
         }
     }
 
