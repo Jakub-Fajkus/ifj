@@ -11,7 +11,6 @@ typedef enum {
     KEYWORD,
     IDENTIFIER_FULL,
     IDENTIFIER,
-    LITERAL_BOOL,
     LITERAL_STRING,
     LITERAL_INTEGER,
     LITERAL_DOUBLE,
@@ -32,10 +31,6 @@ typedef struct {
 typedef struct {
     char *name;
 } KEYWORD_INFO;
-
-typedef struct {
-    bool value;
-} LITERAL_BOOL_INFO;
 
 typedef struct {
     char *name;
@@ -80,7 +75,6 @@ typedef union {
     IDENTIFIER_INFO identifier;
     IDENTIFIER_FULL_INFO identifierFull;
     LITERAL_STRING_INFO literalString;
-    LITERAL_BOOL_INFO literalBool;
     KEYWORD_INFO keyword;
 } DATA;
 
