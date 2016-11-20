@@ -344,7 +344,17 @@ void InstructionExecute(INSTRUCTION *Instr){
 
 
 
+//* ************************************************ CREATE INSTRUCTION ************************************************
 
+INSTRUCTION *createPushGlobalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value) {
+    INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
 
+    instruction->type = Instruction_Push_Global_Variable;
+    instruction->address_dst = name;
+    instruction->address_src1 = malloc(sizeof(DATA_TYPE));
+    *(int*)instruction->address_src1 = type;
+    instruction->address_src2 = malloc(sizeof(VARIABLE_VALUE));
+    *(VARIABLE_VALUE*)instruction->address_src2 = value;
 
-
+    return instruction;
+}

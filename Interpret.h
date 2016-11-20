@@ -60,4 +60,14 @@ typedef struct sINSTRUCTION{
 
 void InstructionExecute(INSTRUCTION *);
 
+/**
+ * Create insturction Instruction_Push_Global_Variable.
+ *
+ * @param name
+ * @param type
+ * @param value
+ * @return
+ */
+INSTRUCTION *createPushGlobalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value);
+
 #endif //IFJ_INTERPRET_H
