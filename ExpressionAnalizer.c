@@ -106,7 +106,7 @@ void parseExpression(tDLList *tokenList, tDLList *threeAddressCode) {
     // push $
     stackElement.type = EA_TERMINAL;
     stackElement.data.terminalData.type = EA_START_END;
-    stackElement.data.terminalData.token = NULL;
+//    stackElement.data.terminalData.token = NULL; why?
     stackPush(stack, stackElement);
 
     terminalData.type = EA_EMPTY;
@@ -132,7 +132,7 @@ void parseExpression(tDLList *tokenList, tDLList *threeAddressCode) {
                         stackElement.type = EA_TERMINAL;
                         stackElement.data.terminalData = terminalData;
                         terminalData.type = EA_EMPTY;
-                        terminalData.token = NULL;
+//                        terminalData.token = NULL; //why?
                         stackPush(stack,stackElement);
                     case 'S':
                         return;
