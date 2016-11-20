@@ -6,16 +6,27 @@
 #define IFJ_STACK_H
 
 #include "SymbolTable.h"
+#include "ExpressionAnalizer.h"
+#include <stdbool.h>
 
 #define STACK_SIZE_LIMIT 100000
 
 typedef enum STACK_ELEMENT_TYPE {
-    STACK_ELEMENT_TYPE_EXPRESSION
-    //todo: use for expressions(exp, operator, <, > ...)
+    STACK_ELEMENT_TYPE_EXPRESSION,
+    EA_TERMINAL,
+    EA_NOT_TERMINAL,
+    EA_TERMINAL_ACTION
 }STACK_ELEMENT_TYPE;
 
+typedef struct {
+    EA_TERMINAL_TYPE type;
+    TOKEN token;
+} EA_TERMINAL_DATA;
+
 typedef union STACK_ELEMENT_DATA {
-    //todo: use for expressions
+    EA_TERMINAL_DATA terminalData;
+//    bool notTerminalData;
+//    bool terminalActionData;
 
 }STACK_ELEMENT_DATA;
 

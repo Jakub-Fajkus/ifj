@@ -16,5 +16,8 @@ typedef struct FRAME {
  * @param fileName
  */
 void runSyntacticalAnalysis(char *fileName);
+TOKEN *getCachedToken(tDLList *tokens);
+void returnCachedTokens(tDLList *tokens, unsigned int count);
+
 
 #endif //IFJ_SYNTACTICANALYZER_H
