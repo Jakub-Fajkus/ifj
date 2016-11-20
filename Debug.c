@@ -57,6 +57,7 @@ void printToken(TOKEN *token) {
 
 void printStack(tStack stack) {
     STACK_ELEMENT *actual = malloc(sizeof(STACK_ELEMENT));
+    STACK_ELEMENT *last;
 
     stackTop(&stack, actual);
 
@@ -83,7 +84,12 @@ void printStack(tStack stack) {
 
 
         stackPop(&stack);
+        last = actual;
         stackTop(&stack, actual);
+
+        if(last == actual) {
+            break;
+        }
     }
 
     printf("printing the stack is OVER:\n\n\n\n");
