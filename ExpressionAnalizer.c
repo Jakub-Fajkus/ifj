@@ -96,6 +96,8 @@ EA_TERMINAL_TYPE getTerminalDataType(TOKEN *token) {
 }
 
 void parseExpression(tDLList *tokenList, tDLList *threeAddressCode) {
+
+    bool lookingForTerminal = true;
     STACK_ELEMENT stackElement;
     TOKEN *activeToken = NULL;
     tStack *stack = NULL;
@@ -106,7 +108,6 @@ void parseExpression(tDLList *tokenList, tDLList *threeAddressCode) {
     // push $
     stackElement.type = EA_TERMINAL;
     stackElement.data.terminalData.type = EA_START_END;
-//    stackElement.data.terminalData.token = NULL; why?
     stackPush(stack, stackElement);
 
     terminalData.type = EA_EMPTY;
@@ -122,29 +123,52 @@ void parseExpression(tDLList *tokenList, tDLList *threeAddressCode) {
         stackTop(stack, &stackElement);
         switch (stackElement.type){
             case EA_TERMINAL: {
-                char action = terminalTable[stackElement.data.terminalData.type][terminalData.type];
-                switch (action){
-                    case '<':
+                if(lookingForTerminal) {
+                    char action = terminalTable[stackElement.data.terminalData.type][terminalData.type];
+                    switch (action) {
+                        case '<':
+                            stackElement.type = EA_TERMINAL_ACTION;
+                            stackPush(stack,stackElement);
 
-                    case '>':
-                        //TODO GENEROVAT KOD
-                    case '=':
-                        stackElement.type = EA_TERMINAL;
-                        stackElement.data.terminalData = terminalData;
-                        terminalData.type = EA_EMPTY;
-//                        terminalData.token = NULL; //why?
-                        stackPush(stack,stackElement);
-                    case 'S':
-                        return;
-                    default:
-                        Error();
+                            while(stackEmpty(stack)){
+                                stackTop(backStack, &stackElement);
+                                stackPop(backStack);
+                                stackPush(stack, stackElement);
+                            }
+
+                            stackElement.type = EA_TERMINAL;
+                            stackElement.data.terminalData = terminalData;
+                            stackPush(stack,stackElement);
+                            terminalData.type = EA_EMPTY;
+                            break;
+                        case '>':
+                            lookingForTerminal = false;
+                            break;
+                        case '=':
+                            stackElement.type = EA_TERMINAL;
+                            stackElement.data.terminalData = terminalData;
+                            terminalData.type = EA_EMPTY;
+
+                            stackPush(stack, stackElement);
+                            break;
+                        case 'S':
+                            return;
+                        default:
+                            Error();
+                    }
+                    break;
                 }
-            }
+            } //NO BREAL
             case EA_NOT_TERMINAL:
                 stackPop(stack);
                 stackPush(backStack, stackElement);
+                break;
             case EA_TERMINAL_ACTION:
-                //TODO
+                if(lookingForTerminal){
+                    Error();
+                }
+                lookingForTerminal = true;
+                //TODO Generovat 3 adresny kod
             default:
                 Error();
         }
