@@ -345,3 +345,17 @@ void addFunctionParameter(SYMBOL_TABLE_FUNCTION *function, char *name, DATA_TYPE
 
     DLInsertLast(function->parameters, element);
 }
+
+void checkIfVariableIsInitialized(SYMBOL_TABLE_NODEPtr *symbolTable, char *name) {
+    SYMBOL_TABLE_VARIABLE* foundVariable = getVariableFromTable(symbolTable, name);
+
+    if (foundVariable == NULL) {
+        printf("checkIfVariableIsInitialized: variable %s was not found", name);
+        exit(99);
+    }
+
+    if (foundVariable->initialized == false) {
+        printf("variable %s is not initialized", name);
+        exit(8);
+    }
+}

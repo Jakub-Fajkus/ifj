@@ -194,6 +194,8 @@ SYMBOL_TABLE_FUNCTION* createFunction(char *name, DATA_TYPE type, unsigned int u
 TREE_NODE_DATA* createFunctionData(SYMBOL_TABLE_FUNCTION *function);
 
 /**
+ * Wrapper around createFunctionData and createFunction
+ *
  * @param symbolTable
  * @param name
  * @param type
@@ -202,6 +204,23 @@ TREE_NODE_DATA* createFunctionData(SYMBOL_TABLE_FUNCTION *function);
  */
 SYMBOL_TABLE_FUNCTION *createAndInsertFunction(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, unsigned int usages, tDLList *parameters);
 
+/**
+ * Add function parameter to the end of the function parameters
+ *
+ * @param function
+ * @param name
+ * @param type
+ */
 void addFunctionParameter(SYMBOL_TABLE_FUNCTION *function, char *name, DATA_TYPE type);
+
+/**
+ * Check if a variable is initialized.
+ * If the variable does not exist, it calls exit(99)
+ * If the variable is not initialized, it calls exit(8)
+ *
+ * @param symbolTable
+ * @param name
+ */
+void checkIfVariableIsInitialized(SYMBOL_TABLE_NODEPtr *symbolTable, char *name);
 
 #endif //IFJ_SYMBOLTABLE_H
