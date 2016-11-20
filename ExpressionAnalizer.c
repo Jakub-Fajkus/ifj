@@ -45,7 +45,6 @@ EA_TERMINAL_TYPE getTerminalDataType(TOKEN *token) {
             return EA_UNKNOWN;
         case IDENTIFIER_FULL:
         case IDENTIFIER:
-        case LITERAL_BOOL:
         case LITERAL_STRING:
         case LITERAL_INTEGER:
         case LITERAL_DOUBLE:
@@ -109,7 +108,6 @@ void parseExpression(tDLList *tokenList, tDLList *threeAddressCode) {
     stackElement.data.terminalData.type = EA_START_END;
     stackElement.data.terminalData.token = NULL;
     stackPush(stack, stackElement);
-    bool
 
     terminalData.type = EA_EMPTY;
     while (true) {
