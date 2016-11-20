@@ -25,9 +25,6 @@ typedef struct {
 
 typedef union STACK_ELEMENT_DATA {
     EA_TERMINAL_DATA terminalData;
-//    bool notTerminalData;
-//    bool terminalActionData;
-
 }STACK_ELEMENT_DATA;
 
 typedef struct STACK_ELEMENT{
