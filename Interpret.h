@@ -11,24 +11,11 @@ typedef enum {
     Instruction_NOP,
     Instruction_Jump,
     Instruction_Assign,
-//  Instruction_Begin,
-//  Instruction_End,
     //----------------------- Math operations
     Instruction_Addition, // 3 params
     Instruction_Substraction, // 3 params
     Instruction_Multiply, // 3 params
     Instruction_Divide, // 3 params
-    //----------------------- Bool operations
-//  Instruction_Bool_Equals,
-//  Instruction_Bool_EqualsNot,
-//  Instruction_Bool_More,
-//  Instruction_Bool_Less,
-//  Instruction_Bool_MoreEqual,
-//  Instruction_Bool_LessEqual,
-    //-----------------------
-//  Instruction_Complex,
-//  Instruction_IF, // Bool operations inside?
-//  Instruction_WHILE,
     //----------------------- Calling user function
     Instruction_CallFunction, // == Instruction_Push_Local_Frame
     Instruction_ReturnFunction, //not sure
@@ -48,6 +35,20 @@ typedef enum {
     Instruction_Create_Local_Frame, // IDEA: do we even need any param?
     Instruction_Push_Local_Variable // 3 params as in global var?
 
+    //  Instruction_Begin,
+    //  Instruction_End,
+    //----------------------- Bool operations
+//  Instruction_Bool_Equals,
+//  Instruction_Bool_EqualsNot,
+//  Instruction_Bool_More,
+//  Instruction_Bool_Less,
+//  Instruction_Bool_MoreEqual,
+//  Instruction_Bool_LessEqual,
+    //-----------------------
+//  Instruction_Complex,
+//  Instruction_IF, // Bool operations inside?
+//  Instruction_WHILE,
+
 } INSTRUCTION_TYPE;
 
 
@@ -58,8 +59,8 @@ typedef struct sINSTRUCTION{
     void *address_src2;
 } INSTRUCTION;
 
-void InstructionExecute(INSTRUCTION *);
-
+void InstructionExecute(INSTRUCTION *Instr);
+void exitInterpret(int errNumber);
 /**
  * Create insturction Instruction_Push_Global_Variable.
  *
@@ -69,5 +70,9 @@ void InstructionExecute(INSTRUCTION *);
  * @return
  */
 INSTRUCTION *createPushGlobalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value);
+INSTRUCTION *createInstructionAssign(char *nameDst, char *nameSrc);
+void executeInstructionAssign(INSTRUCTION *instr);
+INSTRUCTION *createInstructionMathOperation( INSTRUCTION_TYPE instType, char *nameDst, char *nameSrc1, char *nameSrc2);
+void executeInstructionMathOperation(INSTRUCTION *instr);
 
 #endif //IFJ_INTERPRET_H
