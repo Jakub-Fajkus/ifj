@@ -37,6 +37,7 @@ static char terminalTable[14][14] = {
 };
 
 EA_TERMINAL_TYPE getTerminalDataType(TOKEN *token) {
+    static int brackets = 0;
     switch (token->type) {
         case KEYWORD:
         case OPERATOR_ASSIGN:
@@ -81,9 +82,15 @@ EA_TERMINAL_TYPE getTerminalDataType(TOKEN *token) {
         case BRACKET: {
             switch (token->data.bracket.name) {
                 case '(':
+                    brackets++;
                     return EA_LEFT_BR;
                 case ')':
-                    return EA_RIGHT_BR;
+                    if(brackets > 0){
+                        brackets--;
+                        return EA_RIGHT_BR;
+                    }else{
+                        return EA_UNKNOWN;
+                    }
                 default:
                     break;
             }
@@ -151,8 +158,16 @@ void parseExpression(tDLList *tokenList, tDLList *threeAddressCode) {
                             stackPush(stack, stackElement);
                             break;
                         default:
-                            Error();
-                            exit(99);
+                            while(true){
+                                stackTop(stack,&stackElement);
+                                if(stackElement.type == EA_TERMINAL){
+                                    if(stackElement.data.terminalData.type == EA_START_END) {
+                                        return;
+                                    } else{
+                                        Error();
+                                    }
+                                }
+                            }
                     }
                     break;
                 }
@@ -166,18 +181,15 @@ void parseExpression(tDLList *tokenList, tDLList *threeAddressCode) {
                     Error();
                 }
                 lookingForTerminal = true;
-                //TODO Generovat 3 adresny kod
-            default:
-                while(true){
-                    stackTop(stack,&stackElement);
-                    if(stackElement.type == EA_TERMINAL){
-                        if(stackElement.data.terminalData.type == EA_START_END) {
-                            return;
-                        } else{
-                            Error();
-                        }
-                    }
+                while(stackEmpty(backStack)){
+                    //TODO Generovat 3 adresny kod
+                    stackPop(backStack);
                 }
+                stackElement.type = EA_NOT_TERMINAL;
+                stackPush(stack,stackElement);
+                break;
+            default:
+                exit(99);
         }
     }
 
