@@ -7,13 +7,12 @@
 
 #include "DoubleLinkedList.h"
 #include "SyntacticalAnalyzer.h"
-#include "Stack.h"
 #include <stdio.h>
 #include <stdbool.h>
 
 void parseExpression(tDLList *, tDLList *);
 
-typedef enum {
+typedef enum EA_TERMINAL_TYPE_ENUM{
     EA_ADD = 0,
     EA_SUB = 1,
     EA_MUL = 2,
@@ -31,5 +30,8 @@ typedef enum {
     EA_UNKNOWN,
     EA_EMPTY
 } EA_TERMINAL_TYPE;
+
+#include "Stack.h" //include it after EA_TERMINAL_TYPE_ENUM which is needed by Stack.h
+
 
 #endif //IFJ_EXPRESSIONANALIZER_H
