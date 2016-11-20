@@ -21,7 +21,6 @@ void printEnumValue(int value) {
         case KEYWORD: printf("KEYWORD\n"); break;
         case IDENTIFIER_FULL: printf("IDENTIFIER_FULL\n"); break;
         case IDENTIFIER: printf("IDENTIFIER\n"); break;
-        case LITERAL_BOOL: printf("LITERAL_BOOL\n"); break;
         case LITERAL_STRING: printf("LITERAL_STRING\n"); break;
         case LITERAL_INTEGER: printf("LITERAL_INTEGER\n"); break;
         case LITERAL_DOUBLE: printf("LITERAL_DOUBLE\n"); break;
@@ -41,7 +40,6 @@ void printToken(TOKEN *token) {
         case KEYWORD: printf("KEYWORD: %s\n", token->data.keyword.name); break;
         case IDENTIFIER_FULL: printf("IDENTIFIER_FULL: %s.%s\n", token->data.identifierFull.class, token->data.identifierFull.name); break;
         case IDENTIFIER: printf("IDENTIFIER: %s\n", token->data.identifier.name); break;
-        case LITERAL_BOOL: printf("LITERAL_BOOL: %s\n", (token->data.literalBool.value)? "true":"false"); break;
         case LITERAL_STRING: printf("LITERAL_STRING: %s\n",token->data.literalString.name ); break;
         case LITERAL_INTEGER: printf("LITERAL_INTEGER: %d\n", token->data.numberInteger.value); break;
         case LITERAL_DOUBLE: printf("LITERAL_DOUBLE: %lf\n", token->data.numberDouble.value); break;

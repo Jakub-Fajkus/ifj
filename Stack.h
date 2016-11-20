@@ -25,7 +25,7 @@ typedef struct STACK_ELEMENT{
 }STACK_ELEMENT;
 
 typedef struct {
-    struct STACK_ELEMENT arr[];              /* pole pro uložení hodnot */
+    struct STACK_ELEMENT *arr;              /* pole pro uložení hodnot */
     int top;                                /* index prvku na vrcholu zásobníku */
     int maxSize;
     int actualSize;
