@@ -117,7 +117,7 @@ void InstructionExecute(INSTRUCTION *Instr){
             //  MATH OPERATOINS
             //----------------------------------------------------------------------------------------------------------------
         case Instruction_Addition:
-        case Instruction_Substraction:
+        case Instruction_Subtraction:
         case Instruction_Multiply:
         case Instruction_Divide:
             ;
@@ -193,7 +193,7 @@ void InstructionExecute(INSTRUCTION *Instr){
                 }
             } // end of ADD
 
-            else if ( Instr->type == Instruction_Substraction ) {
+            else if ( Instr->type == Instruction_Subtraction ) {
                 if( srcAddr1->var_type == TYPE_INT && srcAddr2->var_type == TYPE_INT ){
                     dstVal->intValue = src1Val->intValue - src2Val->intValue;
                     if ( dstVal->intValue < 0 ) exitInterpret(10); // result is less than zero
@@ -333,27 +333,30 @@ void checkMalloc(void *ptr){
 
 INSTRUCTION *createPushGlobalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value) {
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
+    checkMalloc(instruction); // delete this if you think it is not necessary
 
     instruction->type = Instruction_Push_Global_Variable;
     instruction->address_dst = name;
+
     instruction->address_src1 = malloc(sizeof(DATA_TYPE));
+    checkMalloc(instruction->address_src1); // delete this if you think it is not necessary
     *(int*)instruction->address_src1 = type;
+
     instruction->address_src2 = malloc(sizeof(VARIABLE_VALUE));
+    checkMalloc(instruction->address_src2); // delete this if you think it is not necessary
     *(VARIABLE_VALUE*)instruction->address_src2 = value;
 
     return instruction;
 }
-//todo
-//INSTRUCTION *createInstructionAssign(char *nameDst, char *nameSrc) {
-//    INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
-//
-//    instruction->type = Instruction_Assign;
-//    instruction->address_dst = nameDst;
-//    instruction->address_src1 = nameSrc;
-//    *(int*)instruction->address_src1 = type;
-//    instruction->address_src2 = malloc(sizeof(VARIABLE_VALUE));
-//    *(VARIABLE_VALUE*)instruction->address_src2 = value;
-//
-//    return instruction;
-//}
+
+INSTRUCTION *createInstructionAssign(char *nameDst, char *nameSrc) {
+    INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
+
+    instruction->type = Instruction_Assign;
+    instruction->address_dst = nameDst;
+    instruction->address_src1 = nameSrc;
+    instruction->address_src2 = NULL;
+
+    return instruction;
+}
 

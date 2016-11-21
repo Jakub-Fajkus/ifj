@@ -14,7 +14,7 @@ typedef enum {
     Instruction_Assign,
     //----------------------- Math operations
     Instruction_Addition, // 3 params
-    Instruction_Substraction, // 3 params
+    Instruction_Subtraction, // 3 params
     Instruction_Multiply, // 3 params
     Instruction_Divide, // 3 params
     //----------------------- Calling user function
@@ -59,7 +59,7 @@ typedef struct sINSTRUCTION{
     void *address_src2;
 } INSTRUCTION;
 
-int Interpret(tDLList *InstructionList);    /* @Anyone prečo mi píše "Can't resolve type 'tDLList'? */
+int Interpret(tDLList *InstructionList);
 void InstructionExecute(INSTRUCTION *Instr);    // Function for global execution of instructions
 void exitInterpret(int errNumber);
 void checkMalloc(void *ptr);
