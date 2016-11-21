@@ -41,6 +41,7 @@ bool ruleStListDecl();
 bool ruleStList();
 bool ruleDecl();
 bool ruleStat();
+bool ruleStatBeginningId();
 bool ruleFuncCall();
 bool ruleFuncParams();
 bool ruleParam();

@@ -88,6 +88,12 @@ tDLList* getAllTokens(char *fileName) {
     return listOfTokens;
 }
 
+bool ruleId() {
+    TOKEN *token = getCachedToken();
+
+    return token->type == IDENTIFIER || token->type == IDENTIFIER_FULL;
+}
+
 bool ruleTypeString() {
     TOKEN *token = getCachedToken();
 
@@ -122,27 +128,149 @@ bool ruleTypeInt() {
 }
 
 bool ruleProg(){
-    //todo
+    TOKEN *token = getCachedToken();
+    tDLElemPtr activeElementRuleApplication = globalTokens->Act;
+
+    if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "class")) {
+        if (ruleId()) {
+            token = getCachedToken();
+            if (token->type == BRACKET && token->data.bracket.name == '{') {
+                if (ruleClassDefinition()) {
+                    token = getCachedToken();
+                    if (token->type == BRACKET && token->data.bracket.name == '}') {
+                        if (ruleProg()) {
+                            return true;
+                        } else {
+                            //rule prog was not applied, but it has an epsilon rule... so check if the token is EOF(in this particular case...)
+                            //if so, the source file ended and the syntax analysis is successful
+                            token = getCachedToken();
+                            if (token->type == END_OF_FILE) {
+                                //no need to return any token, the source file is over
+                                return true;
+                            } else {
+                                //the token was not an EOF so there were some other tokens but they did not match the rule prog
+                                //so the syntax analysis is over because of syntax error
+                                globalTokens->Act = activeElementRuleApplication;
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    } else if (token->type == END_OF_FILE) {
+        return true;
+    }
+
+    globalTokens->Act = activeElementRuleApplication;
     return false;
 }
 
 bool ruleClassDefinition(){
-    //todo
-    return false;
+    TOKEN *token = getCachedToken();
+    tDLElemPtr activeElementRuleApplication = globalTokens->Act;
+
+    if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "static")) {
+        if (ruleDefinitionStart()) {
+            if (ruleClassDefinition()) {
+                return true;
+            } else {
+                globalTokens->Act = activeElementRuleApplication;
+                return false;
+            }
+        } else {
+            globalTokens->Act = activeElementRuleApplication;
+
+            return false;
+        }
+    } else {
+        //rule prog was not applied, but it has an epsilon rule... so check if the token is '}'(in this particular case...)
+        //if so, the class definition ended and rule is applied
+        token = getCachedToken();
+        if (token->type == BRACKET && token->data.bracket.name == '}') {
+            returnCachedTokens(1);
+            return true;
+        } else {
+            //the token was not an '}' so there were some other tokens but they did not match the rule
+            //so the syntax analysis is over because of syntax error
+            globalTokens->Act = activeElementRuleApplication;
+            return false;
+        }
+    }
 }
 
 bool ruleDefinition(){
-    //todo
-    return false;
+    return rulePropDef() || ruleFuncDef();
 }
 
 bool rulePropDef(){
-    //todo
-    return false;
+    tDLElemPtr activeElementRuleApplication = globalTokens->Act;
+    TOKEN *token = getCachedToken();
+
+    if (token->type == SEMICOLON) {
+        return true;
+    } else if (token->type == OPERATOR_ASSIGN) {
+        //todo: check if the next tokens are expression
+        //the check should return true if the expression was successfully parsed, false otherwise
+        //the check should set the active token to the token which is right after the expression(example: tokens:"3+4)", the active token should be ')'
+        //todo: replace dummy test with actual list of instruction
+        tDLList *dummyInstructionLIst = malloc(sizeof(tDLList));
+        ListInit(dummyInstructionLIst);
+
+        if (parseExpression(globalTokens, dummyInstructionLIst)) {
+            if (token->type == SEMICOLON) {
+                return true;
+            } else {
+                //the rule application was unsuccessful, so return the token list to the state in which it was before this function call
+                globalTokens->Act = activeElementRuleApplication;
+                return false;
+            }
+        } else {
+            globalTokens->Act = activeElementRuleApplication;
+            return false;
+        }
+    } else {
+        returnCachedTokens(1);
+        return false;
+    }
 }
 
 bool ruleFuncDef(){
-    //todo
+    tDLElemPtr activeElementRuleApplication = globalTokens->Act;
+    TOKEN *token = getCachedToken();
+
+    if (token->type == BRACKET && token->data.bracket.name == '(') {
+        if (ruleFuncDefParams()) {
+            token = getCachedToken();
+            if (token->type == BRACKET && token->data.bracket.name == '{') {
+                if (ruleStListDecl()) {
+                    token = getCachedToken();
+                    if (token->type == BRACKET && token->data.bracket.name == '}') {
+                        return true;
+                    }
+                } else {
+                    //rule stListDeclaration was not applied, but it has an epsilon rule... so check if the token is '}'(in this particular case...)
+                    //if so, the source the rule is applied
+                    //note tha the condition with the bracket is not duplicated as it seems... the condition below works with different tokens
+                    //the bracket below is the only token after the stListDecl which is allowed and represents the rule
+                    token = getCachedToken();
+                    if (token->type == BRACKET && token->data.bracket.name == '}') {
+                        //return the bracket
+                        returnCachedTokens(1);
+
+                        return true;
+                    } else {
+                        //the token was not an '}' so there were some other tokens
+                        //so the syntax analysis is over because of syntax error
+                        globalTokens->Act = activeElementRuleApplication;
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+
+    globalTokens->Act = activeElementRuleApplication;
     return false;
 }
 
@@ -156,13 +284,100 @@ bool ruleStList(){
     return false;
 }
 
+//copied from rulePropDef
 bool ruleDecl(){
-    //todo
-    return false;
+    tDLElemPtr activeElementRuleApplication = globalTokens->Act;
+    TOKEN *token = getCachedToken();
+
+    if (token->type == SEMICOLON) {
+        return true;
+    } else if (token->type == OPERATOR_ASSIGN) {
+        //todo: check if the next tokens are expression
+        //the check should return true if the expression was successfully parsed, false otherwise
+        //the check should set the active token to the token which is right after the expression(example: tokens:"3+4)", the active token should be ')'
+        //todo: rep;ace dummy test with actual list of instruction
+        tDLList *dummyInstructionLIst = malloc(sizeof(tDLList));
+        ListInit(dummyInstructionLIst);
+
+        if (parseExpression(globalTokens, dummyInstructionLIst)) {
+            if (token->type == SEMICOLON) {
+                return true;
+            } else {
+                //the rule application was unsuccessful, so return the token list to the state in which it was before this function call
+                globalTokens->Act = activeElementRuleApplication;
+                return false;
+            }
+        } else {
+            globalTokens->Act = activeElementRuleApplication;
+            return false;
+        }
+    } else {
+        returnCachedTokens(1);
+        return false;
+    }
 }
 
 bool ruleStat(){
-    //todo
+    tDLElemPtr activeElementRuleApplication = globalTokens->Act;
+    tDLList *dummyInstructionLIst = malloc(sizeof(tDLList));
+    ListInit(dummyInstructionLIst);
+
+    //<STAT> -> <ID><STAT_BEGINNING_ID>;
+    if (ruleId() && ruleStatBeginningId()) {
+        return true;
+    } else {
+        TOKEN *token = getCachedToken();
+
+        //<STAT> -> while ( <EXP> ) { <ST_LIST> }
+        if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "while")) {
+            if (token->type == BRACKET && token->data.bracket.name == '(') {
+                if (parseExpression(globalTokens, dummyInstructionLIst)) {
+                    if (token->type == BRACKET && token->data.bracket.name == ')') {
+                        if (token->type == BRACKET && token->data.bracket.name == '{'){
+                            if (ruleStList()) {
+                                if (token->type == BRACKET && token->data.bracket.name == '}') {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        //<STAT> -> if ( <EXP> ) { <ST_LIST> } else { <ST_LIST> }
+        } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "if")) {
+            if (token->type == BRACKET && token->data.bracket.name == '(') {
+                if (parseExpression(globalTokens, dummyInstructionLIst)) {
+                    if (token->type == BRACKET && token->data.bracket.name == ')') {
+                        if (token->type == BRACKET && token->data.bracket.name == '{'){
+                            if (ruleStList()) {
+                                if (token->type == BRACKET && token->data.bracket.name == '}') {
+                                    if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "else")) {
+                                        if (token->type == BRACKET && token->data.bracket.name == '{'){
+                                            if (ruleStList()) {
+                                                if (token->type == BRACKET && token->data.bracket.name == '}') {
+                                                    return true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        //<STAT> -> return <EXP>;
+        } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "return")) {
+            if (parseExpression(globalTokens, dummyInstructionLIst)) {
+                if (token->type == SEMICOLON) {
+                    return true;
+                }
+            }
+        }
+    }
+
+    globalTokens->Act = activeElementRuleApplication;
     return false;
 }
 
@@ -211,12 +426,13 @@ bool ruleFunctionDefEnd(){
     return false;
 }
 
+bool ruleTypeVoid() {
+    return false;
+}
 
-
-
-
-
-
+bool ruleDefinitionStart() {
+    return false;
+}
 
 
 void testTokens() {
@@ -238,6 +454,16 @@ void testTokens() {
 
 void firstPass() {
     ListFirst(globalTokens);
+
+//maybe not the best idea...
+//    TOKEN *token = getCachedToken();
+//
+//    //check if the file is not empty
+//    if (token->type = EOF) {
+//        printf("missing class Main\n");
+//        exit(3);
+//    }
+//    returnCachedTokens(1);
 
 
     //call function for class
