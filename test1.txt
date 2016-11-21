@@ -10,7 +10,7 @@ class Main
             ifj16.print("Faktorial nelze spocitat!\n");
         }
         else {
-            vysl = 1;
+            vysl = 00000001; //pocatecni nuly jsou ignorovany
             while (a > 0) {
                 vysl = vysl * a;
                 a = a - 1;

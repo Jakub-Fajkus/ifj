@@ -8,14 +8,20 @@
 #include "SyntacticalAnalyzer.h"
 #include "Stack.h"
 #include "LexicalAnalyzerStructures.h"
+#include "Interpret.h"
+//#include "BasicStructures.h"
+//#include "Debug.h"
 
 void simulateSymbolTable();
 
 int main(int argc, char *argv[])
 {
-    simulateSymbolTable();
+    VARIABLE_VALUE val;
+    val.doubleValue = 2.3;
+    INSTRUCTION *instruction = createPushGlobalVariable("prom1", TYPE_DOUBLE, val);
+//    simulateSymbolTable();
 
-    runSyntacticalAnalysis("test1.txt");
+//    runSyntacticalAnalysis("test1.txt");
 
     printf("\n\n\nXXXXKONECXXXX");
     return 0;
