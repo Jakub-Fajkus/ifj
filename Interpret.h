@@ -60,23 +60,11 @@ typedef struct sINSTRUCTION{
 } INSTRUCTION;
 
 int Interpret(tDLList *InstructionList);
-void InstructionExecute(INSTRUCTION *Instr);    // Function for global execution of instructions
 void exitInterpret(int errNumber);
 void checkMalloc(void *ptr);
-/**
- * Create insturction Instruction_Push_Global_Variable.
- *
- * @param name
- * @param type
- * @param value
- * @return
- */
-INSTRUCTION *createPushGlobalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value);
 
-// instruction constructors and... executors? (sounds funny)
-INSTRUCTION *createInstructionAssign(char *nameDst, char *nameSrc);
+void InstructionExecute(INSTRUCTION *Instr);    // Function for global execution of instructions
 void executeInstructionAssign(INSTRUCTION *instr);
-INSTRUCTION *createInstructionMathOperation( INSTRUCTION_TYPE instType, char *nameDst, char *nameSrc1, char *nameSrc2);
 void executeInstructionMathOperation(INSTRUCTION *instr);
 
 #endif //IFJ_INTERPRET_H
