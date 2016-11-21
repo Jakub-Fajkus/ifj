@@ -4,14 +4,12 @@
 
 #include "SyntacticalAnalyzer.h"
 #include "Debug.h"
+#include "LexicalAnalyzerStructures.h"
 
-/**
- * Get the next token
- *
- * @param tokens
- * @return
- */
-TOKEN *getCachedToken(tDLList *tokens);
+#define stringEquals(x,y) (strcmp(x, y) == 0)
+
+tDLList *globalTokens;
+
 /**
  * Return 'count' number of tokens.
  * If the count equals to one, the actual token is returned and the next token returned by funtion getCachedToken() is the same token as it was returned the last time.
@@ -19,11 +17,10 @@ TOKEN *getCachedToken(tDLList *tokens);
  * Example: tokens are:
  * tok1 -> tok2 -> tok3
  * last returned token was "tok2". you call the function returnCachedTokens() with count= 1 and the next token retunred by function getCachedToken() will be again "tok2"
- *
- * @param tokens
+
  * @param count
  */
-void returnCachedTokens(tDLList *tokens, unsigned int count);
+void returnCachedTokens(unsigned int count);
 
 /**
  * Get all tokend from the lexical analyser
@@ -35,34 +32,35 @@ tDLList* getAllTokens(char *fileName);
 
 void testTokens();
 
-void firstPass(tDLList *tokens);
+void firstPass();
 
 void runSyntacticalAnalysis(char *fileName) {
-    tDLList *tokens = getAllTokens(fileName);
-    firstPass(tokens);
+    globalTokens = getAllTokens(fileName);
+    tDLList *tokens = globalTokens;
+    firstPass();
 
-    testTokens(); //todo: this is only for "testing"
+//    testTokens(); //todo: this is only for "testing"
 }
 
 
-TOKEN *getCachedToken(tDLList *tokens) {
+TOKEN *getCachedToken() {
     LIST_ELEMENT *element = malloc(sizeof(LIST_ELEMENT));
     TOKEN *token;
 
     //copy the active element
-    DLCopy(tokens, element);
+    DLCopy(globalTokens, element);
     token = element->data.token;
     //move the activity to the next element
-    DLSucc(tokens);
+    DLSucc(globalTokens);
     //free the container
     free(element);
 
     return token;
 }
 
-void returnCachedTokens(tDLList *tokens, unsigned int count) {
+void returnCachedTokens(unsigned int count) {
     for (int i = 0; i < count; ++i) {
-        DLPred(tokens);
+        DLPred(globalTokens);
     }
 }
 
@@ -90,32 +88,72 @@ tDLList* getAllTokens(char *fileName) {
     return listOfTokens;
 }
 
+bool ruleTypeString() {
+    TOKEN *token = getCachedToken();
+
+    if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "string")) {
+        return true;
+    } else {
+        returnCachedTokens(1);
+        return false;
+    }
+}
+
+bool ruleTypeDouble() {
+    TOKEN *token = getCachedToken();
+
+    if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "double")) {
+        return true;
+    } else {
+        returnCachedTokens(1);
+        return false;
+    }
+}
+
+bool ruleTypeInt() {
+    TOKEN *token = getCachedToken();
+
+    if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "int")) {
+        return true;
+    } else {
+        returnCachedTokens(1);
+        return false;
+    }
+}
+
+bool ruleProg() {
+
+}
+
+
+
+
+
+
+
+
 void testTokens() {
     tDLList *tokens = getAllTokens("test1.txt");
     TOKEN *actualToken;
 
-    actualToken = getCachedToken(tokens); //1.
+    actualToken = getCachedToken(); //1.
     printToken(actualToken);
-    actualToken = getCachedToken(tokens); //2.
+    actualToken = getCachedToken(); //2.
     printToken(actualToken);
-    actualToken = getCachedToken(tokens); //3.
+    actualToken = getCachedToken(); //3.
     printToken(actualToken);
-    actualToken = getCachedToken(tokens); //4.
+    actualToken = getCachedToken(); //4.
     printToken(actualToken);
-    returnCachedTokens(tokens, 1); //return to 3. and 2.
-    actualToken = getCachedToken(tokens); //2.
+    returnCachedTokens(1); //return to 3. and 2.
+    actualToken = getCachedToken(); //2.
     printToken(actualToken);
 }
 
-void firstPass(tDLList *tokens) {
-    TOKEN *token;
-    DLFirst(tokens);
+void firstPass() {
+    DLFirst(globalTokens);
 
-    do {
-        token = getCachedToken(tokens);
 
-        //do stuff :D
-
-    } while(token->type != END_OF_FILE);
-
+    //call function for class
 }
+
+

@@ -7,8 +7,13 @@
 
 #include "SymbolTable.h"
 
-typedef struct FRAME {
-}FRAME;
+
+/**
+ * Get the next token
+ *
+ * @return
+ */
+TOKEN *getCachedToken();
 
 /**
  * Run the whole syntactical analysis
@@ -16,8 +21,8 @@ typedef struct FRAME {
  * @param fileName
  */
 void runSyntacticalAnalysis(char *fileName);
-TOKEN *getCachedToken(tDLList *tokens);
-void returnCachedTokens(tDLList *tokens, unsigned int count);
+TOKEN *getCachedToken();
+void returnCachedTokens(unsigned int count);
 /**
  * Get all tokend from the lexical analyser
  *
@@ -25,5 +30,30 @@ void returnCachedTokens(tDLList *tokens, unsigned int count);
  * @return
  */
 tDLList* getAllTokens(char *fileName);
+
+
+bool ruleProg();
+bool ruleClassDefinition();
+bool ruleDefinition();
+bool rulePropDef();
+bool ruleFuncDef();
+bool ruleStListDecl();
+bool ruleStList();
+bool ruleDecl();
+bool ruleStat();
+bool ruleFuncCall();
+bool ruleFuncParams();
+bool ruleParam();
+bool ruleFunctionCallEnd();
+bool ruleAfterFunctionCallExp();
+bool ruleFuncDefParams();
+bool ruleDefParam();
+bool ruleDefParamBeginTi();
+bool ruleFunctionDefEnd();
+bool ruleTypeInt();
+bool ruleTypeDouble();
+bool ruleTypeString();
+bool ruleTypeVoid();
+bool ruleDefinitionStart();
 
 #endif //IFJ_SYNTACTICANALYZER_H
