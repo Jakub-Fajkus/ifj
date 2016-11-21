@@ -11,7 +11,7 @@
 typedef enum LIST_ELEMENT_TYPE {
     LIST_ELEMENT_TYPE_TOKEN,
     LIST_ELEMENT_TYPE_FUNCTION_PARAMETER,
-    LIST_ELEMENT_TYPE_INSTRUCTION,  // for instructions
+    LIST_ELEMENT_TYPE_INSTRUCTION,
     LIST_ELEMENT_TYPE_FRAME_ELEMENT
 } LIST_ELEMENT_TYPE;
 
@@ -19,7 +19,7 @@ typedef union LIST_ELEMENT_DATA {
     FUNCTION_PARAMETER *parameter;
     TOKEN *token;
     struct sINSTRUCTION *instr;
-    VARIABLE *var;
+    VARIABLE *variable;
     FRAME_ELEMENT *framevar;
 }LIST_ELEMENT_DATA;
 
@@ -28,23 +28,30 @@ typedef struct LIST_ELEMENT{
     union LIST_ELEMENT_DATA data;
 }LIST_ELEMENT;
 
-typedef struct tDLElem {            /* prvek dvousměrně vázaného seznamu */
-    struct LIST_ELEMENT element;   /* užitečná data */
-    struct tDLElem *lptr;         /* ukazatel na předchozí prvek seznamu */
-    struct tDLElem *rptr;        /* ukazatel na následující prvek seznamu */
+typedef struct tDLElem {
+    struct LIST_ELEMENT element;
+    struct tDLElem *lptr;
+    struct tDLElem *rptr;
 } *tDLElemPtr;
 
-typedef struct tDLListStruct{                                  /* dvousměrně vázaný seznam */
-    tDLElemPtr First;                      /* ukazatel na první prvek seznamu */
-    tDLElemPtr Act;                     /* ukazatel na aktuální prvek seznamu */
-    tDLElemPtr Last;                    /* ukazatel na posledni prvek seznamu */
+typedef struct tDLListStruct{
+    tDLElemPtr First;
+    tDLElemPtr Act;
+    tDLElemPtr Last;
 } tDLList;
 
-void DLInitList (tDLList *);
-void DLDisposeList (tDLList *);
-void DLInsertFirst (tDLList *, struct LIST_ELEMENT);
-void DLInsertLast(tDLList *, struct LIST_ELEMENT);
-void DLFirst (tDLList *);
+void ListInit (tDLList *);
+void ListInsertLast (tDLList *, struct LIST_ELEMENT);
+void ListFirst (tDLList *);
+void ListElementCopy (tDLList *, struct LIST_ELEMENT *);
+void ListActualize (tDLList *, struct LIST_ELEMENT);
+void ListPredcessor (tDLList *);
+void ListSuccessor (tDLList *);
+void DisposeList (tDLList *);
+int DLActive (tDLList *);
+
+// Maybe useless
+void InsertFirst (tDLList *, struct LIST_ELEMENT);
 void DLLast (tDLList *);
 void DLCopyFirst (tDLList *, struct LIST_ELEMENT *);
 void DLCopyLast (tDLList *, struct LIST_ELEMENT *);
@@ -54,10 +61,5 @@ void DLPostDelete (tDLList *);
 void DLPreDelete (tDLList *);
 void DLPostInsert (tDLList *, struct LIST_ELEMENT);
 void DLPreInsert (tDLList *, struct LIST_ELEMENT);
-void DLCopy (tDLList *, struct LIST_ELEMENT *);
-void DLActualize (tDLList *, struct LIST_ELEMENT);
-void DLSucc (tDLList *);
-void DLPred (tDLList *);
-int DLActive (tDLList *);
 
 #endif //IFJ_DOUBLELINKEDLIST_H

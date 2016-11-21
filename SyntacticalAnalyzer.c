@@ -48,10 +48,10 @@ TOKEN *getCachedToken() {
     TOKEN *token;
 
     //copy the active element
-    DLCopy(globalTokens, element);
+    ListElementCopy(globalTokens, element);
     token = element->data.token;
     //move the activity to the next element
-    DLSucc(globalTokens);
+    ListSuccessor(globalTokens);
     //free the container
     free(element);
 
@@ -60,13 +60,13 @@ TOKEN *getCachedToken() {
 
 void returnCachedTokens(unsigned int count) {
     for (int i = 0; i < count; ++i) {
-        DLPred(globalTokens);
+        ListPredcessor(globalTokens);
     }
 }
 
 tDLList* getAllTokens(char *fileName) {
     tDLList *listOfTokens = malloc(sizeof(tDLList));
-    DLInitList(listOfTokens);
+    ListInit(listOfTokens);
 
     initializeStream(fileName);
     TOKEN *token;
@@ -80,10 +80,10 @@ tDLList* getAllTokens(char *fileName) {
         listElement->data = *data;
         listElement->type = LIST_ELEMENT_TYPE_TOKEN;
 
-        DLInsertLast(listOfTokens, *listElement);
+        ListInsertLast (listOfTokens, *listElement);
     } while(token->type != END_OF_FILE);
 
-    DLFirst(listOfTokens);
+    ListFirst(listOfTokens);
 
     return listOfTokens;
 }
@@ -237,7 +237,7 @@ void testTokens() {
 }
 
 void firstPass() {
-    DLFirst(globalTokens);
+    ListFirst(globalTokens);
 
 
     //call function for class

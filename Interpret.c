@@ -43,16 +43,16 @@ int Interpret( tDLList *InstructionList ){
         exit(99);
     }
 
-    DLFirst(InstructionList);
+    ListFirst(InstructionList);
 
     while ( 1 ) {
-        DLCopy(InstructionList, NewPtr);
+        ListElementCopy(InstructionList, NewPtr);
         Instr = NewPtr->data.instr;
 
         InstructionExecute(Instr);
 
         if (InstructionList->Last->element.data.instr == Instr) break;
-        DLSucc(InstructionList);
+        ListSuccessor(InstructionList);
     } // end of while
     return 0; // I had no idea what have I done
 }

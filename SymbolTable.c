@@ -334,7 +334,7 @@ SYMBOL_TABLE_FUNCTION* createAndInsertFunction(SYMBOL_TABLE_NODEPtr *symbolTable
 void addFunctionParameter(SYMBOL_TABLE_FUNCTION *function, char *name, DATA_TYPE type) {
     if (function->parameters == NULL) {
         function->parameters = malloc(sizeof(tDLList));
-        DLInitList(function->parameters);
+        ListInit(function->parameters);
     }
 
     LIST_ELEMENT element;
@@ -343,7 +343,7 @@ void addFunctionParameter(SYMBOL_TABLE_FUNCTION *function, char *name, DATA_TYPE
     element.data.parameter->name = name;
     element.data.parameter->type = type;
 
-    DLInsertLast(function->parameters, element);
+    ListInsertLast (function->parameters, element);
 }
 
 void checkIfVariableIsInitialized(SYMBOL_TABLE_NODEPtr *symbolTable, char *name) {

@@ -6,11 +6,11 @@
 
 void printAllTokens(tDLList *list) {
     LIST_ELEMENT *actualElement = malloc(sizeof(LIST_ELEMENT));
-    DLFirst(list);
+    ListFirst(list);
 
     while(DLActive(list) != 0) {
-        DLCopy(list, actualElement);
-        DLSucc(list);
+        ListElementCopy(list, actualElement);
+        ListSuccessor(list);
         printToken(actualElement->data.token);
     }
 

@@ -13,10 +13,9 @@ void DLError() {
 **/
     printf ("*ERROR* The program has performed an illegal operation.\n");
     exit(99);
-    return;
 }
 
-void DLInitList (tDLList *L) {
+void ListInit (tDLList *L) {
 /*
 ** Provede inicializaci seznamu L před jeho prvním použitím (tzn. žádná
 ** z následujících funkcí nebude volána nad neinicializovaným seznamem).
@@ -29,7 +28,7 @@ void DLInitList (tDLList *L) {
     L->Act = NULL;
 }
 
-void DLDisposeList (tDLList *L) {
+void DisposeList (tDLList *L) {
 /*
 ** Zruší všechny prvky seznamu L a uvede seznam do stavu, v jakém
 ** se nacházel po inicializaci. Rušené prvky seznamu budou korektně
@@ -55,7 +54,7 @@ void DLDisposeList (tDLList *L) {
     L->Last = NULL;
 }
 
-void DLInsertFirst (tDLList *L, struct LIST_ELEMENT parameter) {
+void InsertFirst (tDLList *L, struct LIST_ELEMENT parameter) {
 /*
 ** Vloží nový prvek na začátek seznamu L.
 ** V případě, že není dostatek paměti pro nový prvek při operaci malloc,
@@ -83,7 +82,7 @@ void DLInsertFirst (tDLList *L, struct LIST_ELEMENT parameter) {
     }
 }
 
-void DLInsertLast(tDLList *L, struct LIST_ELEMENT parameter) {
+void ListInsertLast (tDLList *L, struct LIST_ELEMENT parameter) {
 /*
 ** Vloží nový prvek na konec seznamu L (symetrická operace k DLInsertFirst).
 ** V případě, že není dostatek paměti pro nový prvek při operaci malloc,
@@ -110,7 +109,7 @@ void DLInsertLast(tDLList *L, struct LIST_ELEMENT parameter) {
     }
 }
 
-void DLFirst (tDLList *L) {
+void ListFirst (tDLList *L) {
 /*
 ** Nastaví aktivitu na první prvek seznamu L.
 ** Funkci implementujte jako jediný příkaz (nepočítáme-li return),
@@ -328,7 +327,7 @@ void DLPreInsert (tDLList *L, struct LIST_ELEMENT parameter) {
     }
 }
 
-void DLCopy (tDLList *L, struct LIST_ELEMENT *val) {
+void ListElementCopy (tDLList *L, struct LIST_ELEMENT *val) {
 /*
 ** Prostřednictvím parametru val vrátí hodnotu aktivního prvku seznamu L.
 ** Pokud seznam L není aktivní, volá funkci DLError ().
@@ -342,7 +341,7 @@ void DLCopy (tDLList *L, struct LIST_ELEMENT *val) {
     *val = L->Act->element;
 }
 
-void DLActualize (tDLList *L, struct LIST_ELEMENT parameter) {
+void ListActualize (tDLList *L, struct LIST_ELEMENT parameter) {
 /*
 ** Přepíše obsah aktivního prvku seznamu L.
 ** Pokud seznam L není aktivní, nedělá nic.
@@ -354,7 +353,7 @@ void DLActualize (tDLList *L, struct LIST_ELEMENT parameter) {
     L->Act->element = parameter;
 }
 
-void DLSucc (tDLList *L) {
+void ListSuccessor (tDLList *L) {
 /*
 ** Posune aktivitu na následující prvek seznamu L.
 ** Není-li seznam aktivní, nedělá nic.
@@ -368,7 +367,7 @@ void DLSucc (tDLList *L) {
     L->Act = L->Act->rptr;
 }
 
-void DLPred (tDLList *L) {
+void ListPredcessor (tDLList *L) {
 /*
 ** Posune aktivitu na předchozí prvek seznamu L.
 ** Není-li seznam aktivní, nedělá nic.

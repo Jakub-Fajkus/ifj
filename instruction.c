@@ -15,7 +15,7 @@ tDLList *createGlobalFrame() {
 
     tDLList *frame = malloc(sizeof(tDLList));
     checkMalloc(frame);
-    DLInitList(frame);
+    ListInit(frame);
 
     return frame;
 }
