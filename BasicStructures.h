@@ -30,13 +30,9 @@ typedef union {
 } VARIABLE_VALUE;
 
 typedef struct {
-    DATA_TYPE var_type;
-    VARIABLE_VALUE var_value;
-} VARIABLE;
-
-typedef struct {
-    VARIABLE *variable;
     char *var_name;
-} FRAME_ELEMENT;
+    DATA_TYPE type;
+    VARIABLE_VALUE value;
+} VARIABLE;
 
 #endif //IFJ_BASICSTRUCTURES_H

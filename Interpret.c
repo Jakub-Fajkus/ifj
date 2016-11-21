@@ -71,17 +71,17 @@ void InstructionExecute(INSTRUCTION *Instr){
     VARIABLE *srcAddr1 = ((VARIABLE*)Instr->address_src1);
     VARIABLE *srcAddr2 = ((VARIABLE*)Instr->address_src2);
 
-    VARIABLE_VALUE *dstVal = &dstAddr->var_value;
-    VARIABLE_VALUE *src1Val = &srcAddr1->var_value;
-    VARIABLE_VALUE *src2Val = &srcAddr2->var_value;
+    VARIABLE_VALUE *dstVal = &dstAddr->value;
+    VARIABLE_VALUE *src1Val = &srcAddr1->value;
+    VARIABLE_VALUE *src2Val = &srcAddr2->value;
 
     //The Giant Switch
     switch ( Instr -> type ) {
 
         case Instruction_Assign: /* Kontrola typov, nieco v style dst=src1 */
             ;
-            int a_type1 = dstAddr->var_type;
-            int a_type2 = srcAddr1->var_type;
+            int a_type1 = dstAddr->type;
+            int a_type2 = srcAddr1->type;
             switch ( a_type1 ) {
                 case TYPE_INT:
                     if ( a_type2==TYPE_INT ) dstVal->intValue = src1Val->intValue; // Correct assignemt
@@ -93,7 +93,7 @@ void InstructionExecute(INSTRUCTION *Instr){
                         dstVal->doubleValue = src1Val->doubleValue;
                     }
                     else if ( a_type2==TYPE_INT ) { // Type cast INT->DOUBLE & assign
-                        srcAddr1->var_type = TYPE_DOUBLE;
+                        srcAddr1->type = TYPE_DOUBLE;
                         src1Val->doubleValue = (double)src1Val->intValue;
                         dstVal->doubleValue = src1Val->doubleValue;
                     }
@@ -121,18 +121,18 @@ void InstructionExecute(INSTRUCTION *Instr){
         case Instruction_Multiply:
         case Instruction_Divide:
             ;
-            DATA_TYPE type1 = srcAddr1->var_type;  //Data type of Src1
-            DATA_TYPE type2 = srcAddr2->var_type;  //Data Type of Src2
+            DATA_TYPE type1 = srcAddr1->type;  //Data type of Src1
+            DATA_TYPE type2 = srcAddr2->type;  //Data Type of Src2
             if ( (type1==TYPE_INT && type2==TYPE_DOUBLE) || (type1==TYPE_DOUBLE && type2==TYPE_INT) ) {
                 // type cast of Src1 from int to double
                 if ( type1 == TYPE_INT ) {
-                    srcAddr1->var_type = TYPE_DOUBLE;
+                    srcAddr1->type = TYPE_DOUBLE;
                     // TODO: môže to tu zhavarovať
                     src1Val->doubleValue = (double)src1Val->intValue;
                 }
                 // type cast of Src2 from int to double
                 if ( type2 == TYPE_INT ) {
-                    srcAddr2->var_type = TYPE_DOUBLE;
+                    srcAddr2->type = TYPE_DOUBLE;
                     src2Val->doubleValue = (double)src2Val->intValue;
                 }
             }
@@ -185,7 +185,7 @@ void InstructionExecute(INSTRUCTION *Instr){
                 break;
             } // End of string IF
             if( Instr->type == Instruction_Addition ){
-                if( srcAddr1->var_type == TYPE_INT && srcAddr2->var_type == TYPE_INT ){
+                if( srcAddr1->type == TYPE_INT && srcAddr2->type == TYPE_INT ){
                     dstVal->intValue = src1Val->intValue + src2Val->intValue;
                 }
                 else{
@@ -194,7 +194,7 @@ void InstructionExecute(INSTRUCTION *Instr){
             } // end of ADD
 
             else if ( Instr->type == Instruction_Subtraction ) {
-                if( srcAddr1->var_type == TYPE_INT && srcAddr2->var_type == TYPE_INT ){
+                if( srcAddr1->type == TYPE_INT && srcAddr2->type == TYPE_INT ){
                     dstVal->intValue = src1Val->intValue - src2Val->intValue;
                     if ( dstVal->intValue < 0 ) exitInterpret(10); // result is less than zero
                 }
@@ -205,7 +205,7 @@ void InstructionExecute(INSTRUCTION *Instr){
             } // end of SUB
 
             else if ( Instr->type == Instruction_Multiply ) {
-                if( srcAddr1->var_type == TYPE_INT && srcAddr2->var_type == TYPE_INT ){
+                if( srcAddr1->type == TYPE_INT && srcAddr2->type == TYPE_INT ){
                     dstVal->intValue = src1Val->intValue * src2Val->intValue;
                 }
                 else{
@@ -215,7 +215,7 @@ void InstructionExecute(INSTRUCTION *Instr){
 
             else if ( Instr->type == Instruction_Divide ) {
                 // + ošetrenie: delenie nulou
-                if( srcAddr1->var_type == TYPE_INT && srcAddr2->var_type == TYPE_INT ){
+                if( srcAddr1->type == TYPE_INT && srcAddr2->type == TYPE_INT ){
                     if ( src2Val->intValue == 0 ) exitInterpret(9); // dividing by zero
                     dstVal->intValue = src1Val->intValue / src2Val->intValue;
                 }
@@ -230,7 +230,6 @@ void InstructionExecute(INSTRUCTION *Instr){
 
         case Instruction_CallFunction: /* Tu sa budu diat zazraky s ramcami */ break;
         case Instruction_ReturnFunction: break;
-        case Instruction_NOP: break;
         case Instruction_Jump: /* ulozim si na zasobnik pointer na aktualnu instrukciu */ break;
         case Instruction_Create_Local_Frame: break;
         case Instruction_Push_Local_Variable: break;

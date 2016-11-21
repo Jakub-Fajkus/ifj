@@ -9,19 +9,18 @@
 #include "DoubleLinkedList.h"
 
 typedef enum {
-    Instruction_NOP,
     Instruction_Jump,
     Instruction_Assign,
     //----------------------- Math operations
-            Instruction_Addition, // 3 params
+    Instruction_Addition, // 3 params
     Instruction_Subtraction, // 3 params
     Instruction_Multiply, // 3 params
     Instruction_Divide, // 3 params
     //----------------------- Calling user function
-            Instruction_CallFunction, // == Instruction_Push_Local_Frame
+    Instruction_CallFunction, // == Instruction_Push_Local_Frame
     Instruction_ReturnFunction, //not sure
     //-------------------------------- Built-in functions
-            Instruction_Function_readInt, // 1 param (retvalue, type INT)
+    Instruction_Function_readInt, // 1 param (retvalue, type INT)
     Instruction_Function_readDouble, // 1 param (retvalue, type DOUBLE)
     Instruction_Function_readString, // 1 param (retvalue, type STRING)
     Instruction_Function_Print, // 1-n params, ANY TYPE
@@ -31,7 +30,7 @@ typedef enum {
     Instruction_Function_Find, // 3 params (retvalue-int, 2 params-string,string)
     Instruction_Function_Sort, // 2 params (retvalue-string, param-string)
     //-------------------------------- Work with frames
-            Instruction_Create_Global_Frame, // IDEA: do we even need any param?
+    Instruction_Create_Global_Frame, // IDEA: do we even need any param?
     Instruction_Push_Global_Variable, // 3 params: variable name, variable type, variable value : best in this format
     Instruction_Create_Local_Frame, // IDEA: do we even need any param?
     Instruction_Push_Local_Variable // 3 params as in global var?
@@ -59,7 +58,7 @@ typedef struct sINSTRUCTION{
     void *address_src2;
 } INSTRUCTION;
 
-FRAME_ELEMENT *createGlobalVariable();
+VARIABLE *createGlobalVariable();
 tDLList *createGlobalFrame();
 void pushToGlobalFrame(tDLList *frame);
 
