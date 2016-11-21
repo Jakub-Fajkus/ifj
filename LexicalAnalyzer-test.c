@@ -73,7 +73,7 @@ void printEnumValue(int value);
 //}
 
 void test1(){
-    initializeStream("test1.txt");
+    initializeStream("test1-0.txt");
     TOKEN *tok;
     //class Main
     keyword("class")identifier("Main")

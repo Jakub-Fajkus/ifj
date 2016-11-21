@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     INSTRUCTION *instruction = createPushGlobalVariable("prom1", TYPE_DOUBLE, val);
 //    simulateSymbolTable();
 
-//    runSyntacticalAnalysis("test1.txt");
+    runSyntacticalAnalysis(argv[1]);
 
     printf("\n\n\nXXXXKONECXXXX");
     return 0;

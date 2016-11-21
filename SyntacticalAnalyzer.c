@@ -36,7 +36,8 @@ void firstPass();
 
 void runSyntacticalAnalysis(char *fileName) {
     globalTokens = getAllTokens(fileName);
-    tDLList *tokens = globalTokens;
+    tDLList *tokens = globalTokens; //for debugger
+
     firstPass();
 
 //    testTokens(); //todo: this is only for "testing"
@@ -188,7 +189,7 @@ bool ruleClassDefinition(){
     } else {
         //rule prog was not applied, but it has an epsilon rule... so check if the token is '}'(in this particular case...)
         //if so, the class definition ended and rule is applied
-        token = getCachedToken();
+//        token = getCachedToken();
         if (token->type == BRACKET && token->data.bracket.name == '}') {
             returnCachedTokens(1);
             return true;
@@ -648,7 +649,7 @@ bool ruleStatBeginningId() {
 }
 
 void testTokens() {
-    tDLList *tokens = getAllTokens("test1.txt");
+    tDLList *tokens = getAllTokens("test1-0.txt");
     TOKEN *actualToken;
 
     actualToken = getCachedToken(); //1.
@@ -667,17 +668,12 @@ void testTokens() {
 void firstPass() {
     ListFirst(globalTokens);
 
-//maybe not the best idea...
-//    TOKEN *token = getCachedToken();
-//
-//    //check if the file is not empty
-//    if (token->type = EOF) {
-//        printf("missing class Main\n");
-//        exit(3);
-//    }
-//    returnCachedTokens(1);
+    bool result = ruleProg();
+//    printf("the result of syntax check is %d", result);
 
-
+    if(result == 0) {
+        exit(2);
+    }
     //call function for class
 }
 

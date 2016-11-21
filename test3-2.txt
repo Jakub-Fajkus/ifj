@@ -1,0 +1,5 @@
+//missing { after class ID
+class Main
+
+
+}
