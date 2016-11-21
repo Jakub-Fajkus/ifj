@@ -121,9 +121,96 @@ bool ruleTypeInt() {
     }
 }
 
-bool ruleProg() {
-
+bool ruleProg(){
+    //todo
+    return false;
 }
+
+bool ruleClassDefinition(){
+    //todo
+    return false;
+}
+
+bool ruleDefinition(){
+    //todo
+    return false;
+}
+
+bool rulePropDef(){
+    //todo
+    return false;
+}
+
+bool ruleFuncDef(){
+    //todo
+    return false;
+}
+
+bool ruleStListDecl(){
+    //todo
+    return false;
+}
+
+bool ruleStList(){
+    //todo
+    return false;
+}
+
+bool ruleDecl(){
+    //todo
+    return false;
+}
+
+bool ruleStat(){
+    //todo
+    return false;
+}
+
+bool ruleFuncCall(){
+    //todo
+    return false;
+}
+
+bool ruleFuncParams(){
+    //todo
+    return false;
+}
+
+bool ruleParam(){
+    //todo
+    return false;
+}
+
+bool ruleFunctionCallEnd(){
+    //todo
+    return false;
+}
+
+bool ruleAfterFunctionCallExp(){
+    //todo
+    return false;
+}
+
+bool ruleFuncDefParams(){
+    //todo
+    return false;
+}
+
+bool ruleDefParam(){
+    //todo
+    return false;
+}
+
+bool ruleDefParamBeginTi(){
+    //todo
+    return false;
+}
+
+bool ruleFunctionDefEnd(){
+    //todo
+    return false;
+}
+
 
 
 
