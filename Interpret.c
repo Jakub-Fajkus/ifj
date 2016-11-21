@@ -17,6 +17,7 @@
 
 int Interpret(tDLList *InstructionList);
 void InstructionExecute(INSTRUCTION *Instr);
+void checkMalloc(void *ptr);
 // TODO: funkcie pre tvorbu a prácu s rámcom
 
 
