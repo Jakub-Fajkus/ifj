@@ -382,58 +382,215 @@ bool ruleStat(){
 }
 
 bool ruleFuncCall(){
-    //todo
+    tDLElemPtr activeElementRuleApplication = globalTokens->Act;
+
+    //<FUNC_CALL> -> <ID> ( <FUNC_PARAMS>
+    if (ruleId()) {
+        TOKEN *token = getCachedToken();
+        if (token->type == BRACKET && token->data.bracket.name == '('){
+            if (ruleFuncParams()) {
+                return true;
+            }
+        }
+    }
+
+    globalTokens->Act = activeElementRuleApplication;
     return false;
 }
 
 bool ruleFuncParams(){
-    //todo
-    return false;
+    //<FUNC_PARAMS> -> <PARAM>
+    //<FUNC_PARAMS> -> <FUNCTION_CALL_END>
+    return ruleParam() || ruleFunctionCallEnd();
 }
 
 bool ruleParam(){
-    //todo
+    tDLElemPtr activeElementRuleApplication = globalTokens->Act;
+    tDLList *dummyInstructionLIst = malloc(sizeof(tDLList));
+    ListInit(dummyInstructionLIst);
+
+    //<PARAM> -> <EXP> <AFTER_FUNCTION_CALL_EXP>
+    //<PARAM> -> <ID> <AFTER_FUNCTION_CALL_EXP>
+
+
+
+    if (parseExpression(globalTokens, dummyInstructionLIst)) {
+        if (ruleAfterFunctionCallExp()) {
+            return true;
+        }
+    } else if (ruleId()) {
+        if (ruleAfterFunctionCallExp()) {
+            return true;
+        }
+    }
+
+    globalTokens->Act = activeElementRuleApplication;
     return false;
 }
 
 bool ruleFunctionCallEnd(){
-    //todo
+//    <FUNCTION_CALL_END> -> )
+    TOKEN *token = getCachedToken();
+
+    if (token->type == BRACKET && token->data.bracket.name == ')') {
+        return true;
+    }
+
+    returnCachedTokens(1);
     return false;
 }
 
 bool ruleAfterFunctionCallExp(){
-    //todo
+    tDLElemPtr activeElementRuleApplication = globalTokens->Act;
+    //<AFTER_FUNCTION_CALL_EXP> -> <FUNCTION_CALL_END>
+    //<AFTER_FUNCTION_CALL_EXP> -> , <PARAM>
+
+    if (ruleFunctionCallEnd()) {
+        return true;
+    } else {
+        TOKEN *token = getCachedToken();
+
+        if (token->type == SEPARATOR) {
+            if (ruleParam()) {
+                return true;
+            }
+        }
+    }
+
+    globalTokens->Act = activeElementRuleApplication;
     return false;
 }
 
 bool ruleFuncDefParams(){
-    //todo
-    return false;
+    //<FUNC_DEF_PARAMS> -> <DEF_PARAM>
+    //<FUNC_DEF_PARAMS> -> <FUNCTION_DEF_END>
+
+    return ruleDefParam() || ruleFunctionDefEnd();
 }
 
 bool ruleDefParam(){
-    //todo
+    //<DEF_PARAM> -> <TYPE> <ID> <DEF_PARAM_BEGIN_TI>
+    if (ruleTypeInt() || ruleTypeDouble() || ruleTypeString()) {
+        if (ruleId()) {
+            if (ruleDefParamBeginTi()) {
+                return true;
+            }
+        }
+    }
+
+    //no need to return tokens
     return false;
 }
 
 bool ruleDefParamBeginTi(){
-    //todo
+    tDLElemPtr activeElementRuleApplication = globalTokens->Act;
+    //<DEF_PARAM_BEGIN_TI> ->  <FUNCTION_DEF_END>
+    //<DEF_PARAM_BEGIN_TI> -> , <DEF_PARAM>
+
+    if (ruleFunctionDefEnd()) {
+        return true;
+    } else {
+        TOKEN *token = getCachedToken();
+
+        if(token->type == SEPARATOR) {
+            if (ruleDefParam()) {
+                return true;
+            }
+        }
+    }
+
+    globalTokens->Act = activeElementRuleApplication;
     return false;
 }
 
 bool ruleFunctionDefEnd(){
-    //todo
+    //<FUNCTION_DEF_END> -> ) <ST_LIST_DECL>
+    TOKEN *token = getCachedToken();
+
+    if (token->type == BRACKET && token->data.bracket.name == ')') {
+        if (ruleStListDecl()) {
+            return true;
+        }
+    }
+
+    returnCachedTokens(1);
     return false;
 }
 
 bool ruleTypeVoid() {
-    return false;
+    if (ruleTypeInt() || ruleTypeDouble() || ruleTypeString()) {
+        return true;
+    } else {
+        TOKEN *token = getCachedToken();
+        if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "void")) {
+            return true;
+        } else {
+            returnCachedTokens(1);
+            return false;
+        }
+    }
 }
 
 bool ruleDefinitionStart() {
+    tDLElemPtr activeElementRuleApplication = globalTokens->Act;
+    TOKEN *token = getCachedToken();
+
+    //<DEFINITION_START> -> void <ID><FUNC_DEF>
+    if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "void")) {
+        if (ruleId()) {
+            if (ruleFuncDef()) {
+                return true;
+            }
+        }
+    //<DEFINITION_START> -> string <ID><DEFINITION>
+    } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "string")) {
+        if (ruleId()) {
+            if (ruleDefinition()) {
+                return true;
+            }
+        }
+    //<DEFINITION_START> -> int <ID><DEFINITION>
+    } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "id")) {
+        if (ruleId()) {
+            if (ruleDefinition()) {
+                return true;
+            }
+        }
+    //<DEFINITION_START> -> double <ID><DEFINITION>
+    } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "double")) {
+        if (ruleId()) {
+            if (ruleDefinition()) {
+                return true;
+            }
+        }
+    }
+
+    globalTokens->Act = activeElementRuleApplication;
     return false;
 }
 
+bool ruleStatBeginningId() {
+    tDLElemPtr activeElementRuleApplication = globalTokens->Act;
+    tDLList *dummyInstructionLIst = malloc(sizeof(tDLList));
+    ListInit(dummyInstructionLIst);
+    //<STAT_BEGINNING_ID> -> <FUNC_CALL>
+    //<STAT_BEGINNING_ID> -> =<EXP>
+
+    if (ruleFuncCall()) {
+        return true;
+    } else {
+        TOKEN *token = getCachedToken();
+
+        if(token->type == OPERATOR_ASSIGN) {
+            if (parseExpression(globalTokens, dummyInstructionLIst)) {
+                return true;
+            }
+        }
+    }
+
+    globalTokens->Act = activeElementRuleApplication;
+    return false;
+}
 
 void testTokens() {
     tDLList *tokens = getAllTokens("test1.txt");
