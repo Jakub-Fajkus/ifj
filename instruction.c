@@ -2,13 +2,13 @@
 // Created by Andrej on 21.11.2016.
 //
 
-#include "Interpret.h"
 #include "instruction.h"
+#include "Interpret.h"
 
-//* ************************************************ USED BY INTERPRET *************************************************
-
+/* ************************************************ USED BY INTERPRET *************************************************/
+/* ************************************************ EXECUTE           *************************************************/
 FRAME_ELEMENT *createGlobalVariable() {
-
+    //todo
 }
 
 tDLList *createGlobalFrame() {
@@ -21,14 +21,12 @@ tDLList *createGlobalFrame() {
 }
 
 void pushToGlobalFrame(tDLList *frame){
-
-
-
+    //todo
 }
 
 
-//* ************************************************ USED BY PARSER ****************************************************
-
+/* ************************************************ USED BY PARSER ****************************************************/
+/* ************************************************ CREATE         ****************************************************/
 
 INSTRUCTION *createPushGlobalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value) {
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
@@ -57,4 +55,17 @@ INSTRUCTION *createInstructionAssign(char *nameDst, char *nameSrc) {
     instruction->address_src2 = NULL;
 
     return instruction;
+}
+
+INSTRUCTION *createInstructionMathOperation(INSTRUCTION_TYPE instType, char *nameDst, char *nameSrc1, char *nameSrc2) {
+    //todo
+    return NULL;
+}
+
+void executeInstructionAssign(INSTRUCTION *instr) {
+    //todo
+}
+
+void executeInstructionMathOperation(INSTRUCTION *instr) {
+    //todo
 }

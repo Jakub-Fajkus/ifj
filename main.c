@@ -9,6 +9,7 @@
 #include "Stack.h"
 #include "LexicalAnalyzerStructures.h"
 #include "Interpret.h"
+#include "instruction.h"
 //#include "BasicStructures.h"
 //#include "Debug.h"
 
