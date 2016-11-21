@@ -11,11 +11,10 @@
 */
 #include "ifj16.h"  // Built-in functions & most libraries
 #include "Stack.h"
-//#include "Interpret.h"
+#include "Interpret.h"
 //#include "DoubleLinkedList.h"
 //#include "BasicStructures.h"
 
-int Interpret(tDLList *InstructionList);
 void InstructionExecute(INSTRUCTION *Instr);
 void checkMalloc(void *ptr);
 // TODO: funkcie pre tvorbu a prácu s rámcom
@@ -344,3 +343,17 @@ INSTRUCTION *createPushGlobalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE
 
     return instruction;
 }
+//todo
+//INSTRUCTION *createInstructionAssign(char *nameDst, char *nameSrc) {
+//    INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
+//
+//    instruction->type = Instruction_Assign;
+//    instruction->address_dst = nameDst;
+//    instruction->address_src1 = nameSrc;
+//    *(int*)instruction->address_src1 = type;
+//    instruction->address_src2 = malloc(sizeof(VARIABLE_VALUE));
+//    *(VARIABLE_VALUE*)instruction->address_src2 = value;
+//
+//    return instruction;
+//}
+

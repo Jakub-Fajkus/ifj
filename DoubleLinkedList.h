@@ -7,7 +7,6 @@
 
 #include "BasicStructures.h"
 #include "LexicalAnalyzer.h"
-#include "Interpret.h"
 
 typedef enum LIST_ELEMENT_TYPE {
     LIST_ELEMENT_TYPE_TOKEN,
@@ -19,7 +18,7 @@ typedef enum LIST_ELEMENT_TYPE {
 typedef union LIST_ELEMENT_DATA {
     FUNCTION_PARAMETER *parameter;
     TOKEN *token;
-    INSTRUCTION *instr;
+    struct sINSTRUCTION *instr;
     VARIABLE *var;
     FRAME_ELEMENT *framevar;
 }LIST_ELEMENT_DATA;
@@ -35,7 +34,7 @@ typedef struct tDLElem {            /* prvek dvousměrně vázaného seznamu */
     struct tDLElem *rptr;        /* ukazatel na následující prvek seznamu */
 } *tDLElemPtr;
 
-typedef struct {                                  /* dvousměrně vázaný seznam */
+typedef struct tDLListStruct{                                  /* dvousměrně vázaný seznam */
     tDLElemPtr First;                      /* ukazatel na první prvek seznamu */
     tDLElemPtr Act;                     /* ukazatel na aktuální prvek seznamu */
     tDLElemPtr Last;                    /* ukazatel na posledni prvek seznamu */
