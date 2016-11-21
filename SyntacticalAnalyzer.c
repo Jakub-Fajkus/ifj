@@ -275,13 +275,62 @@ bool ruleFuncDef(){
 }
 
 bool ruleStListDecl(){
-    //todo
+    //todo:!! <ST_LIST_DECL> -> EPSILON
+
+    //<ST_LIST_DECL> -> <TYPE><ID><DECL><ST_LIST_DECL>
+    if (ruleTypeDouble() || ruleTypeInt() || ruleTypeString()) {
+        if (ruleId()) {
+            if (ruleDecl()) {
+                if (ruleStListDecl()) {
+                    return true;
+                }
+            }
+        }
+    //<ST_LIST_DECL> -> <STAT> <ST_LIST_DECL>
+    } else if (ruleStat()) {
+        if (ruleStListDecl()) {
+            return true;
+        }
+    //<ST_LIST_DECL> -> { <ST_LIST> }
+    } else {
+        TOKEN *token = getCachedToken();
+        if (token->type == BRACKET && token->data.bracket.name == '{') {
+            if (ruleStList()) {
+                if (token->type == BRACKET && token->data.bracket.name == '}') {
+                    return true;
+                }
+            }
+        } else {
+            returnCachedTokens(1);
+            return false;
+        }
+    }
+
     return false;
 }
 
 bool ruleStList(){
-    //todo
-    return false;
+    //<ST_LIST> -> <STAT> <ST_LIST>
+    if (ruleStat()) {
+        if (ruleStList()) {
+            return true;
+        }
+    //<ST_LIST>-> { <ST_LIST> }
+    } else {
+        TOKEN *token = getCachedToken();
+        if (token->type == BRACKET && token->data.bracket.name == '{') {
+            if (ruleStList()) {
+                if (token->type == BRACKET && token->data.bracket.name == '}') {
+                    return true;
+                }
+            }
+        } else {
+            returnCachedTokens(1);
+            return false;
+        }
+    }
+    //todo:!!!<ST_LIST> -> EPSILON
+
 }
 
 //copied from rulePropDef
