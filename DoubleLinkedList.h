@@ -20,7 +20,6 @@ typedef union LIST_ELEMENT_DATA {
     TOKEN *token;
     struct sINSTRUCTION *instr;
     VARIABLE *variable;
-    FRAME_ELEMENT *framevar;
 }LIST_ELEMENT_DATA;
 
 typedef struct LIST_ELEMENT{

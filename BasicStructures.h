@@ -30,7 +30,7 @@ typedef union {
 } VARIABLE_VALUE;
 
 typedef struct {
-    char *var_name;
+    char *name;
     DATA_TYPE type;
     VARIABLE_VALUE value;
 } VARIABLE;

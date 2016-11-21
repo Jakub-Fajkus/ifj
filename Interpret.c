@@ -318,11 +318,11 @@ void exitInterpret(int errNumber) {
     //TODO: free all allocated memory
 
     exit(errNumber);
-} // end of exitInterpret
+}
 
 void checkMalloc(void *ptr){
     if ( ptr == NULL ) {
         fprintf(stderr, "Intern error: Unable to allocate memory.\n");
         exitInterpret(99);
     }
-} // end of checkMalloc
+}
