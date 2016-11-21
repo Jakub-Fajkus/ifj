@@ -131,6 +131,7 @@ bool ruleProg(){
     TOKEN *token = getCachedToken();
     tDLElemPtr activeElementRuleApplication = globalTokens->Act;
 
+    //<PROG> -> class <ID> {<CLASS_DEFINITION> } <PROG>
     if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "class")) {
         if (ruleId()) {
             token = getCachedToken();
@@ -170,6 +171,7 @@ bool ruleClassDefinition(){
     TOKEN *token = getCachedToken();
     tDLElemPtr activeElementRuleApplication = globalTokens->Act;
 
+    //<CLASS_DEFINITION> -> static <DEFINITION_START> <CLASS_DEFINITION>
     if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "static")) {
         if (ruleDefinitionStart()) {
             if (ruleClassDefinition()) {
@@ -200,6 +202,8 @@ bool ruleClassDefinition(){
 }
 
 bool ruleDefinition(){
+    //<DEFINITION> -> <PROP_DEF>
+    //<DEFINITION> -> <FUNC_DEF>
     return rulePropDef() || ruleFuncDef();
 }
 
@@ -210,6 +214,8 @@ bool rulePropDef(){
     if (token->type == SEMICOLON) {
         return true;
     } else if (token->type == OPERATOR_ASSIGN) {
+
+        //<PROP_DEF> ->  = <EXP>;
         //todo: check if the next tokens are expression
         //the check should return true if the expression was successfully parsed, false otherwise
         //the check should set the active token to the token which is right after the expression(example: tokens:"3+4)", the active token should be ')'
@@ -239,6 +245,7 @@ bool ruleFuncDef(){
     tDLElemPtr activeElementRuleApplication = globalTokens->Act;
     TOKEN *token = getCachedToken();
 
+    //<FUNC_DEF> -> ( <FUNC_DEF_PARAMS> { <ST_LIST_DECL> }
     if (token->type == BRACKET && token->data.bracket.name == '(') {
         if (ruleFuncDefParams()) {
             token = getCachedToken();
@@ -341,6 +348,7 @@ bool ruleDecl(){
     if (token->type == SEMICOLON) {
         return true;
     } else if (token->type == OPERATOR_ASSIGN) {
+        //<DECL> -> = <EXP>;
         //todo: check if the next tokens are expression
         //the check should return true if the expression was successfully parsed, false otherwise
         //the check should set the active token to the token which is right after the expression(example: tokens:"3+4)", the active token should be ')'
@@ -349,6 +357,7 @@ bool ruleDecl(){
         ListInit(dummyInstructionLIst);
 
         if (parseExpression(globalTokens, dummyInstructionLIst)) {
+            //<DECL> -> ;
             if (token->type == SEMICOLON) {
                 return true;
             } else {
@@ -461,8 +470,6 @@ bool ruleParam(){
     //<PARAM> -> <EXP> <AFTER_FUNCTION_CALL_EXP>
     //<PARAM> -> <ID> <AFTER_FUNCTION_CALL_EXP>
 
-
-
     if (parseExpression(globalTokens, dummyInstructionLIst)) {
         if (ruleAfterFunctionCallExp()) {
             return true;
@@ -513,7 +520,6 @@ bool ruleAfterFunctionCallExp(){
 bool ruleFuncDefParams(){
     //<FUNC_DEF_PARAMS> -> <DEF_PARAM>
     //<FUNC_DEF_PARAMS> -> <FUNCTION_DEF_END>
-
     return ruleDefParam() || ruleFunctionDefEnd();
 }
 
@@ -599,7 +605,7 @@ bool ruleDefinitionStart() {
             }
         }
     //<DEFINITION_START> -> int <ID><DEFINITION>
-    } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "id")) {
+    } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "int")) {
         if (ruleId()) {
             if (ruleDefinition()) {
                 return true;
