@@ -10,7 +10,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-void parseExpression(tDLList *, tDLList *);
+//todo: return true if the expression was successfully parsed, false otherwise... use exit only in error situations(99)
+bool parseExpression(tDLList *, tDLList *);
 
 typedef enum EA_TERMINAL_TYPE_ENUM{
     EA_ADD = 0,

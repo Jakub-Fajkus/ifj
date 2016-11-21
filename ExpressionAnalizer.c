@@ -102,7 +102,7 @@ EA_TERMINAL_TYPE getTerminalDataType(TOKEN *token) {
     exit(99); //for compiler ...should never happened
 }
 
-void parseExpression(tDLList *tokenList, tDLList *threeAddressCode) {
+bool parseExpression(tDLList *tokenList, tDLList *threeAddressCode) {
 
     bool lookingForTerminal = true;
     STACK_ELEMENT stackElement;
@@ -162,7 +162,8 @@ void parseExpression(tDLList *tokenList, tDLList *threeAddressCode) {
                                 stackTop(stack,&stackElement);
                                 if(stackElement.type == EA_TERMINAL){
                                     if(stackElement.data.terminalData.type == EA_START_END) {
-                                        return;
+                                        //todo: valid?
+                                        return true;
                                     } else{
                                         Error();
                                     }
@@ -193,5 +194,7 @@ void parseExpression(tDLList *tokenList, tDLList *threeAddressCode) {
         }
     }
 
+    //todo: valid?
+    return true;
 }
 
