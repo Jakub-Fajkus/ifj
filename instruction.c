@@ -4,24 +4,27 @@
 
 #include "instruction.h"
 #include "Interpret.h"
+#include "BasicStructures.h"
 
 /* ************************************************ USED BY INTERPRET *************************************************/
 /* ************************************************ EXECUTE           *************************************************/
-VARIABLE *createGlobalVariable() {
-    //todo
-}
 
-tDLList *createGlobalFrame() {
-
+tDLList *createFrame() {
     tDLList *frame = malloc(sizeof(tDLList));
     checkMalloc(frame);
     ListInit(frame);
-
     return frame;
 }
 
-void pushToGlobalFrame(tDLList *frame){
-    //todo
+void pushToFrame(tDLList *frame, INSTRUCTION *instruction){
+    LIST_ELEMENT variable;
+
+    variable.type = LIST_ELEMENT_TYPE_FRAME_ELEMENT;
+    variable.data.variable->name = (char *)instruction->address_dst;
+    variable.data.variable->type = (DATA_TYPE)instruction->address_src1;
+    variable.data.variable->value = *(VARIABLE_VALUE*)instruction->address_src2;
+
+    ListInsertLast(frame, variable);
 }
 
 

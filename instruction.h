@@ -58,9 +58,10 @@ typedef struct sINSTRUCTION{
     void *address_src2;
 } INSTRUCTION;
 
-VARIABLE *createGlobalVariable();
-tDLList *createGlobalFrame();
-void pushToGlobalFrame(tDLList *frame);
+
+// Used for Global frame & Local frames
+tDLList *createFrame();
+void pushToFrame(tDLList *globalFrame, INSTRUCTION *instruction);
 
 /* ************************************************ EXECUTE ************************************************/
 void executeInstructionAssign(INSTRUCTION *instr);
