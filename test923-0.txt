@@ -1,0 +1,5 @@
+//succ full id
+
+class succ{
+    static int smt.sm;
+}

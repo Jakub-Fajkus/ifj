@@ -1,0 +1,7 @@
+//succ id starting with $
+
+class succ{
+
+    static String $smth;
+
+}

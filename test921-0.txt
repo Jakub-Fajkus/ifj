@@ -1,0 +1,5 @@
+//succ is start with big letter
+
+class succ{
+    static int Smth;
+}

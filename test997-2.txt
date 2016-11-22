@@ -1,0 +1,7 @@
+//missing bracket for if
+class smthing{
+    int a;
+    if a){
+        int b;
+    }
+}

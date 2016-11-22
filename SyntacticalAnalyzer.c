@@ -98,7 +98,7 @@ bool ruleId() {
 bool ruleTypeString() {
     TOKEN *token = getCachedToken();
 
-    if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "string")) {
+    if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "String")) {
         return true;
     } else {
         returnCachedTokens(1);
@@ -605,7 +605,7 @@ bool ruleDefinitionStart() {
             }
         }
     //<DEFINITION_START> -> string <ID><DEFINITION>
-    } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "string")) {
+    } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "String")) {
         if (ruleId()) {
             if (ruleDefinition()) {
                 return true;

@@ -1,0 +1,5 @@
+//succes id
+
+class succ{
+    static double _smth;
+}

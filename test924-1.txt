@@ -1,0 +1,5 @@
+//fail just with dot
+
+class fail{
+    static string $mst.;
+}

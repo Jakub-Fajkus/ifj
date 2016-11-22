@@ -1,0 +1,6 @@
+
+// id doesn't start with letter
+
+class smth{
+    int 12lol;
+}

@@ -1,0 +1,7 @@
+//fail syntax miss bracket
+
+class smth{
+    while(){
+
+
+}

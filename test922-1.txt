@@ -1,0 +1,5 @@
+//fail id starting with dot
+
+class smt{
+    static double .dot;
+}
