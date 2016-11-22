@@ -257,7 +257,7 @@ bool ruleFuncDef(){
         if (ruleFuncDefParams()) {
             token = getCachedToken();
             if (token->type == BRACKET && token->data.bracket.name == '{') {
-                if (ruleStListDecl()) {
+                if (ruleStListDecl()) { //tu nevlezu....!
                     token = getCachedToken();
                     if (token->type == BRACKET && token->data.bracket.name == '}') {
                         return true;
@@ -292,7 +292,7 @@ bool ruleStListDecl(){
     //<ST_LIST_DECL> -> <TYPE><ID><DECL><ST_LIST_DECL>
     if (ruleTypeDouble() || ruleTypeInt() || ruleTypeString()) {
         if (ruleId()) {
-            if (ruleDecl()) {
+            if (ruleDecl()) { //tu nevlezu!!
                 if (ruleStListDecl()) {
                     return true;
                 }
@@ -355,7 +355,6 @@ bool ruleStList(){
     }
 }
 
-//copied from rulePropDef
 bool ruleDecl(){
     tDLElemPtr activeElementRuleApplication = globalTokens->Act;
     TOKEN *token = getCachedToken();
@@ -409,12 +408,16 @@ bool ruleStat(){
 
         //<STAT> -> while ( <EXP> ) { <ST_LIST> }
         if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "while")) {
+            token = getCachedToken();
             if (token->type == BRACKET && token->data.bracket.name == '(') {
                 char* resultVariableName;
                 if (parseExpression(dummyInstructionLIst, resultVariableName)) {
+                    token = getCachedToken();
                     if (token->type == BRACKET && token->data.bracket.name == ')') {
+                        token = getCachedToken();
                         if (token->type == BRACKET && token->data.bracket.name == '{'){
                             if (ruleStList()) {
+                                token = getCachedToken();
                                 if (token->type == BRACKET && token->data.bracket.name == '}') {
                                     return true;
                                 }
@@ -426,16 +429,23 @@ bool ruleStat(){
 
         //<STAT> -> if ( <EXP> ) { <ST_LIST> } else { <ST_LIST> }
         } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "if")) {
+            token = getCachedToken();
             if (token->type == BRACKET && token->data.bracket.name == '(') {
                 char* resultVariableName;
                 if (parseExpression(dummyInstructionLIst, resultVariableName)) {
+                    token = getCachedToken();
                     if (token->type == BRACKET && token->data.bracket.name == ')') {
+                        token = getCachedToken();
                         if (token->type == BRACKET && token->data.bracket.name == '{'){
                             if (ruleStList()) {
+                                token = getCachedToken();
                                 if (token->type == BRACKET && token->data.bracket.name == '}') {
+                                    token = getCachedToken();
                                     if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "else")) {
+                                        token = getCachedToken();
                                         if (token->type == BRACKET && token->data.bracket.name == '{'){
                                             if (ruleStList()) {
+                                                token = getCachedToken();
                                                 if (token->type == BRACKET && token->data.bracket.name == '}') {
                                                     return true;
                                                 }
@@ -452,6 +462,7 @@ bool ruleStat(){
         } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "return")) {
             char* resultVariableName;
             if (parseExpression(dummyInstructionLIst, resultVariableName)) {
+                token = getCachedToken();
                 if (token->type == SEMICOLON) {
                     return true;
                 }

@@ -7,8 +7,8 @@ class smth{
 class Smth{
 
 }
-class _smth{
 
+class _smth{
     static int smth(){
         while(1+2+3){
             if(0){
@@ -16,6 +16,8 @@ class _smth{
             } else{
                 if(1){
                     return 1;
+                } else {
+
                 }
             }
         }
