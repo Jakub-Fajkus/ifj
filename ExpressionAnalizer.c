@@ -105,6 +105,17 @@ bool parseExpression(tDLList *threeAddressCode, char *returnVal) {
 
     stackPush(stack, stackElement);
 
+    //todo: validate
+    TOKEN *token = getCachedToken();
+    if((token->type == BRACKET && token->data.bracket.name == ')') ||
+       !(token->type == OPERATOR_ARITHMETIC || token->type == OPERATOR_LOGIC ||
+         token->type == IDENTIFIER || token->type == LITERAL_DOUBLE || token->type == LITERAL_INTEGER || token->type == LITERAL_STRING)
+            ) {
+        returnCachedTokens(1);
+        return false;
+    }
+    returnCachedTokens(1);
+
     terminalData.type = EA_EMPTY;
     while (true) {
         if(terminalData.type == EA_EMPTY) {
@@ -113,15 +124,6 @@ bool parseExpression(tDLList *threeAddressCode, char *returnVal) {
             terminalData.type = getTerminalDataType(&terminalData.token);
 
             // new from cache END
-            //todo: validate
-            if((terminalData.token.type == BRACKET && terminalData.token.data.bracket.name == ')') ||
-                    !(terminalData.token.type == OPERATOR_ARITHMETIC || terminalData.token.type == OPERATOR_LOGIC ||
-                    terminalData.token.type == IDENTIFIER)
-            ) {
-                returnCachedTokens(1);
-                return false;
-            }
-
         }
 
         stackTop(stack, &stackElement);
