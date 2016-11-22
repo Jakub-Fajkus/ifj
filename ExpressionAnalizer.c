@@ -173,7 +173,7 @@ bool parseExpression(tDLList *threeAddressCode, char *returnVal) {
                 lookingForTerminal = true;
                 stackPop(stack);
 
-                generate3AdressCode()
+                generate3AdressCode();
 
                 stackElement.type = EA_NOT_TERMINAL;
                 stackPush(stack,stackElement);

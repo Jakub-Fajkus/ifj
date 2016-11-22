@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-FILES=`find -E test*`
+FILES=`find . -iname "test*"`
 FAILED_COUNTER=0
 OK_COUNTER=0
 
