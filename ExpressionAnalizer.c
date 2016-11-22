@@ -3,6 +3,8 @@
 //
 
 #include "ExpressionAnalizer.h"
+#include "Stack.h"
+#include "LexicalAnalyzerStructures.h"
 
 void generate3AdressCode();
 
@@ -111,6 +113,14 @@ bool parseExpression(tDLList *threeAddressCode, char *returnVal) {
             terminalData.type = getTerminalDataType(&terminalData.token);
 
             // new from cache END
+            //todo: validate
+            if((terminalData.token.type == BRACKET && terminalData.token.data.bracket.name == ')') ||
+                    !(terminalData.token.type == OPERATOR_ARITHMETIC || terminalData.token.type == OPERATOR_LOGIC ||
+                    terminalData.token.type == IDENTIFIER)
+            ) {
+                returnCachedTokens(1);
+                return false;
+            }
 
         }
 

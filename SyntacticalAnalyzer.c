@@ -91,8 +91,12 @@ tDLList* getAllTokens(char *fileName) {
 
 bool ruleId() {
     TOKEN *token = getCachedToken();
-
-    return token->type == IDENTIFIER || token->type == IDENTIFIER_FULL;
+    if(token->type == IDENTIFIER || token->type == IDENTIFIER_FULL) {
+        return true;
+    } else {
+        returnCachedTokens(1);
+        return false;
+    }
 }
 
 bool ruleTypeString() {
@@ -129,8 +133,8 @@ bool ruleTypeInt() {
 }
 
 bool ruleProg(){
-    TOKEN *token = getCachedToken();
     tDLElemPtr activeElementRuleApplication = globalTokens->Act;
+    TOKEN *token = getCachedToken();
 
     //<PROG> -> class <ID> {<CLASS_DEFINITION> } <PROG>
     if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "class")) {
@@ -169,8 +173,8 @@ bool ruleProg(){
 }
 
 bool ruleClassDefinition(){
-    TOKEN *token = getCachedToken();
     tDLElemPtr activeElementRuleApplication = globalTokens->Act;
+    TOKEN *token = getCachedToken();
 
     //<CLASS_DEFINITION> -> static <DEFINITION_START> <CLASS_DEFINITION>
     if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "static")) {
@@ -396,7 +400,10 @@ bool ruleStat(){
 
     //<STAT> -> <ID><STAT_BEGINNING_ID>;
     if (ruleId() && ruleStatBeginningId()) {
-        return true;
+        TOKEN *token = getCachedToken();
+        if(token->type == SEMICOLON) {
+            return true;
+        }
     } else {
         TOKEN *token = getCachedToken();
 
@@ -474,7 +481,7 @@ bool ruleFuncCall(){
 bool ruleFuncParams(){
     //<FUNC_PARAMS> -> <PARAM>
     //<FUNC_PARAMS> -> <FUNCTION_CALL_END>
-    return ruleParam() || ruleFunctionCallEnd();
+    return ruleFunctionCallEnd() || ruleParam();
 }
 
 bool ruleParam(){
