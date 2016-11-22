@@ -11,7 +11,7 @@
 #include <stdbool.h>
 
 //todo: return true if the expression was successfully parsed, false otherwise... use exit only in error situations(99)
-bool parseExpression(tDLList *);
+bool parseExpression(tDLList * , char *returnVal);
 
 typedef enum EA_TERMINAL_TYPE_ENUM{
     EA_ADD = 0,
