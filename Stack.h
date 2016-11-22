@@ -26,7 +26,7 @@ typedef struct {
 
 typedef union STACK_ELEMENT_DATA {
     EA_TERMINAL_DATA terminalData;
-    tDLList localFrame;
+    tDLList *localFrame;
     char *notTerminalData;
     EA_TERMINAL_TYPE actionType;
 }STACK_ELEMENT_DATA;

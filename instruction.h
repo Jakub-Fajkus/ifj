@@ -7,8 +7,15 @@
 
 #include "BasicStructures.h"
 #include "DoubleLinkedList.h"
+#include "Stack.h"
 
 typedef enum {
+    Instruction_Create_GlobalFrame_And_LocalStack,  // maybe the first instruction possible. NO PARAMS in DST, SRC1 or SRC2
+    Instruction_Push_Global_Variable, // 3 params: variable name, variable type, variable value : best in this format
+    Instruction_Create_Local_Frame, // IDEA: do we even need any param?
+    Instruction_Push_Local_Variable, // 3 params as in global var?
+    Instruction_CallFunction, // == Instruction_PushToStack_LocalFrame
+    Instruction_ReturnFunction, // == Instruction_PopFromStack_LocalFrame
     Instruction_Jump,
     Instruction_Assign,
     //----------------------- Math operations
@@ -16,9 +23,6 @@ typedef enum {
     Instruction_Subtraction, // Params: address_dst = address_src1 - address_src2;
     Instruction_Multiply, // 3 params
     Instruction_Divide, // 3 params
-    //----------------------- Calling user function
-    Instruction_CallFunction, // == Instruction_PushToStack_LocalFrame
-    Instruction_ReturnFunction, // == Instruction_PopFromStack_LocalFrame
     //-------------------------------- Built-in functions
     Instruction_Function_readInt, // 1 param (retvalue, type INT)
     Instruction_Function_readDouble, // 1 param (retvalue, type DOUBLE)
@@ -28,13 +32,8 @@ typedef enum {
     Instruction_Function_Substr, // 4 params (retvalue-string, 3 params-string,int,int)
     Instruction_Function_Compare, // 3 params (retvalue-int, 2 params-string, string)
     Instruction_Function_Find, // 3 params (retvalue-int, 2 params-string,string)
-    Instruction_Function_Sort, // 2 params (retvalue-string, param-string)
+    Instruction_Function_Sort // 2 params (retvalue-string, param-string)
     //-------------------------------- Work with frames
-    Instruction_Create_GlobalFrame_And_LocalStack,
-    Instruction_Push_Global_Variable, // 3 params: variable name, variable type, variable value : best in this format
-    Instruction_Create_Local_Frame, // IDEA: do we even need any param?
-    Instruction_Push_Local_Variable // 3 params as in global var?
-
     //  Instruction_Begin,
     //  Instruction_End,
     //----------------------- Bool operations
@@ -62,7 +61,11 @@ typedef struct sINSTRUCTION{
 // Used for Global frame & Local frames
 tDLList *createFrame();
 void pushToFrame(tDLList *globalFrame, INSTRUCTION *instruction);
-VARIABLE *findGlobalVariable(tDLList *globalFrame, char *name);
+tStack *createFrameStack();
+void pushFrameToStack(tStack *localFrameStack,tDLList *frame);
+
+VARIABLE *findFrameVariable(tDLList *frame, char *name);
+tDLList *getActualLocalFrame(tStack *stackOfLocalFrames);
 
 
 /* ************************************************ CREATE *************************************************/

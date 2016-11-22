@@ -31,12 +31,10 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         return 1;
     }
 
-    // Code shortening
-
     LIST_ELEMENT *NewPtr = malloc(sizeof(struct LIST_ELEMENT));   //TODO: how to free and exit?
     INSTRUCTION *Instr = NewPtr->data.instr;
 
-
+    tDLList *upcomingLocalFrame = NULL;
 
     ListFirst(InstructionList);
 
@@ -45,39 +43,65 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         ListElementCopy(InstructionList, NewPtr);
 
         if ( Instr->type == Instruction_Create_GlobalFrame_And_LocalStack ) {
-            globalFrame = createFrame();
+            globalFrame = createFrame();    //!!!
+            stackOfLocalFrames = createFrameStack();    //!!!
             ListSuccessor(InstructionList);
-            continue;
+            continue; // Jump to next instruction
         }
 
         if ( Instr->type == Instruction_Push_Global_Variable ) {
             pushToFrame(globalFrame, Instr);
             ListSuccessor(InstructionList);
-            continue; // Jump to another instruction
+            continue; // Jump to next instruction
         }
 
         if (Instr->type == Instruction_Create_Local_Frame) {
-            // just do it
+            upcomingLocalFrame = createFrame();
+            ListSuccessor(InstructionList);
+            continue; // Jump to next instruction
         }
 
         if (Instr->type == Instruction_Push_Local_Variable) {
-            // DO IT!!!
+            pushToFrame(upcomingLocalFrame, Instr);
+            ListSuccessor(InstructionList);
+            continue; // Jump to next instruction
         }
+
+        if (Instr->type == Instruction_CallFunction) {
+            // many things to do
+            // but...
+            pushFrameToStack(stackOfLocalFrames, upcomingLocalFrame);
+            // HERE COMES THE FUCKING RECURSION
+            Interpret(Instr->address_dst, globalFrame, stackOfLocalFrames);
+        }
+
+        // other special instructions: IF & WHILE
+
+        //-----------------------------------------------------------------------
+        //--- Special instructions are captured, now we will execute the rest ---
+        //-----------------------------------------------------------------------
 
         // prečítaj mená inštrukcii a vytvor novú inštrukciu
         // do ktorej narveš priamo hodnoty a jebeš na všetko
 
         //... sem sa dostane program až po odchytení inštrukcii, ktoré majú
 
+        VARIABLE *dst = NULL;
+        VARIABLE *src1 = NULL;
+        VARIABLE *src2 = NULL;
+
+        tDLList *actualLocalFrame = getActualLocalFrame(stackOfLocalFrames);
+        if (actualLocalFrame != NULL) {
+            //... hľadanie premennej v stacku
+        }
+
         //TODO: first look into top local frame (in stack)
-        // ...
-        // ...
         // ...
 
         // Not found in local frame
-        VARIABLE *dst = findGlobalVariable(globalFrame, Instr->address_dst);
-        VARIABLE *src1 = findGlobalVariable(globalFrame, Instr->address_src1);
-        VARIABLE *src2 = findGlobalVariable(globalFrame, Instr->address_src1);
+        dst = findFrameVariable(globalFrame, Instr->address_dst);
+        src1 = findFrameVariable(globalFrame, Instr->address_src1);
+        src2 = findFrameVariable(globalFrame, Instr->address_src1);
 
         switch (Instr->type) {
             case Instruction_Assign:    // expecting DST & SRC variable name
@@ -96,12 +120,13 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 if ( dst ==NULL || src1 == NULL || src2 == NULL ){
                     //TODO: dst, src1 or src2 not found
                 }
+
                 // passing 3 pointers to variables in FRAMES!
                 INSTRUCTION *mathInstruction = malloc(sizeof(INSTRUCTION));
                 //TODO: try to think out new way of exiting the code
 
                 mathInstruction->type = Instr->type;
-                //todo: validate last change!
+                // i hope this sorcery is fine
                 *(VARIABLE *)mathInstruction->address_dst = *dst;
                 *(VARIABLE *)mathInstruction->address_src1 = *src1;
                 *(VARIABLE *)mathInstruction->address_src2 = *src2;

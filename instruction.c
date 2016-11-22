@@ -7,8 +7,28 @@
 //#include "BasicStructures.h"
 
 
+
 /* ************************************************ USED BY INTERPRET *************************************************/
 /* ************************************************ EXECUTE           *************************************************/
+
+tStack *createFrameStack() {
+    tStack *localFrameStack = malloc(sizeof(tStack));
+    //TODO: check malloc
+    // WARNING: also mallocs those arrays
+    stackInit(localFrameStack);
+    localFrameStack->arr->type = STACK_ELEMENT_TYPE_LOCAL_FRAME;
+    return localFrameStack;
+}
+
+void pushFrameToStack(tStack *localFrameStack,tDLList *frame) {
+    STACK_ELEMENT *newLocalFrame = malloc(sizeof(STACK_ELEMENT));
+
+    newLocalFrame->type = STACK_ELEMENT_TYPE_LOCAL_FRAME;
+    newLocalFrame->data.localFrame = frame;
+
+    stackPush(localFrameStack, *newLocalFrame);
+}
+
 
 tDLList *createFrame() {
     tDLList *frame = malloc(sizeof(tDLList));
@@ -28,21 +48,30 @@ void pushToFrame(tDLList *frame, INSTRUCTION *instruction){
     ListInsertLast(frame, variable);
 }
 
-VARIABLE *findGlobalVariable(tDLList *globalFrame, char *name) {
+VARIABLE *findFrameVariable(tDLList *frame, char *name) {
 
     if ( name == NULL ) return NULL; // error handling
     int compare;
-    ListFirst(globalFrame);
+    ListFirst(frame);
     do { // Search for the variable in the globalFrame
-        compare = strcmp(name, globalFrame->Act->element.data.variable->name);
+        compare = strcmp(name, frame->Act->element.data.variable->name);
         if ( compare == 0 ) {   // found the right variable
-            return globalFrame->Act->element.data.variable;
+            return frame->Act->element.data.variable;
         }
-        ListSuccessor(globalFrame);
-    } while ( globalFrame->Act != globalFrame->Last );
+        ListSuccessor(frame);
+    } while ( frame->Act != frame->Last );
     return NULL;
 }
 
+tDLList *getActualLocalFrame(tStack *stackOfLocalFrames) {
+
+    STACK_ELEMENT* stackElement = malloc(sizeof(STACK_ELEMENT));
+    // ošetruj malloc
+    stackTop(stackOfLocalFrames, stackElement);
+    tDLList *actualLocalFrame = stackElement->data.localFrame;
+    return actualLocalFrame;
+
+}
 
 
 /* ************************************************ USED BY PARSER ****************************************************/
