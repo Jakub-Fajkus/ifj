@@ -1,0 +1,7 @@
+class Main {
+    static int a = 5;
+}
+
+class Pom {
+    static double b = 3 + a;
+}

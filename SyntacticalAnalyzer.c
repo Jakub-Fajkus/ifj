@@ -224,7 +224,9 @@ bool rulePropDef(){
         tDLList *dummyInstructionLIst = malloc(sizeof(tDLList));
         ListInit(dummyInstructionLIst);
 
-        if (parseExpression(globalTokens, dummyInstructionLIst)) {
+        char* resultVariableName;
+
+        if (parseExpression(dummyInstructionLIst, resultVariableName)) {
             if (token->type == SEMICOLON) {
                 return true;
             } else {
@@ -364,8 +366,11 @@ bool ruleDecl(){
         //todo: rep;ace dummy test with actual list of instruction
         tDLList *dummyInstructionLIst = malloc(sizeof(tDLList));
         ListInit(dummyInstructionLIst);
+        char* resultVariableName;
 
-        if (parseExpression(globalTokens, dummyInstructionLIst)) {
+        if (parseExpression(dummyInstructionLIst, resultVariableName)) {
+            token = getCachedToken();
+
             //<DECL> -> ;
             if (token->type == SEMICOLON) {
                 return true;
@@ -398,7 +403,8 @@ bool ruleStat(){
         //<STAT> -> while ( <EXP> ) { <ST_LIST> }
         if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "while")) {
             if (token->type == BRACKET && token->data.bracket.name == '(') {
-                if (parseExpression(globalTokens, dummyInstructionLIst)) {
+                char* resultVariableName;
+                if (parseExpression(dummyInstructionLIst, resultVariableName)) {
                     if (token->type == BRACKET && token->data.bracket.name == ')') {
                         if (token->type == BRACKET && token->data.bracket.name == '{'){
                             if (ruleStList()) {
@@ -414,7 +420,8 @@ bool ruleStat(){
         //<STAT> -> if ( <EXP> ) { <ST_LIST> } else { <ST_LIST> }
         } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "if")) {
             if (token->type == BRACKET && token->data.bracket.name == '(') {
-                if (parseExpression(globalTokens, dummyInstructionLIst)) {
+                char* resultVariableName;
+                if (parseExpression(dummyInstructionLIst, resultVariableName)) {
                     if (token->type == BRACKET && token->data.bracket.name == ')') {
                         if (token->type == BRACKET && token->data.bracket.name == '{'){
                             if (ruleStList()) {
@@ -436,7 +443,8 @@ bool ruleStat(){
             }
         //<STAT> -> return <EXP>;
         } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "return")) {
-            if (parseExpression(globalTokens, dummyInstructionLIst)) {
+            char* resultVariableName;
+            if (parseExpression(dummyInstructionLIst, resultVariableName)) {
                 if (token->type == SEMICOLON) {
                     return true;
                 }
@@ -451,13 +459,11 @@ bool ruleStat(){
 bool ruleFuncCall(){
     tDLElemPtr activeElementRuleApplication = globalTokens->Act;
 
-    //<FUNC_CALL> -> <ID> ( <FUNC_PARAMS>
-    if (ruleId()) {
-        TOKEN *token = getCachedToken();
-        if (token->type == BRACKET && token->data.bracket.name == '('){
-            if (ruleFuncParams()) {
-                return true;
-            }
+    //<FUNC_CALL> -> ( <FUNC_PARAMS>
+    TOKEN *token = getCachedToken();
+    if (token->type == BRACKET && token->data.bracket.name == '('){
+        if (ruleFuncParams()) {
+            return true;
         }
     }
 
@@ -478,8 +484,8 @@ bool ruleParam(){
 
     //<PARAM> -> <EXP> <AFTER_FUNCTION_CALL_EXP>
     //<PARAM> -> <ID> <AFTER_FUNCTION_CALL_EXP>
-
-    if (parseExpression(globalTokens, dummyInstructionLIst)) {
+    char* resultVariableName;
+    if (parseExpression(dummyInstructionLIst, resultVariableName)) {
         if (ruleAfterFunctionCallExp()) {
             return true;
         }
@@ -642,9 +648,10 @@ bool ruleStatBeginningId() {
         return true;
     } else {
         TOKEN *token = getCachedToken();
+        char* resultVariableName;
 
         if(token->type == OPERATOR_ASSIGN) {
-            if (parseExpression(globalTokens, dummyInstructionLIst)) {
+            if (parseExpression(dummyInstructionLIst, resultVariableName)) {
                 return true;
             }
         }
