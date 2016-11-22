@@ -22,6 +22,11 @@ int main(int argc, char *argv[])
     INSTRUCTION *instruction = createPushGlobalVariable("prom1", TYPE_DOUBLE, val);
 //    simulateSymbolTable();
 
+    if (argc != 2) {
+        printf("no input file found\n");
+        return 99;
+    }
+
     runSyntacticalAnalysis(argv[1]);
 
     printf("\n\n\nXXXXKONECXXXX");
