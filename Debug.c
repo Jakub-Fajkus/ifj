@@ -64,7 +64,8 @@ void printStack(tStack stack) {
     printf("printing the stack from the top to the bottom:\n");
 
     //it is updated in the function stackTop
-    while(actual != NULL) {
+    while(!stackEmpty(&stack)) {
+        printf("....");
         if (actual->type == STACK_ELEMENT_TYPE_EXPRESSION) {
             printf("type: STACK_ELEMENT_TYPE_EXPRESSION \n");
         } else if (actual->type == EA_TERMINAL) {
@@ -80,16 +81,12 @@ void printStack(tStack stack) {
 
         printEaTerminalType(actual->data.terminalData.type);
 
-        printToken(&actual->data.terminalData.token);
 
 
         stackPop(&stack);
         last = actual;
         stackTop(&stack, actual);
 
-        if(last == actual) {
-            break;
-        }
     }
 
     printf("printing the stack is OVER:\n\n\n\n");

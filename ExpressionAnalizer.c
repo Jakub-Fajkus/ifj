@@ -3,20 +3,6 @@
 //
 
 #include "ExpressionAnalizer.h"
-#include "LexicalAnalyzerStructures.h"
-#include "Stack.h"
-
-void Error() {
-    exit(99);
-}
-
-//typedef enum { // pro jistotu
-//    OPEN = ,
-//    CLOSE = ,
-//    EQUAL = 2,
-//    ERROR = 3,
-//    SUCCESS = 4
-//} OPERATION_TYPE;
 
 
 static char terminalTable[14][14] = {
@@ -98,29 +84,29 @@ EA_TERMINAL_TYPE getTerminalDataType(TOKEN *token) {
         default:
             break;
     }
-    Error();
-    exit(99); //for compiler ...should never happened
+    exit(99);
 }
 
 bool parseExpression(tDLList *tokenList, tDLList *threeAddressCode) {
 
     bool lookingForTerminal = true;
     STACK_ELEMENT stackElement;
-    tStack *stack = NULL;
-    tStack *backStack = NULL;
+    tStack *stack = malloc(sizeof(tStack));
+    tStack *backStack = malloc(sizeof(tStack));
     EA_TERMINAL_DATA terminalData;
     stackInit(stack);
     stackInit(backStack);
     // push $
     stackElement.type = EA_TERMINAL;
     stackElement.data.terminalData.type = EA_START_END;
+
     stackPush(stack, stackElement);
 
     terminalData.type = EA_EMPTY;
     while (true) {
         if(terminalData.type == EA_EMPTY) {
             // new from cache START
-            terminalData.token = *getCachedToken(tokenList); // BECAUSE reasons
+            terminalData.token = *getCachedToken(); // BECAUSE reasons
             terminalData.type = getTerminalDataType(&terminalData.token);
             // new from cache END
 
@@ -143,6 +129,7 @@ bool parseExpression(tDLList *tokenList, tDLList *threeAddressCode) {
                             }
 
                             stackElement.type = EA_TERMINAL;
+
                             stackElement.data.terminalData = terminalData;
                             stackPush(stack,stackElement);
                             terminalData.type = EA_EMPTY;
@@ -162,10 +149,9 @@ bool parseExpression(tDLList *tokenList, tDLList *threeAddressCode) {
                                 stackTop(stack,&stackElement);
                                 if(stackElement.type == EA_TERMINAL){
                                     if(stackElement.data.terminalData.type == EA_START_END) {
-                                        //todo: valid?
                                         return true;
                                     } else{
-                                        Error();
+                                        return  false;
                                     }
                                 }
                             }
@@ -179,11 +165,11 @@ bool parseExpression(tDLList *tokenList, tDLList *threeAddressCode) {
                 break;
             case EA_TERMINAL_ACTION:
                 if(lookingForTerminal){
-                    Error();
+                    exit(99);
                 }
                 lookingForTerminal = true;
+                stackPop(stack);
                 while(stackEmpty(backStack)){
-                    //TODO Generovat 3 adresny kod
                     stackPop(backStack);
                 }
                 stackElement.type = EA_NOT_TERMINAL;
@@ -194,7 +180,5 @@ bool parseExpression(tDLList *tokenList, tDLList *threeAddressCode) {
         }
     }
 
-    //todo: valid?
-    return true;
 }
 
