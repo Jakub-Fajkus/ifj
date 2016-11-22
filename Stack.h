@@ -15,7 +15,8 @@ typedef enum STACK_ELEMENT_TYPE {
     STACK_ELEMENT_TYPE_EXPRESSION,
     EA_TERMINAL,
     EA_NOT_TERMINAL,
-    EA_TERMINAL_ACTION
+    EA_TERMINAL_ACTION,
+    STACK_ELEMENT_TYPE_LOCAL_FRAME
 }STACK_ELEMENT_TYPE;
 
 typedef struct {
@@ -23,9 +24,9 @@ typedef struct {
     TOKEN token;
 } EA_TERMINAL_DATA;
 
-
 typedef union STACK_ELEMENT_DATA {
     EA_TERMINAL_DATA terminalData;
+    tDLList localFrame;
     char *notTerminalData;
     EA_TERMINAL_TYPE actionType;
 }STACK_ELEMENT_DATA;

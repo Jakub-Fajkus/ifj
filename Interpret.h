@@ -10,9 +10,22 @@
 #include "instruction.h"
 #include <string.h>
 
+/**
+ * @param InstructionList - list of instructons passed by parser
+ * @param globalFrame - Important note: function interpret passes this argument to itself
+ *                      TL;DR: Interpret called from parser passes NULL value
+ * @param stackOfLocalFrames - Important note: function interpret passes this argument to itself
+ *                      TL;DR: Interpret called from parser passes NULL value
+ * @return int value in case of crash if the interpret, to make sure the function main can free() everything else
+ */
+int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames );
 
-int Interpret(tDLList *InstructionList);
+/// TO BE REPLACED WITH ANOTHER SOLUTION
+/// \param errNumber - exit number
 void exitInterpret(int errNumber);
+
+/// TO BE REPLACED WITH ANOTHER SOLUTION
+/// \param ptr - any type of pointer if it is NULL
 void checkMalloc(void *ptr);
 
 
@@ -20,6 +33,11 @@ void checkMalloc(void *ptr);
 /* ************************************************ EXECUTE ************************************************/
 
 //TODO: remake the types of functions
+
+/**
+ * This functiont
+ * @param Instr
+ */
 void InstructionExecute(INSTRUCTION *Instr);
 void executeInstructionMathOperation(INSTRUCTION *instr);
 

@@ -12,43 +12,56 @@
 #include "ifj16.h"  // Built-in functions & most libraries
 #include "Stack.h"
 #include "Interpret.h"
+#include "BasicStructures.h"
 //#include "DoubleLinkedList.h"
 //#include "BasicStructures.h"
 
 
-int Interpret(tDLList *InstructionList);
+int Interpret(tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames);
 void InstructionExecute(INSTRUCTION *instr);
 void executeInstructionMathOperation(INSTRUCTION *instr);
 void executeInstructionAssign(VARIABLE *dst, VARIABLE *src);
 
 // TODO: funkcie pre tvorbu a prácu s rámcom
 
-int Interpret( tDLList *InstructionList ){
+int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames ){
 
     if (InstructionList == NULL) {
         fprintf(stderr, "Interpret obtained NULL pointer to list of instructions.\n");
         return 1;
     }
 
-    INSTRUCTION *Instr = malloc(sizeof(INSTRUCTION));
-        checkMalloc(Instr);
-    LIST_ELEMENT *NewPtr = malloc(sizeof(struct LIST_ELEMENT));
-        checkMalloc(NewPtr);
-    tDLList *globalFrame = createFrame();
-    // create the stack for localFrame here
+    // Code shortening
+
+    LIST_ELEMENT *NewPtr = malloc(sizeof(struct LIST_ELEMENT));   //TODO: how to free and exit?
+    INSTRUCTION *Instr = NewPtr->data.instr;
+
 
 
     ListFirst(InstructionList);
 
     while ( 1 ) {
-
+        // Copy the actual instruction from the list
         ListElementCopy(InstructionList, NewPtr);
-        Instr = NewPtr->data.instr;
+
+        if ( Instr->type == Instruction_Create_GlobalFrame_And_LocalStack ) {
+            globalFrame = createFrame();
+            ListSuccessor(InstructionList);
+            continue;
+        }
 
         if ( Instr->type == Instruction_Push_Global_Variable ) {
             pushToFrame(globalFrame, Instr);
             ListSuccessor(InstructionList);
             continue; // Jump to another instruction
+        }
+
+        if (Instr->type == Instruction_Create_Local_Frame) {
+            // just do it
+        }
+
+        if (Instr->type == Instruction_Push_Local_Variable) {
+            // DO IT!!!
         }
 
         // prečítaj mená inštrukcii a vytvor novú inštrukciu
@@ -89,15 +102,13 @@ int Interpret( tDLList *InstructionList ){
 
                 mathInstruction->type = Instr->type;
                 //todo: validate last change!
-                *(VARIABLE *)mathInstruction->address_dst = *dst;
-                *(VARIABLE *)mathInstruction->address_src1 = *src1;
-                *(VARIABLE *)mathInstruction->address_src2 = *src2;
+                (VARIABLE *)mathInstruction->address_dst = dst;
+                (VARIABLE *)mathInstruction->address_src1 = src1;
+                (VARIABLE *)mathInstruction->address_src2 = src2;
 
                 executeInstructionMathOperation(mathInstruction);
 
                 dst = (VARIABLE *)mathInstruction->address_dst;
-                src1 = (VARIABLE *)mathInstruction->address_src1;
-                src2 = (VARIABLE *)mathInstruction->address_src2;
 
                 break;
 

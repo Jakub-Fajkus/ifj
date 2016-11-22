@@ -12,13 +12,13 @@ typedef enum {
     Instruction_Jump,
     Instruction_Assign,
     //----------------------- Math operations
-    Instruction_Addition, // 3 params
-    Instruction_Subtraction, // 3 params
+    Instruction_Addition, // Params: address_dst = address_src1 + address_src2;
+    Instruction_Subtraction, // Params: address_dst = address_src1 - address_src2;
     Instruction_Multiply, // 3 params
     Instruction_Divide, // 3 params
     //----------------------- Calling user function
-    Instruction_CallFunction, // == Instruction_Push_Local_Frame
-    Instruction_ReturnFunction, //not sure
+    Instruction_CallFunction, // == Instruction_PushToStack_LocalFrame
+    Instruction_ReturnFunction, // == Instruction_PopFromStack_LocalFrame
     //-------------------------------- Built-in functions
     Instruction_Function_readInt, // 1 param (retvalue, type INT)
     Instruction_Function_readDouble, // 1 param (retvalue, type DOUBLE)
@@ -30,7 +30,7 @@ typedef enum {
     Instruction_Function_Find, // 3 params (retvalue-int, 2 params-string,string)
     Instruction_Function_Sort, // 2 params (retvalue-string, param-string)
     //-------------------------------- Work with frames
-//  Instruction_Create_Global_Frame,
+    Instruction_Create_GlobalFrame_And_LocalStack,
     Instruction_Push_Global_Variable, // 3 params: variable name, variable type, variable value : best in this format
     Instruction_Create_Local_Frame, // IDEA: do we even need any param?
     Instruction_Push_Local_Variable // 3 params as in global var?
@@ -75,6 +75,17 @@ VARIABLE *findGlobalVariable(tDLList *globalFrame, char *name);
  * @return
  */
 INSTRUCTION *createPushGlobalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value);
+
+/***
+ *
+ * Push local variable to interpret local frame
+ * @param name
+ * @param type
+ * @param value
+ * @return
+ */
+INSTRUCTION *createPushLocalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value);
+
 INSTRUCTION *createInstructionAssign(char *nameDst, char *nameSrc);
 //TODO
 INSTRUCTION *createInstructionMathOperation( INSTRUCTION_TYPE instType, char *nameDst, char *nameSrc1, char *nameSrc2);
