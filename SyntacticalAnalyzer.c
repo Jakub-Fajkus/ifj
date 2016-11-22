@@ -337,6 +337,7 @@ bool ruleStList(){
             return false;
         }
     }
+    //todo: check for }
     //todo:!!!<ST_LIST> -> EPSILON
 
 }
@@ -564,9 +565,7 @@ bool ruleFunctionDefEnd(){
     TOKEN *token = getCachedToken();
 
     if (token->type == BRACKET && token->data.bracket.name == ')') {
-        if (ruleStListDecl()) {
-            return true;
-        }
+        return true;
     }
 
     returnCachedTokens(1);

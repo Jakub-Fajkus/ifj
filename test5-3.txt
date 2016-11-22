@@ -1,0 +1,8 @@
+//this is not valid in ifj16!
+class Main
+{
+    static void run(int a)
+    {
+        int a;
+    }
+}
