@@ -102,9 +102,9 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
                 mathInstruction->type = Instr->type;
                 //todo: validate last change!
-                (VARIABLE *)mathInstruction->address_dst = dst;
-                (VARIABLE *)mathInstruction->address_src1 = src1;
-                (VARIABLE *)mathInstruction->address_src2 = src2;
+                *(VARIABLE *)mathInstruction->address_dst = *dst;
+                *(VARIABLE *)mathInstruction->address_src1 = *src1;
+                *(VARIABLE *)mathInstruction->address_src2 = *src2;
 
                 executeInstructionMathOperation(mathInstruction);
 

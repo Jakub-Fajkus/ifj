@@ -8,6 +8,7 @@
 #include "BasicStructures.h"
 #include "DoubleLinkedList.h"
 #include "instruction.h"
+#include "Stack.h"
 #include <string.h>
 
 /**
