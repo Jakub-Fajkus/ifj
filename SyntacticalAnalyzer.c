@@ -231,6 +231,7 @@ bool rulePropDef(){
         char* resultVariableName;
 
         if (parseExpression(dummyInstructionLIst, resultVariableName)) {
+            token = getCachedToken();
             if (token->type == SEMICOLON) {
                 return true;
             } else {
