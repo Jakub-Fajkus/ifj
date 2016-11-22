@@ -349,11 +349,11 @@ bool ruleStList(){
             returnCachedTokens(1);
             return true;
         // FAIL
-        } else {
-            returnCachedTokens(1);
-            return false;
-        }
+         }
     }
+
+    returnCachedTokens(1);
+    return false;
 }
 
 bool ruleDecl(){

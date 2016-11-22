@@ -6,10 +6,10 @@
 #define IFJ_BASICSTRUCTURES_H
 
 typedef enum{
-    TYPE_INT,
-    TYPE_DOUBLE,
-    TYPE_STRING,
-    TYPE_VOID
+    TYPE_INT = 1000,
+    TYPE_DOUBLE = 1001,
+    TYPE_STRING = 1002,
+    TYPE_VOID = 1003
 } DATA_TYPE;
 
 typedef struct {
@@ -18,9 +18,9 @@ typedef struct {
 } FUNCTION_PARAMETER;
 
 typedef enum{
-    TREE_NODE_VARIABLE,
-    TREE_NODE_FUNCTION,
-    TREE_NODE_FUNCTION_CALL,
+    TREE_NODE_VARIABLE = 1010,
+    TREE_NODE_FUNCTION = 1011,
+    TREE_NODE_FUNCTION_CALL = 1012,
 } TREE_NODE_DATA_TYPE;
 
 typedef union {

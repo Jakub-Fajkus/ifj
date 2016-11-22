@@ -50,8 +50,11 @@ EA_TERMINAL_TYPE getTerminalDataType(TOKEN *token) {
                 case '/':
                     return EA_DIV;
                 default:
+                    //this break breaks the actual swith, not the outer with many cases
                     break;
             }
+            //the break here would break the terminal switch, but then the exit(99) comes into a play
+//            break;
         case OPERATOR_LOGIC:
             if (strcmp(token->data.operatorLogic.name, "<")) {
                 return EA_IS_LESS;
