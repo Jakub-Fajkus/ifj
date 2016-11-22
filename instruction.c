@@ -4,7 +4,8 @@
 
 #include "instruction.h"
 #include "Interpret.h"
-#include "BasicStructures.h"
+//#include "BasicStructures.h"
+
 
 /* ************************************************ USED BY INTERPRET *************************************************/
 /* ************************************************ EXECUTE           *************************************************/
@@ -26,6 +27,22 @@ void pushToFrame(tDLList *frame, INSTRUCTION *instruction){
 
     ListInsertLast(frame, variable);
 }
+
+VARIABLE *findGlobalVariable(tDLList *globalFrame, char *name) {
+
+    if ( name == NULL ) return NULL; // error handling
+    int compare;
+    ListFirst(globalFrame);
+    do { // Search for the variable in the globalFrame
+        compare = strcmp(name, globalFrame->Act->element.data.variable->name);
+        if ( compare == 0 ) {   // found the right variable
+            return globalFrame->Act->element.data.variable;
+        }
+        ListSuccessor(globalFrame);
+    } while ( globalFrame->Act != globalFrame->Last );
+    return NULL;
+}
+
 
 
 /* ************************************************ USED BY PARSER ****************************************************/
@@ -63,12 +80,4 @@ INSTRUCTION *createInstructionAssign(char *nameDst, char *nameSrc) {
 INSTRUCTION *createInstructionMathOperation(INSTRUCTION_TYPE instType, char *nameDst, char *nameSrc1, char *nameSrc2) {
     //todo
     return NULL;
-}
-
-void executeInstructionAssign(INSTRUCTION *instr) {
-    //todo
-}
-
-void executeInstructionMathOperation(INSTRUCTION *instr) {
-    //todo
 }

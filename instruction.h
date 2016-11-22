@@ -30,7 +30,7 @@ typedef enum {
     Instruction_Function_Find, // 3 params (retvalue-int, 2 params-string,string)
     Instruction_Function_Sort, // 2 params (retvalue-string, param-string)
     //-------------------------------- Work with frames
-    Instruction_Create_Global_Frame, // IDEA: do we even need any param?
+//  Instruction_Create_Global_Frame,
     Instruction_Push_Global_Variable, // 3 params: variable name, variable type, variable value : best in this format
     Instruction_Create_Local_Frame, // IDEA: do we even need any param?
     Instruction_Push_Local_Variable // 3 params as in global var?
@@ -62,10 +62,9 @@ typedef struct sINSTRUCTION{
 // Used for Global frame & Local frames
 tDLList *createFrame();
 void pushToFrame(tDLList *globalFrame, INSTRUCTION *instruction);
+VARIABLE *findGlobalVariable(tDLList *globalFrame, char *name);
 
-/* ************************************************ EXECUTE ************************************************/
-void executeInstructionAssign(INSTRUCTION *instr);
-void executeInstructionMathOperation(INSTRUCTION *instr);
+
 /* ************************************************ CREATE *************************************************/
 /**
  * Create insturction Instruction_Push_Global_Variable.
