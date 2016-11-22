@@ -23,8 +23,11 @@ typedef struct {
     TOKEN token;
 } EA_TERMINAL_DATA;
 
+
 typedef union STACK_ELEMENT_DATA {
     EA_TERMINAL_DATA terminalData;
+    char *notTerminalData;
+    EA_TERMINAL_TYPE actionType;
 }STACK_ELEMENT_DATA;
 
 typedef struct STACK_ELEMENT{
