@@ -88,9 +88,10 @@ int Interpret( tDLList *InstructionList ){
                 //TODO: try to think out new way of exiting the code
 
                 mathInstruction->type = Instr->type;
-                (VARIABLE *)mathInstruction->address_dst = dst;
-                (VARIABLE *)mathInstruction->address_src1 = src1;
-                (VARIABLE *)mathInstruction->address_src2 = src2;
+                //todo: validate last change!
+                *(VARIABLE *)mathInstruction->address_dst = *dst;
+                *(VARIABLE *)mathInstruction->address_src1 = *src1;
+                *(VARIABLE *)mathInstruction->address_src2 = *src2;
 
                 executeInstructionMathOperation(mathInstruction);
 
