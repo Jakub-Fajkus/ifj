@@ -4,6 +4,7 @@
 
 #include "ExpressionAnalizer.h"
 
+void generate3AdressCode();
 
 static char terminalTable[14][14] = {
         {'>', '>', '<', '<', '>', '<', '<', '>', '>', '>', '>', '>', '>', '>'},
@@ -87,7 +88,7 @@ EA_TERMINAL_TYPE getTerminalDataType(TOKEN *token) {
     exit(99);
 }
 
-bool parseExpression(tDLList *tokenList, tDLList *threeAddressCode) {
+bool parseExpression(tDLList *threeAddressCode, char *returnVal) {
 
     bool lookingForTerminal = true;
     STACK_ELEMENT stackElement;
@@ -108,6 +109,7 @@ bool parseExpression(tDLList *tokenList, tDLList *threeAddressCode) {
             // new from cache START
             terminalData.token = *getCachedToken(); // BECAUSE reasons
             terminalData.type = getTerminalDataType(&terminalData.token);
+
             // new from cache END
 
         }
@@ -145,6 +147,7 @@ bool parseExpression(tDLList *tokenList, tDLList *threeAddressCode) {
                             stackPush(stack, stackElement);
                             break;
                         default:
+                            returnCachedTokens(1);
                             while(true){
                                 stackTop(stack,&stackElement);
                                 if(stackElement.type == EA_TERMINAL){
@@ -169,9 +172,9 @@ bool parseExpression(tDLList *tokenList, tDLList *threeAddressCode) {
                 }
                 lookingForTerminal = true;
                 stackPop(stack);
-                while(stackEmpty(backStack)){
-                    stackPop(backStack);
-                }
+
+                generate3AdressCode()
+
                 stackElement.type = EA_NOT_TERMINAL;
                 stackPush(stack,stackElement);
                 break;
@@ -182,3 +185,6 @@ bool parseExpression(tDLList *tokenList, tDLList *threeAddressCode) {
 
 }
 
+void generate3AdressCode(){
+
+};
