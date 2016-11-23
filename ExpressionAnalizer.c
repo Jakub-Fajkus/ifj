@@ -13,20 +13,21 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
 void concatenateString();
 
 static char terminalTable[14][14] = {
-        {'>', '>', '<', '<', '>', '<', '<', '>', '>', '>', '>', '>', '>', '>'},
-        {'>', '>', '<', '<', '>', '<', '<', '>', '>', '>', '>', '>', '>', '>'},
-        {'>', '>', '>', '<', '>', '<', '>', '>', '>', '>', '>', '>', '>', '>'},
-        {'<', '>', '<', '<', '=', '<', '>', '>', '>', '>', '>', '>', '>', 'X'},
-        {'>', '>', '>', 'X', '>', 'X', '>', '>', '>', '>', '>', '>', '>', '>'},
-        {'>', '>', '>', 'X', '>', 'X', '>', '>', '>', '>', '>', '>', '>', '>'},
-        {'>', '>', '>', '<', '>', '<', '>', '>', '>', '>', '>', '>', '>', '>'},
-        {'<', '<', '<', '<', '>', '<', '<', 'X', 'X', 'X', 'X', 'X', 'X', '>'},
-        {'<', '<', '<', '<', '>', '<', '<', 'X', 'X', 'X', 'X', 'X', 'X', '>'},
-        {'<', '<', '<', '<', '>', '<', '<', 'X', 'X', 'X', 'X', 'X', 'X', '>'},
-        {'<', '<', '<', '<', '>', '<', '<', 'X', 'X', 'X', 'X', 'X', 'X', '>'},
-        {'<', '<', '<', '<', '>', '<', '<', 'X', 'X', 'X', 'X', 'X', 'X', '>'},
-        {'<', '<', '<', '<', '>', '<', '<', 'X', 'X', 'X', 'X', 'X', 'X', '>'},
-        {'<', '<', '<', '<', 'X', '<', '<', '<', '<', '<', '<', '<', '<', 'S'}
+             /*+*/ /*-*//***//*(*//*)*//*I*//*/*//*<*//*>*//*>=*//*>=*//*==*//*!=*//*$*/
+        /*+*/{'>', '>', '<', '<', '>', '<', '<', '>', '>', '>', '>', '>',    '>',    '>'},
+        /*-*/{'>', '>', '<', '<', '>', '<', '<', '>', '>', '>', '>', '>',    '>',    '>'},
+        /***/{'>', '>', '>', '<', '>', '<', '>', '>', '>', '>', '>', '>',    '>',    '>'},
+        /*(*/{'<', '<', '<', '<', '=', '<', '<', '<', '<', '<', '<', '<',    '<',    'X'},
+        /*)*/{'>', '>', '>', 'X', '>', 'X', '>', '>', '>', '>', '>', '>',    '>',    '>'},
+        /*I*/{'>', '>', '>', 'X', '>', 'X', '>', '>', '>', '>', '>', '>',    '>',    '>'},
+        /*/*/{'>', '>', '>', '<', '>', '<', '>', '>', '>', '>', '>', '>',    '>',    '>'},
+        /*<*/{'<', '<', '<', '<', '>', '<', '<', 'X', 'X', 'X', 'X', 'X',    'X',    '>'},
+        /*>*/{'<', '<', '<', '<', '>', '<', '<', 'X', 'X', 'X', 'X', 'X',    'X',    '>'},
+        /*<=*/{'<', '<', '<', '<', '>', '<', '<', 'X', 'X', 'X',  'X', 'X',  'X',    '>'},
+        /*>=*/{'<', '<', '<', '<', '>', '<', '<', 'X', 'X', 'X',  'X', 'X',  'X',    '>'},
+        /*==*/{'<', '<', '<', '<', '>', '<', '<', 'X', 'X', 'X',  'X', 'X',  'X',    '>'},
+        /*!=*/{'<', '<', '<', '<', '>', '<', '<', 'X', 'X', 'X',  'X', 'X',  'X',    '>'},
+        /*$*/{'<', '<', '<', '<', 'X', '<', '<', '<', '<', '<',  '<', '<',   '<',    'S'}
 };
 
 DATA_TYPE getOutputType(DATA_TYPE type1,DATA_TYPE type2){
@@ -46,7 +47,7 @@ EA_TERMINAL_TYPE getTerminalDataType(TOKEN token) {
         case OPERATOR_ASSIGN:
         case SEMICOLON:
         case END_OF_FILE:
-            return EA_UNKNOWN;
+            return EA_START_END;
         case IDENTIFIER_FULL:
         case IDENTIFIER:
         case LITERAL_STRING:
@@ -93,7 +94,7 @@ EA_TERMINAL_TYPE getTerminalDataType(TOKEN token) {
                         brackets--;
                         return EA_RIGHT_BR;
                     }else{
-                        return EA_UNKNOWN;
+                        return EA_START_END;
                     }
                 default:
                     break;
@@ -102,7 +103,7 @@ EA_TERMINAL_TYPE getTerminalDataType(TOKEN token) {
         default:
             break;
     }
-    exit(111);
+    return EA_START_END;
 }
 
 bool parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NODEPtr *globalSymbolTable, SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBOL_TABLE_FUNCTION *calledFunction) {
@@ -143,7 +144,8 @@ bool parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NO
         switch (stackElement.type){
             case EA_TERMINAL: {
                 if(lookingForTerminal) {
-                    char action = terminalTable[stackElement.data.terminalData.type][terminalData.type];
+                    char  action = terminalTable[stackElement.data.terminalData.type][terminalData.type];
+
                     switch (action) {
                         case '<':
                             stackElement.type = EA_TERMINAL_ACTION;
@@ -166,25 +168,26 @@ bool parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NO
                             lookingForTerminal = false;
                             break;
                         case '=':
+                            while(!stackEmpty(backStack)) {
+                                stackTop(backStack, &stackElement);
+                                stackPop(backStack);
+                                stackPush(stack, stackElement);
+                            }
                             stackElement.type = EA_TERMINAL;
                             stackElement.data.terminalData = terminalData;
                             stackPush(stack, stackElement);
 
                             terminalData.type = EA_EMPTY;
                             break;
-                        default:
+                        case 'X':
+                            return false;
+                        case 'S':
                             returnCachedTokens(1);
-                            while(true){
-                                stackTop(stack,&stackElement);
-                                if(stackElement.type == EA_TERMINAL){
-                                    if(stackElement.data.terminalData.type == EA_START_END) {
-                                        printf("\n true");
-                                        return true;
-                                    } else{
-                                        return  false;
-                                    }
-                                }
-                            }
+
+                            return true;
+
+                        default:
+                            exit(136);
                     }
                     break;
                 }
@@ -273,7 +276,7 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
                 // TODO push variable
                 createInstructionMathOperation(Instruction_Addition,tempName,stackElement1.data.notTerminalData.name,stackElement2.data.notTerminalData.name);
 
-                printf("generate: E->E+E");
+                printf("generate: E->E+E\n");
                 stackElement1.data.notTerminalData.name =tempName;
                 stackElement1.data.notTerminalData.type = outputType;
                 stackElement1.type = EA_NOT_TERMINAL;
@@ -296,7 +299,7 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
 
                 createInstructionMathOperation(Instruction_Subtraction,tempName,stackElement1.data.notTerminalData.name,stackElement2.data.notTerminalData.name);
 
-                printf("generate: E->E-E");
+                printf("generate: E->E-E\n");
                 stackElement1.data.notTerminalData.name =tempName;
                 stackElement1.data.notTerminalData.type = outputType;
                 stackElement1.type = EA_NOT_TERMINAL;
@@ -319,7 +322,7 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
                 // TODO push variable
 
                 createInstructionMathOperation(Instruction_Multiply,tempName,stackElement1.data.notTerminalData.name,stackElement2.data.notTerminalData.name);
-                printf("generate: E->E*E");
+                printf("generate: E->E*E\n");
                 stackElement1.data.notTerminalData.name =tempName;
                 stackElement1.data.notTerminalData.type = outputType;
                 stackElement1.type = EA_NOT_TERMINAL;
@@ -336,13 +339,13 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
 
                 DATA_TYPE outputType = getOutputType(stackElement1.data.notTerminalData.type,stackElement3.data.notTerminalData.type);
 
-                if(outputType == TYPE_STRING) exit(3);
+                if(outputType == TYPE_STRING) exit(3); else outputType = TYPE_DOUBLE;
 
                 char *tempName = (char*)malloc(sizeof(char)*30);
                 strcpy(tempName,varName);
                 // TODO push variable
                 createInstructionMathOperation(Instruction_Multiply,tempName,stackElement1.data.notTerminalData.name,stackElement2.data.notTerminalData.name);
-                printf("generate: E->E/E");
+                printf("generate: E->E/E\n");
                 stackElement1.data.notTerminalData.name =tempName;
                 stackElement1.data.notTerminalData.type = outputType;
                 stackElement1.type = EA_NOT_TERMINAL;
@@ -355,7 +358,7 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
                stackElement3.data.terminalData.type == EA_RIGHT_BR &&
                stackElement3.type == EA_TERMINAL)
             {
-                printf("generate: E->(E)");
+                printf("generate: E->(E)\n");
                 stackElement1 = stackElement2;
             }else return  false;
 
@@ -370,7 +373,7 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
                     stackElement2.data.notTerminalData.name = stackElement1.data.terminalData.token.data.identifier.name;
                     SYMBOL_TABLE_VARIABLE *symbolTableVariable = getVariable(localSymbolTable, globalSymbolTable, calledFunction, stackElement2.data.notTerminalData.name);
                     stackElement2.data.notTerminalData.type = symbolTableVariable->type;
-                    printf("generate: E->i where i = ID");
+                    printf("generate: E->i where i = ID\n");
                 }else if(stackElement1.data.terminalData.token.type == IDENTIFIER_FULL){
                     sprintf(
                             stackElement2.data.notTerminalData.name,
@@ -380,7 +383,7 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
                     );
                     SYMBOL_TABLE_VARIABLE *symbolTableVariable = getVariable(localSymbolTable, globalSymbolTable, calledFunction, stackElement2.data.notTerminalData.name);
                     stackElement2.data.notTerminalData.type = symbolTableVariable->type;
-                    printf("generate: E->i where i = ID_FULL");
+                    printf("generate: E->i where i = ID_FULL\n");
                 }else {
                     concatenateString();
                     char *tempName = (char*)malloc(sizeof(char)*30);
@@ -404,7 +407,7 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
                     stackElement2.data.notTerminalData.type = varType;
                     stackElement2.data.notTerminalData.name = tempName;
                 }
-                printf("generate: E->i where i = LIT");
+                printf("generate: E->i where i = LIT\n");
                 stackElement2.type = EA_NOT_TERMINAL;
                 stackElement1=stackElement2;
             }else return  false;
