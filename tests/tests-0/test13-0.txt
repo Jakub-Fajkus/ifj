@@ -3,6 +3,6 @@ class Main {
         int x = 5;
         int y = 5;
         
-        ifj16.print(Main.x + Main.y);
+        ifj16.print(x + y);
     }
 }
