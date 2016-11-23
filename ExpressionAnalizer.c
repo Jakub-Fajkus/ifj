@@ -5,6 +5,7 @@
 #include "ExpressionAnalizer.h"
 #include "LexicalAnalyzerStructures.h"
 #include "SymbolTable.h"
+#include "Stack.h"
 
 unsigned long iterator = 0;
 char varName[100];
@@ -38,9 +39,9 @@ DATA_TYPE getOutputType(DATA_TYPE type1,DATA_TYPE type2){
     }
 }
 
-EA_TERMINAL_TYPE getTerminalDataType(TOKEN *token) {
+EA_TERMINAL_TYPE getTerminalDataType(TOKEN token) {
     static int brackets = 0;
-    switch (token->type) {
+    switch (token.type) {
         case KEYWORD:
         case OPERATOR_ASSIGN:
         case SEMICOLON:
@@ -53,7 +54,7 @@ EA_TERMINAL_TYPE getTerminalDataType(TOKEN *token) {
         case LITERAL_DOUBLE:
             return EA_I;
         case OPERATOR_ARITHMETIC:
-            switch (token->data.operatorArithmetic.name) {
+            switch (token.data.operatorArithmetic.name) {
                 case '+':
                     return EA_ADD;
                 case '-':
@@ -63,29 +64,27 @@ EA_TERMINAL_TYPE getTerminalDataType(TOKEN *token) {
                 case '/':
                     return EA_DIV;
                 default:
-                    //this break breaks the actual swith, not the outer with many cases
                     break;
             }
-            //the break here would break the terminal switch, but then the exit(99) comes into a play
-//            break;
+            break;
         case OPERATOR_LOGIC:
-            if (strcmp(token->data.operatorLogic.name, "<")) {
+            if (strcmp(token.data.operatorLogic.name, "<")) {
                 return EA_IS_LESS;
-            } else if (strcmp(token->data.operatorLogic.name, ">")) {
+            } else if (strcmp(token.data.operatorLogic.name, ">")) {
                 return EA_IS_MORE;
-            } else if (strcmp(token->data.operatorLogic.name, ">=")) {
+            } else if (strcmp(token.data.operatorLogic.name, ">=")) {
                 return EA_IS_MORE_EQUAL;
-            } else if (strcmp(token->data.operatorLogic.name, "<=")) {
+            } else if (strcmp(token.data.operatorLogic.name, "<=")) {
                 return EA_IS_LESS_EQUAL;
-            } else if (strcmp(token->data.operatorLogic.name, "==")) {
+            } else if (strcmp(token.data.operatorLogic.name, "==")) {
                 return EA_IS_EQUAL;
-            }else if (strcmp(token->data.operatorLogic.name, "!=")) {
+            }else if (strcmp(token.data.operatorLogic.name, "!=")) {
                 return EA_IS_NOT_EQUAL;
             } else {
                 break;
             }
         case BRACKET: {
-            switch (token->data.bracket.name) {
+            switch (token.data.bracket.name) {
                 case '(':
                     brackets++;
                     return EA_LEFT_BR;
@@ -103,7 +102,7 @@ EA_TERMINAL_TYPE getTerminalDataType(TOKEN *token) {
         default:
             break;
     }
-    exit(99);
+    exit(111);
 }
 
 bool parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NODEPtr *globalSymbolTable, SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBOL_TABLE_FUNCTION *calledFunction) {
@@ -136,7 +135,7 @@ bool parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NO
         if(terminalData.type == EA_EMPTY) {
             // new from cache START
             terminalData.token = *getCachedToken(); // BECAUSE reasons
-            terminalData.type = getTerminalDataType(&terminalData.token);
+            terminalData.type = getTerminalDataType(terminalData.token);
             // new from cache END
         }
 
@@ -148,9 +147,10 @@ bool parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NO
                     switch (action) {
                         case '<':
                             stackElement.type = EA_TERMINAL_ACTION;
+                            stackElement.data.actionType=terminalData.type;
                             stackPush(stack,stackElement);
 
-                            while(stackEmpty(stack)){
+                            while(!stackEmpty(backStack)){
                                 stackTop(backStack, &stackElement);
                                 stackPop(backStack);
                                 stackPush(stack, stackElement);
@@ -178,6 +178,7 @@ bool parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NO
                                 stackTop(stack,&stackElement);
                                 if(stackElement.type == EA_TERMINAL){
                                     if(stackElement.data.terminalData.type == EA_START_END) {
+                                        printf("\n true");
                                         return true;
                                     } else{
                                         return  false;
@@ -194,13 +195,15 @@ bool parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NO
                 break;
             case EA_TERMINAL_ACTION:
                 if(lookingForTerminal){
-                    exit(99);
+                    exit(112);
                 }
                 lookingForTerminal = true;
-                generate3AddressCode(stack, backStack, localSymbolTable,globalSymbolTable, calledFunction);
+                if(!generate3AddressCode(stack, backStack, localSymbolTable,globalSymbolTable, calledFunction)){
+                    return false;
+                }
                 break;
             default:
-                exit(99);
+                exit(113);
         }
     }
 
@@ -221,38 +224,38 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
         case EA_DIV:
         case EA_LEFT_BR:
         case EA_ADD:
-            if(!stackEmpty(stack)) {
-                stackTop(stack, &stackElement1);
-                stackPop(stack);
+            if(!stackEmpty(backStack)) {
+                stackTop(backStack, &stackElement1);
+                stackPop(backStack);
             }else return false;
 
-            if(!stackEmpty(stack)) {
-                stackTop(stack, &stackElement2);
-                stackPop(stack);
+            if(!stackEmpty(backStack)) {
+                stackTop(backStack, &stackElement2);
+                stackPop(backStack);
             }else return false;
 
-            if(!stackEmpty(stack)) {
-                stackTop(stack, &stackElement3);
-                stackPop(stack);
+            if(!stackEmpty(backStack)) {
+                stackTop(backStack, &stackElement3);
+                stackPop(backStack);
             }else return false;
 
-            if(!stackEmpty(stack)){
+            if(!stackEmpty(backStack)){
                 return false;
             }
 
             break;
         case EA_I:
-            if(!stackEmpty(stack)) {
-                stackTop(stack, &stackElement1);
-                stackPop(stack);
+            if(!stackEmpty(backStack)) {
+                stackTop(backStack, &stackElement1);
+                stackPop(backStack);
             }else return false;
 
-            if(!stackEmpty(stack)){
+            if(!stackEmpty(backStack)){
                 return false;
             }
             break;
         default:
-            exit(99);
+            exit(114);
     }
 
     switch (actionType){
@@ -268,11 +271,8 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
                 char *tempName = (char*)malloc(sizeof(char)*30);
                 strcpy(tempName,varName);
                 // TODO push variable
-                if(outputType != TYPE_STRING){
-                    createInstructionMathOperation(Instruction_Addition,tempName,stackElement1.data.notTerminalData.name,stackElement2.data.notTerminalData.name);
-                }else {
-                    //TODO concatenate STRINGS
-                }
+                createInstructionMathOperation(Instruction_Addition,tempName,stackElement1.data.notTerminalData.name,stackElement2.data.notTerminalData.name);
+
                 printf("generate: E->E+E");
                 stackElement1.data.notTerminalData.name =tempName;
                 stackElement1.data.notTerminalData.type = outputType;
@@ -397,9 +397,12 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
                             varType = TYPE_INT;
                             break;
                         default:
-                            exit(99);
+                            exit(115);
                     }
                     //todo create local var
+
+                    stackElement2.data.notTerminalData.type = varType;
+                    stackElement2.data.notTerminalData.name = tempName;
                 }
                 printf("generate: E->i where i = LIT");
                 stackElement2.type = EA_NOT_TERMINAL;
@@ -407,7 +410,7 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
             }else return  false;
             break;
         default:
-            exit(99);
+            exit(116);
     }
 
     stackPush(stack,stackElement1);

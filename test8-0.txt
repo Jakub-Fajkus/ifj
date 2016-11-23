@@ -1,5 +1,5 @@
 class _smth{
     static int smth(){
-        int a = 2 + 3 * (3 / 2 + 2);
+        int a = (3 / 2);
     }
 }

@@ -67,6 +67,7 @@ TOKEN *getToken() {
     if(token->type == LEX_ERROR){
         Error1();
     }
+
     return token;
 }
 
@@ -156,7 +157,7 @@ void slash(TOKEN *token) {
         multiLineComment(token);
     } else if (testValid(c)) {
         token->type = OPERATOR_ARITHMETIC;
-        token->data.operatorArithmetic.name = (char) c;
+        token->data.operatorArithmetic.name = '/';
     } else {
         token->type = LEX_ERROR;
     }
