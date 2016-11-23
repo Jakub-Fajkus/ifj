@@ -5,7 +5,6 @@ FILES=`find tests/$FOLDER -iname  'test*' | sort -n`
 FAILED_COUNTER=0
 OK_COUNTER=0
 
-
 for FILE in $FILES; do
     EXPECTED_RETURN_CODE=`echo $FILE | cut -d'/' -f 3 | cut -d'-' -f 2 | cut -d'.' -f 1`
 
