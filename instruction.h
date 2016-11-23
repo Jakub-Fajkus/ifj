@@ -61,11 +61,11 @@ typedef struct sINSTRUCTION{
 // Used for Global frame & Local frames
 tDLList *createFrame();
 void pushToFrame(tDLList *globalFrame, INSTRUCTION *instruction);
-tStack *createFrameStack();
-void pushFrameToStack(tStack *localFrameStack,tDLList *frame);
+struct tStuck_struct *createFrameStack();
+void pushFrameToStack(struct tStuck_struct *localFrameStack,tDLList *frame);
 
 VARIABLE *findFrameVariable(tDLList *frame, char *name);
-tDLList *getActualLocalFrame(tStack *stackOfLocalFrames);
+tDLList *getActualLocalFrame(struct tStuck_struct *stackOfLocalFrames);
 
 
 /* ************************************************ CREATE *************************************************/

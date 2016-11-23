@@ -369,7 +369,7 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
                 if(stackElement1.data.terminalData.token.type == IDENTIFIER){
                     stackElement2.data.notTerminalData.name = stackElement1.data.terminalData.token.data.identifier.name;
                     SYMBOL_TABLE_VARIABLE *symbolTableVariable = getVariable(localSymbolTable, globalSymbolTable, calledFunction, stackElement2.data.notTerminalData.name);
-                    stackElement2.data.notTerminalData.type = symbolTableVariable->type
+                    stackElement2.data.notTerminalData.type = symbolTableVariable->type;
                     printf("generate: E->i where i = ID");
                 }else if(stackElement1.data.terminalData.token.type == IDENTIFIER_FULL){
                     sprintf(
