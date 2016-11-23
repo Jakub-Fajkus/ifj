@@ -19,15 +19,39 @@ typedef enum STACK_ELEMENT_TYPE {
     STACK_ELEMENT_TYPE_LOCAL_FRAME = 15004
 }STACK_ELEMENT_TYPE;
 
+typedef enum EA_TERMINAL_TYPE_ENUM{
+    EA_ADD = 0,
+    EA_SUB = 1,
+    EA_MUL = 2,
+    EA_LEFT_BR = 3,
+    EA_RIGHT_BR = 4,
+    EA_I = 5,
+    EA_DIV = 6,
+    EA_IS_LESS = 7,
+    EA_IS_MORE = 8,
+    EA_IS_LESS_EQUAL = 9,
+    EA_IS_MORE_EQUAL = 10,
+    EA_IS_EQUAL = 11,
+    EA_IS_NOT_EQUAL = 12,
+    EA_START_END = 13,
+    EA_EMPTY,
+    EA_UNKNOWN
+} EA_TERMINAL_TYPE;
+
 typedef struct {
     EA_TERMINAL_TYPE type;
     TOKEN token;
 } EA_TERMINAL_DATA;
 
+typedef struct {
+    char *name;//bude bohate stačit
+    DATA_TYPE type;
+} EA_NOT_TERMINAL_DATA;
+
 typedef union STACK_ELEMENT_DATA {
     EA_TERMINAL_DATA terminalData;
     tDLList *localFrame;
-    char *notTerminalData;
+    EA_NOT_TERMINAL_DATA notTerminalData;
     EA_TERMINAL_TYPE actionType;
 }STACK_ELEMENT_DATA;
 

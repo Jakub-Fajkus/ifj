@@ -3,10 +3,13 @@
 //
 
 #include "ExpressionAnalizer.h"
-#include "Stack.h"
 #include "LexicalAnalyzerStructures.h"
+#include "SymbolTable.h"
 
-void generate3AdressCode();
+unsigned long iterator = 0;
+char varName[100];
+bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr *globalSymbolTable, SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBOL_TABLE_FUNCTION *calledFunction);
+void concatenateString();
 
 static char terminalTable[14][14] = {
         {'>', '>', '<', '<', '>', '<', '<', '>', '>', '>', '>', '>', '>', '>'},
@@ -24,6 +27,16 @@ static char terminalTable[14][14] = {
         {'<', '<', '<', '<', '>', '<', '<', 'X', 'X', 'X', 'X', 'X', 'X', '>'},
         {'<', '<', '<', '<', 'X', '<', '<', '<', '<', '<', '<', '<', '<', 'S'}
 };
+
+DATA_TYPE getOutputType(DATA_TYPE type1,DATA_TYPE type2){
+    if(type1 == TYPE_STRING || type2 == TYPE_STRING){
+        return TYPE_STRING;
+    }else if(type1 == TYPE_DOUBLE || type2 == TYPE_DOUBLE){
+        return TYPE_DOUBLE;
+    }else{
+        return TYPE_INT;
+    }
+}
 
 EA_TERMINAL_TYPE getTerminalDataType(TOKEN *token) {
     static int brackets = 0;
@@ -93,7 +106,7 @@ EA_TERMINAL_TYPE getTerminalDataType(TOKEN *token) {
     exit(99);
 }
 
-bool parseExpression(tDLList *threeAddressCode, char *returnVal) {
+bool parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NODEPtr *globalSymbolTable, SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBOL_TABLE_FUNCTION *calledFunction) {
 
     bool lookingForTerminal = true;
     STACK_ELEMENT stackElement;
@@ -111,9 +124,8 @@ bool parseExpression(tDLList *threeAddressCode, char *returnVal) {
     //todo: validate
     TOKEN *token = getCachedToken();
     if((token->type == BRACKET && token->data.bracket.name == ')') ||
-       !(token->type == OPERATOR_ARITHMETIC || token->type == OPERATOR_LOGIC ||
-         token->type == IDENTIFIER || token->type == LITERAL_DOUBLE || token->type == LITERAL_INTEGER || token->type == LITERAL_STRING)
-            ) {
+            token->type == KEYWORD || token->type == OPERATOR_ASSIGN ||
+            token->type == SEMICOLON || token->type == END_OF_FILE){
         returnCachedTokens(1);
         return false;
     }
@@ -125,7 +137,6 @@ bool parseExpression(tDLList *threeAddressCode, char *returnVal) {
             // new from cache START
             terminalData.token = *getCachedToken(); // BECAUSE reasons
             terminalData.type = getTerminalDataType(&terminalData.token);
-
             // new from cache END
         }
 
@@ -157,9 +168,9 @@ bool parseExpression(tDLList *threeAddressCode, char *returnVal) {
                         case '=':
                             stackElement.type = EA_TERMINAL;
                             stackElement.data.terminalData = terminalData;
-                            terminalData.type = EA_EMPTY;
-
                             stackPush(stack, stackElement);
+
+                            terminalData.type = EA_EMPTY;
                             break;
                         default:
                             returnCachedTokens(1);
@@ -186,12 +197,7 @@ bool parseExpression(tDLList *threeAddressCode, char *returnVal) {
                     exit(99);
                 }
                 lookingForTerminal = true;
-                stackPop(stack);
-
-                generate3AdressCode();
-
-                stackElement.type = EA_NOT_TERMINAL;
-                stackPush(stack,stackElement);
+                generate3AddressCode(stack, backStack, localSymbolTable,globalSymbolTable, calledFunction);
                 break;
             default:
                 exit(99);
@@ -200,6 +206,217 @@ bool parseExpression(tDLList *threeAddressCode, char *returnVal) {
 
 }
 
-void generate3AdressCode(){
+bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr *globalSymbolTable, SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBOL_TABLE_FUNCTION *calledFunction){
+    STACK_ELEMENT stackElement1;
+    STACK_ELEMENT stackElement2;
+    STACK_ELEMENT stackElement3;
+    stackTop(stack,&stackElement1);
+    stackPop(stack);
+    EA_TERMINAL_TYPE actionType = stackElement1.data.actionType;
+    stackElement2.type = EA_TERMINAL_ACTION; // fake value
 
+    switch (actionType){
+        case EA_SUB:
+        case EA_MUL:
+        case EA_DIV:
+        case EA_LEFT_BR:
+        case EA_ADD:
+            if(!stackEmpty(stack)) {
+                stackTop(stack, &stackElement1);
+                stackPop(stack);
+            }else return false;
+
+            if(!stackEmpty(stack)) {
+                stackTop(stack, &stackElement2);
+                stackPop(stack);
+            }else return false;
+
+            if(!stackEmpty(stack)) {
+                stackTop(stack, &stackElement3);
+                stackPop(stack);
+            }else return false;
+
+            if(!stackEmpty(stack)){
+                return false;
+            }
+
+            break;
+        case EA_I:
+            if(!stackEmpty(stack)) {
+                stackTop(stack, &stackElement1);
+                stackPop(stack);
+            }else return false;
+
+            if(!stackEmpty(stack)){
+                return false;
+            }
+            break;
+        default:
+            exit(99);
+    }
+
+    switch (actionType){
+        case EA_ADD:
+            if(stackElement1.type == EA_NOT_TERMINAL &&
+                    stackElement2.type == EA_TERMINAL &&
+                    stackElement2.data.terminalData.type == EA_ADD &&
+                    stackElement3.type == EA_NOT_TERMINAL)
+            {
+                concatenateString();
+                DATA_TYPE outputType = getOutputType(stackElement1.data.notTerminalData.type,stackElement3.data.notTerminalData.type);
+
+                char *tempName = (char*)malloc(sizeof(char)*30);
+                strcpy(tempName,varName);
+                // TODO push variable
+                if(outputType != TYPE_STRING){
+                    createInstructionMathOperation(Instruction_Addition,tempName,stackElement1.data.notTerminalData.name,stackElement2.data.notTerminalData.name);
+                }else {
+                    //TODO concatenate STRINGS
+                }
+                printf("generate: E->E+E");
+                stackElement1.data.notTerminalData.name =tempName;
+                stackElement1.data.notTerminalData.type = outputType;
+                stackElement1.type = EA_NOT_TERMINAL;
+            } else return  false;
+            break;
+        case EA_SUB:
+            if(stackElement1.type == EA_NOT_TERMINAL &&
+               stackElement2.type == EA_TERMINAL &&
+               stackElement2.data.terminalData.type == EA_SUB &&
+               stackElement3.type == EA_NOT_TERMINAL)
+            {
+                concatenateString();
+                DATA_TYPE outputType = getOutputType(stackElement1.data.notTerminalData.type,stackElement3.data.notTerminalData.type);
+
+                if(outputType == TYPE_STRING) exit(3);
+
+                char *tempName = (char*)malloc(sizeof(char)*30);
+                strcpy(tempName,varName);
+                // TODO push variable
+
+                createInstructionMathOperation(Instruction_Subtraction,tempName,stackElement1.data.notTerminalData.name,stackElement2.data.notTerminalData.name);
+
+                printf("generate: E->E-E");
+                stackElement1.data.notTerminalData.name =tempName;
+                stackElement1.data.notTerminalData.type = outputType;
+                stackElement1.type = EA_NOT_TERMINAL;
+            } else return  false;
+            break;
+        case EA_MUL:
+            if(stackElement1.type == EA_NOT_TERMINAL &&
+               stackElement2.type == EA_TERMINAL &&
+               stackElement2.data.terminalData.type == EA_MUL &&
+               stackElement3.type == EA_NOT_TERMINAL)
+            {
+                concatenateString();
+
+                DATA_TYPE outputType = getOutputType(stackElement1.data.notTerminalData.type,stackElement3.data.notTerminalData.type);
+
+                if(outputType == TYPE_STRING) exit(3);
+
+                char *tempName = (char*)malloc(sizeof(char)*30);
+                strcpy(tempName,varName);
+                // TODO push variable
+
+                createInstructionMathOperation(Instruction_Multiply,tempName,stackElement1.data.notTerminalData.name,stackElement2.data.notTerminalData.name);
+                printf("generate: E->E*E");
+                stackElement1.data.notTerminalData.name =tempName;
+                stackElement1.data.notTerminalData.type = outputType;
+                stackElement1.type = EA_NOT_TERMINAL;
+            }else return  false;
+
+            break;
+        case EA_DIV:
+            if(stackElement1.type == EA_NOT_TERMINAL &&
+               stackElement2.type == EA_TERMINAL &&
+               stackElement2.data.terminalData.type == EA_DIV &&
+               stackElement3.type == EA_NOT_TERMINAL)
+            {
+                concatenateString();
+
+                DATA_TYPE outputType = getOutputType(stackElement1.data.notTerminalData.type,stackElement3.data.notTerminalData.type);
+
+                if(outputType == TYPE_STRING) exit(3);
+
+                char *tempName = (char*)malloc(sizeof(char)*30);
+                strcpy(tempName,varName);
+                // TODO push variable
+                createInstructionMathOperation(Instruction_Multiply,tempName,stackElement1.data.notTerminalData.name,stackElement2.data.notTerminalData.name);
+                printf("generate: E->E/E");
+                stackElement1.data.notTerminalData.name =tempName;
+                stackElement1.data.notTerminalData.type = outputType;
+                stackElement1.type = EA_NOT_TERMINAL;
+            }else  return  false;
+            break;
+        case EA_LEFT_BR:
+            if(stackElement1.type == EA_TERMINAL &&
+               stackElement1.data.terminalData.type == EA_LEFT_BR &&
+               stackElement2.type == EA_NOT_TERMINAL &&
+               stackElement3.data.terminalData.type == EA_RIGHT_BR &&
+               stackElement3.type == EA_TERMINAL)
+            {
+                printf("generate: E->(E)");
+                stackElement1 = stackElement2;
+            }else return  false;
+
+            break;
+        case EA_I:
+            if(stackElement1.type == EA_TERMINAL &&
+               stackElement1.data.terminalData.type == EA_I)
+            {
+//                stackElement2 = temp :)
+
+                if(stackElement1.data.terminalData.token.type == IDENTIFIER){
+                    stackElement2.data.notTerminalData.name = stackElement1.data.terminalData.token.data.identifier.name;
+                    SYMBOL_TABLE_VARIABLE *symbolTableVariable = getVariable(localSymbolTable, globalSymbolTable, calledFunction, stackElement2.data.notTerminalData.name);
+                    stackElement2.data.notTerminalData.type = symbolTableVariable->type
+                    printf("generate: E->i where i = ID");
+                }else if(stackElement1.data.terminalData.token.type == IDENTIFIER_FULL){
+                    sprintf(
+                            stackElement2.data.notTerminalData.name,
+                            "%s.%s",
+                            stackElement1.data.terminalData.token.data.identifierFull.class,
+                            stackElement1.data.terminalData.token.data.identifierFull.name
+                    );
+                    SYMBOL_TABLE_VARIABLE *symbolTableVariable = getVariable(localSymbolTable, globalSymbolTable, calledFunction, stackElement2.data.notTerminalData.name);
+                    stackElement2.data.notTerminalData.type = symbolTableVariable->type;
+                    printf("generate: E->i where i = ID_FULL");
+                }else {
+                    concatenateString();
+                    char *tempName = (char*)malloc(sizeof(char)*30);
+                    strcpy(tempName,varName);
+                    DATA_TYPE varType;
+                    switch (stackElement1.data.terminalData.token.type){
+                        case LITERAL_DOUBLE:
+                            varType = TYPE_DOUBLE;
+                            break;
+                        case LITERAL_STRING:
+                            varType = TYPE_STRING;
+                            break;
+                        case LITERAL_INTEGER:
+                            varType = TYPE_INT;
+                            break;
+                        default:
+                            exit(99);
+                    }
+                    //todo create local var
+                }
+                printf("generate: E->i where i = LIT");
+                stackElement2.type = EA_NOT_TERMINAL;
+                stackElement1=stackElement2;
+            }else return  false;
+            break;
+        default:
+            exit(99);
+    }
+
+    stackPush(stack,stackElement1);
+    return  true;
 };
+
+
+void concatenateString(){
+    iterator++;
+    sprintf(varName, "#ExpressionAnalyzerVar%lu", iterator);
+}
+
