@@ -1,7 +1,7 @@
 //
 // Created by Jakub Fajkus on 12.11.16.
 //
-
+#include "ial.h"
 #include "SyntacticalAnalyzer.h"
 #include "Debug.h"
 #include "LexicalAnalyzerStructures.h"
@@ -9,6 +9,12 @@
 #define stringEquals(x,y) (strcmp(x, y) == 0)
 
 tDLList *globalTokens;
+
+SYMBOL_TABLE_NODEPtr *globalSymbolTable;
+SYMBOL_TABLE_NODEPtr *actualSymbolTable;
+SYMBOL_TABLE_FUNCTION *actualFunction;
+
+bool firstPass = true;
 
 /**
  * Return 'count' number of tokens.
@@ -32,13 +38,16 @@ tDLList* getAllTokens(char *fileName);
 
 void testTokens();
 
-void firstPass();
+void makeFirstPass();
 
 void runSyntacticalAnalysis(char *fileName) {
     globalTokens = getAllTokens(fileName);
     tDLList *tokens = globalTokens; //for debugger
 
-    firstPass();
+    initializeSymbolTable(&globalSymbolTable);
+    initializeSymbolTable(&actualSymbolTable);
+
+    makeFirstPass();
 
 //    testTokens(); //todo: this is only for "testing"
 }
@@ -89,9 +98,20 @@ tDLList* getAllTokens(char *fileName) {
     return listOfTokens;
 }
 
-bool ruleId() {
+bool ruleId(char **name) {
     TOKEN *token = getCachedToken();
-    if(token->type == IDENTIFIER || token->type == IDENTIFIER_FULL) {
+
+    if (token->type == IDENTIFIER) {
+        *name = token->data.identifier.name;
+        return true;
+    }
+
+    if(token->type == IDENTIFIER_FULL) {
+        char *classWithDot = stringConcat(token->data.identifierFull.class, ".");
+        char *fullName = stringConcat(classWithDot, token->data.identifierFull.name);
+        free(classWithDot);
+
+        *name = fullName;
         return true;
     } else {
         returnCachedTokens(1);
@@ -99,10 +119,11 @@ bool ruleId() {
     }
 }
 
-bool ruleTypeString() {
+bool ruleTypeString(char **type) {
     TOKEN *token = getCachedToken();
 
     if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "String")) {
+        *type = "String";
         return true;
     } else {
         returnCachedTokens(1);
@@ -110,10 +131,11 @@ bool ruleTypeString() {
     }
 }
 
-bool ruleTypeDouble() {
+bool ruleTypeDouble(char **type) {
     TOKEN *token = getCachedToken();
 
     if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "double")) {
+        *type = "double";
         return true;
     } else {
         returnCachedTokens(1);
@@ -121,10 +143,11 @@ bool ruleTypeDouble() {
     }
 }
 
-bool ruleTypeInt() {
+bool ruleTypeInt(char **type) {
     TOKEN *token = getCachedToken();
 
     if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "int")) {
+        *type = "int";
         return true;
     } else {
         returnCachedTokens(1);
@@ -136,9 +159,12 @@ bool ruleProg(){
     tDLElemPtr activeElementRuleApplication = globalTokens->Act;
     TOKEN *token = getCachedToken();
 
+    char *className;
     //<PROG> -> class <ID> {<CLASS_DEFINITION> } <PROG>
     if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "class")) {
-        if (ruleId()) {
+        if (ruleId(&className)) {
+//            createAndInsertIntVariable(globalSymbolTable, className)
+
             token = getCachedToken();
             if (token->type == BRACKET && token->data.bracket.name == '{') {
                 if (ruleClassDefinition()) {
@@ -230,7 +256,7 @@ bool rulePropDef(){
 
         char* resultVariableName;
 
-        if (parseExpression(dummyInstructionLIst, resultVariableName, NULL, NULL, NULL)) {
+        if (parseExpression(dummyInstructionLIst, resultVariableName, globalSymbolTable, actualSymbolTable, actualFunction)) {
             token = getCachedToken();
             if (token->type == SEMICOLON) {
                 return true;
@@ -291,9 +317,12 @@ bool ruleFuncDef(){
 
 bool ruleStListDecl(){
     //<ST_LIST_DECL> -> <TYPE><ID><DECL><ST_LIST_DECL>
-    if (ruleTypeDouble() || ruleTypeInt() || ruleTypeString()) {
-        if (ruleId()) {
-            if (ruleDecl()) { //tu nevlezu!!
+    char *type;
+    char *name;
+
+    if (ruleTypeDouble(&type) || ruleTypeInt(&type) || ruleTypeString(&type)) {
+        if (ruleId(&name)) {
+            if (ruleDecl()) {
                 if (ruleStListDecl()) {
                     return true;
                 }
@@ -372,7 +401,7 @@ bool ruleDecl(){
         ListInit(dummyInstructionLIst);
         char* resultVariableName;
 
-        if (parseExpression(dummyInstructionLIst, resultVariableName, NULL, NULL, NULL)) {
+        if (parseExpression(dummyInstructionLIst, resultVariableName, globalSymbolTable, actualSymbolTable, actualFunction)) {
             token = getCachedToken();
 
             //<DECL> -> ;
@@ -398,8 +427,10 @@ bool ruleStat(){
     tDLList *dummyInstructionLIst = malloc(sizeof(tDLList));
     ListInit(dummyInstructionLIst);
 
+    char *name;
+
     //<STAT> -> <ID><STAT_BEGINNING_ID>;
-    if (ruleId() && ruleStatBeginningId()) {
+    if (ruleId(&name) && ruleStatBeginningId()) {
         TOKEN *token = getCachedToken();
         if(token->type == SEMICOLON) {
             return true;
@@ -412,7 +443,7 @@ bool ruleStat(){
             token = getCachedToken();
             if (token->type == BRACKET && token->data.bracket.name == '(') {
                 char* resultVariableName;
-                if (parseExpression(dummyInstructionLIst, resultVariableName, NULL, NULL, NULL)) {
+                if (parseExpression(dummyInstructionLIst, resultVariableName, globalSymbolTable, actualSymbolTable, actualFunction)) {
                     token = getCachedToken();
                     if (token->type == BRACKET && token->data.bracket.name == ')') {
                         token = getCachedToken();
@@ -433,7 +464,7 @@ bool ruleStat(){
             token = getCachedToken();
             if (token->type == BRACKET && token->data.bracket.name == '(') {
                 char* resultVariableName;
-                if (parseExpression(dummyInstructionLIst, resultVariableName, NULL, NULL, NULL)) {
+                if (parseExpression(dummyInstructionLIst, resultVariableName, globalSymbolTable, actualSymbolTable, actualFunction)) {
                     token = getCachedToken();
                     if (token->type == BRACKET && token->data.bracket.name == ')') {
                         token = getCachedToken();
@@ -485,7 +516,7 @@ bool ruleExpSemicolon() {
         ListInit(dummyInstructionLIst);
         char *returnValue;
 
-        if(parseExpression(dummyInstructionLIst, returnValue, NULL, NULL, NULL)) {
+        if(parseExpression(dummyInstructionLIst, returnValue, globalSymbolTable, actualSymbolTable, actualFunction)) {
             token = getCachedToken();
             if (token->type == SEMICOLON){
                 return true;
@@ -523,14 +554,16 @@ bool ruleParam(){
     tDLList *dummyInstructionLIst = malloc(sizeof(tDLList));
     ListInit(dummyInstructionLIst);
 
+    char *name;
+
     //<PARAM> -> <EXP> <AFTER_FUNCTION_CALL_EXP>
     //<PARAM> -> <ID> <AFTER_FUNCTION_CALL_EXP>
     char* resultVariableName;
-    if (parseExpression(dummyInstructionLIst, resultVariableName, NULL, NULL, NULL)) {
+    if (parseExpression(dummyInstructionLIst, resultVariableName, globalSymbolTable, actualSymbolTable, actualFunction)) {
         if (ruleAfterFunctionCallExp()) {
             return true;
         }
-    } else if (ruleId()) {
+    } else if (ruleId(&name)) {
         if (ruleAfterFunctionCallExp()) {
             return true;
         }
@@ -580,9 +613,12 @@ bool ruleFuncDefParams(){
 }
 
 bool ruleDefParam(){
+
+    char *type;
+    char *name;
     //<DEF_PARAM> -> <TYPE> <ID> <DEF_PARAM_BEGIN_TI>
-    if (ruleTypeInt() || ruleTypeDouble() || ruleTypeString()) {
-        if (ruleId()) {
+    if (ruleTypeInt(&type) || ruleTypeDouble(&type) || ruleTypeString(&type)) {
+        if (ruleId(&name)) {
             if (ruleDefParamBeginTi()) {
                 return true;
             }
@@ -626,8 +662,10 @@ bool ruleFunctionDefEnd(){
     return false;
 }
 
-bool ruleTypeVoid() {
-    if (ruleTypeInt() || ruleTypeDouble() || ruleTypeString()) {
+bool ruleTypeVoid(char **name) {
+    char *type;
+
+    if (ruleTypeInt(&type) || ruleTypeDouble(&type) || ruleTypeString(&type)) {
         return true;
     } else {
         TOKEN *token = getCachedToken();
@@ -644,30 +682,31 @@ bool ruleDefinitionStart() {
     tDLElemPtr activeElementRuleApplication = globalTokens->Act;
     TOKEN *token = getCachedToken();
 
+    char *name;
     //<DEFINITION_START> -> void <ID><FUNC_DEF>
     if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "void")) {
-        if (ruleId()) {
+        if (ruleId(&name)) {
             if (ruleFuncDef()) {
                 return true;
             }
         }
     //<DEFINITION_START> -> string <ID><DEFINITION>
     } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "String")) {
-        if (ruleId()) {
+        if (ruleId(&name)) {
             if (ruleDefinition()) {
                 return true;
             }
         }
     //<DEFINITION_START> -> int <ID><DEFINITION>
     } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "int")) {
-        if (ruleId()) {
+        if (ruleId(&name)) {
             if (ruleDefinition()) {
                 return true;
             }
         }
     //<DEFINITION_START> -> double <ID><DEFINITION>
     } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "double")) {
-        if (ruleId()) {
+        if (ruleId(&name)) {
             if (ruleDefinition()) {
                 return true;
             }
@@ -692,7 +731,7 @@ bool ruleStatBeginningId() {
         char* resultVariableName;
 
         if(token->type == OPERATOR_ASSIGN) {
-            if (parseExpression(dummyInstructionLIst, resultVariableName, NULL, NULL, NULL)) {
+            if (parseExpression(dummyInstructionLIst, resultVariableName, globalSymbolTable, actualSymbolTable, actualFunction)) {
                 return true;
             }
         }
@@ -719,16 +758,14 @@ void testTokens() {
     printToken(actualToken);
 }
 
-void firstPass() {
+void makeFirstPass() {
     ListFirst(globalTokens);
 
     bool result = ruleProg();
-//    printf("the result of syntax check is %d", result);
 
     if(result == 0) {
         exit(2);
     }
-    //call function for class
 }
 
 

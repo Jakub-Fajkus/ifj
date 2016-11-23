@@ -51,10 +51,10 @@ bool ruleFuncDefParams();
 bool ruleDefParam();
 bool ruleDefParamBeginTi();
 bool ruleFunctionDefEnd();
-bool ruleTypeInt();
-bool ruleTypeDouble();
-bool ruleTypeString();
-bool ruleTypeVoid();
+bool ruleTypeInt(char **name);
+bool ruleTypeDouble(char **type);
+bool ruleTypeString(char **type);
+bool ruleTypeVoid(char **type);
 bool ruleDefinitionStart();
 bool ruleExpSemicolon();
 

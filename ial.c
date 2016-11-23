@@ -99,3 +99,13 @@ void swap(char *arr, int left, int right){
     arr[right] = arr[left];
     arr[left] = tmp;
 }
+
+char *stringConcat(char *str1, char *str2) {
+    char *buffer = malloc(sizeof(char)*(strlen(str1) + strlen(str2)+1));
+    buffer[0] = '\0';
+
+    strcat(buffer, str1);
+    strcat(buffer, str2);
+
+    return buffer;
+}
