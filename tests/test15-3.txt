@@ -1,0 +1,10 @@
+class Main{
+
+    static double neco() {
+
+    }
+
+    static double neco() {
+
+    }
+}

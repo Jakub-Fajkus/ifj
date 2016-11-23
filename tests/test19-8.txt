@@ -1,0 +1,13 @@
+class Main{
+    static int a;
+
+    static void example(){
+        a = -1;
+    }
+
+    static int run(){
+        ifj16.print(a);
+        example();
+        return 0;
+    }
+}

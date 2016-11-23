@@ -1,0 +1,8 @@
+class Main{
+
+    static double neco;
+
+    static double neco() {
+        int \a;
+    }
+}
