@@ -11,6 +11,7 @@ unsigned long iterator = 0;
 char varName[100];
 bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr *globalSymbolTable, SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBOL_TABLE_FUNCTION *calledFunction);
 void concatenateString();
+bool stopNow = false;
 
 static char terminalTable[14][14] = {
              /*+*/ /*-*//***//*(*//*)*//*I*//*/*//*<*//*>*//*>=*//*>=*//*==*//*!=*//*$*/
@@ -45,8 +46,9 @@ EA_TERMINAL_TYPE getTerminalDataType(TOKEN token) {
     switch (token.type) {
         case KEYWORD:
         case OPERATOR_ASSIGN:
-        case SEMICOLON:
         case END_OF_FILE:
+            return EA_UNKNOWN;
+        case SEMICOLON:
             return EA_START_END;
         case IDENTIFIER_FULL:
         case IDENTIFIER:
@@ -103,11 +105,11 @@ EA_TERMINAL_TYPE getTerminalDataType(TOKEN token) {
         default:
             break;
     }
-    return EA_START_END;
+    return EA_UNKNOWN;
 }
 
 bool parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NODEPtr *globalSymbolTable, SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBOL_TABLE_FUNCTION *calledFunction) {
-
+    printf("\nDEBUG expression START\n");
     bool lookingForTerminal = true;
     STACK_ELEMENT stackElement;
     tStack *stack = malloc(sizeof(tStack));
@@ -140,12 +142,17 @@ bool parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NO
             // new from cache END
         }
 
+        if(terminalData.type == EA_UNKNOWN)return false;
+
+
         stackTop(stack, &stackElement);
         switch (stackElement.type){
             case EA_TERMINAL: {
                 if(lookingForTerminal) {
                     char  action = terminalTable[stackElement.data.terminalData.type][terminalData.type];
-
+                    if(stopNow && action != 'S'){
+                        return false;
+                    }
                     switch (action) {
                         case '<':
                             stackElement.type = EA_TERMINAL_ACTION;
@@ -183,7 +190,11 @@ bool parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NO
                             return false;
                         case 'S':
                             returnCachedTokens(1);
-
+                            printf("\nDEBUG expression END\n");
+                            //reset globals
+                            stopNow = false;
+                            //TODO vhen NOT NULL
+//                            varName => returnVal
                             return true;
 
                         default:
@@ -222,11 +233,19 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
     stackElement2.type = EA_TERMINAL_ACTION; // fake value
 
     switch (actionType){
+        case EA_IS_LESS:
+        case EA_IS_MORE:
+        case EA_IS_MORE_EQUAL:
+        case EA_IS_LESS_EQUAL:
+        case EA_IS_EQUAL:
+        case EA_IS_NOT_EQUAL:
+            stopNow = true;
         case EA_SUB:
         case EA_MUL:
         case EA_DIV:
         case EA_LEFT_BR:
         case EA_ADD:
+
             if(!stackEmpty(backStack)) {
                 stackTop(backStack, &stackElement1);
                 stackPop(backStack);
@@ -371,16 +390,20 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
 
                 if(stackElement1.data.terminalData.token.type == IDENTIFIER){
                     stackElement2.data.notTerminalData.name = stackElement1.data.terminalData.token.data.identifier.name;
+//                     TODO when not null
                     SYMBOL_TABLE_VARIABLE *symbolTableVariable = getVariable(localSymbolTable, globalSymbolTable, calledFunction, stackElement2.data.notTerminalData.name);
                     stackElement2.data.notTerminalData.type = symbolTableVariable->type;
                     printf("generate: E->i where i = ID\n");
                 }else if(stackElement1.data.terminalData.token.type == IDENTIFIER_FULL){
+                    char *tempName = (char*)malloc(sizeof(char) * (1+strlen(stackElement1.data.terminalData.token.data.identifierFull.class) + strlen(stackElement1.data.terminalData.token.data.identifierFull.class)));
                     sprintf(
-                            stackElement2.data.notTerminalData.name,
+                            tempName,
                             "%s.%s",
                             stackElement1.data.terminalData.token.data.identifierFull.class,
                             stackElement1.data.terminalData.token.data.identifierFull.name
                     );
+                    stackElement2.data.notTerminalData.name = tempName;
+//                    todo when not null
                     SYMBOL_TABLE_VARIABLE *symbolTableVariable = getVariable(localSymbolTable, globalSymbolTable, calledFunction, stackElement2.data.notTerminalData.name);
                     stackElement2.data.notTerminalData.type = symbolTableVariable->type;
                     printf("generate: E->i where i = ID_FULL\n");
@@ -411,6 +434,30 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
                 stackElement2.type = EA_NOT_TERMINAL;
                 stackElement1=stackElement2;
             }else return  false;
+            break;
+        case EA_IS_LESS:
+        case EA_IS_MORE:
+        case EA_IS_MORE_EQUAL:
+        case EA_IS_LESS_EQUAL:
+        case EA_IS_EQUAL:
+        case EA_IS_NOT_EQUAL:
+            if(stackElement1.type == EA_NOT_TERMINAL &&
+               stackElement2.type == EA_TERMINAL &&
+//               stackElement2.data.terminalData.type == EA_ADD &&
+               stackElement3.type == EA_NOT_TERMINAL)
+            {
+                concatenateString();
+
+                char *tempName = (char*)malloc(sizeof(char)*30);
+                strcpy(tempName,varName);
+                // TODO push variable
+                // TDO generate LogicOporation
+
+                printf("generate: E->E_LOGIC_E\n");
+                stackElement1.data.notTerminalData.name =tempName;
+                stackElement1.data.notTerminalData.type = TYPE_INT;
+                stackElement1.type = EA_NOT_TERMINAL;
+            } else return  false;
             break;
         default:
             exit(116);
