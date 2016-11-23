@@ -2,7 +2,7 @@
 
 class smth{
     static int fun1(int b){
-        return b;
+        return 1;
     }
 
     static void run() {
@@ -10,6 +10,6 @@ class smth{
         int b;
         int c;
 
-        fun1(a,b);
+        fun1(a);
     }
 }
