@@ -230,7 +230,7 @@ bool rulePropDef(){
 
         char* resultVariableName;
 
-        if (parseExpression(dummyInstructionLIst, resultVariableName)) {
+        if (parseExpression(dummyInstructionLIst, resultVariableName, NULL, NULL, NULL)) {
             token = getCachedToken();
             if (token->type == SEMICOLON) {
                 return true;
@@ -372,7 +372,7 @@ bool ruleDecl(){
         ListInit(dummyInstructionLIst);
         char* resultVariableName;
 
-        if (parseExpression(dummyInstructionLIst, resultVariableName)) {
+        if (parseExpression(dummyInstructionLIst, resultVariableName, NULL, NULL, NULL)) {
             token = getCachedToken();
 
             //<DECL> -> ;
@@ -412,7 +412,7 @@ bool ruleStat(){
             token = getCachedToken();
             if (token->type == BRACKET && token->data.bracket.name == '(') {
                 char* resultVariableName;
-                if (parseExpression(dummyInstructionLIst, resultVariableName)) {
+                if (parseExpression(dummyInstructionLIst, resultVariableName, NULL, NULL, NULL)) {
                     token = getCachedToken();
                     if (token->type == BRACKET && token->data.bracket.name == ')') {
                         token = getCachedToken();
@@ -433,7 +433,7 @@ bool ruleStat(){
             token = getCachedToken();
             if (token->type == BRACKET && token->data.bracket.name == '(') {
                 char* resultVariableName;
-                if (parseExpression(dummyInstructionLIst, resultVariableName)) {
+                if (parseExpression(dummyInstructionLIst, resultVariableName, NULL, NULL, NULL)) {
                     token = getCachedToken();
                     if (token->type == BRACKET && token->data.bracket.name == ')') {
                         token = getCachedToken();
@@ -462,7 +462,7 @@ bool ruleStat(){
         //<STAT> -> return <EXP>;
         } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "return")) {
             char* resultVariableName;
-            if (parseExpression(dummyInstructionLIst, resultVariableName)) {
+            if (parseExpression(dummyInstructionLIst, resultVariableName, NULL, NULL, NULL)) {
                 token = getCachedToken();
                 if (token->type == SEMICOLON) {
                     return true;
@@ -504,7 +504,7 @@ bool ruleParam(){
     //<PARAM> -> <EXP> <AFTER_FUNCTION_CALL_EXP>
     //<PARAM> -> <ID> <AFTER_FUNCTION_CALL_EXP>
     char* resultVariableName;
-    if (parseExpression(dummyInstructionLIst, resultVariableName)) {
+    if (parseExpression(dummyInstructionLIst, resultVariableName, NULL, NULL, NULL)) {
         if (ruleAfterFunctionCallExp()) {
             return true;
         }
@@ -670,7 +670,7 @@ bool ruleStatBeginningId() {
         char* resultVariableName;
 
         if(token->type == OPERATOR_ASSIGN) {
-            if (parseExpression(dummyInstructionLIst, resultVariableName)) {
+            if (parseExpression(dummyInstructionLIst, resultVariableName, NULL, NULL, NULL)) {
                 return true;
             }
         }
