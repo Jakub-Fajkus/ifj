@@ -1,0 +1,11 @@
+//wrong count of parameters for function
+
+class smth{
+    static int fun1(int b){
+        return b;
+    }
+
+    static int a,b,c;
+
+    fun1(a,b,c);
+}

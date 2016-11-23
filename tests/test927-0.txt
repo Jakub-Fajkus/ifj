@@ -1,0 +1,7 @@
+//undefined function
+
+class smth{
+    static int fun1(){
+        fun22();
+    }
+}

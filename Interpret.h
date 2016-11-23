@@ -19,7 +19,7 @@
  *                      TL;DR: Interpret called from parser passes NULL value
  * @return int value in case of crash if the interpret, to make sure the function main can free() everything else
  */
-int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames );
+/*int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames );*/
 
 /// TO BE REPLACED WITH ANOTHER SOLUTION
 /// \param errNumber - exit number

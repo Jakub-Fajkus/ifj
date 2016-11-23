@@ -1,0 +1,9 @@
+//testing statement while miss condition
+
+class smth{
+    static void fun(){
+        while(){
+
+        }
+    }
+}

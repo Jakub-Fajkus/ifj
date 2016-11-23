@@ -1,0 +1,10 @@
+//redefinition funciton
+
+class smth{
+    static int sm(){
+
+    }
+    static void sm(){
+
+    }
+}

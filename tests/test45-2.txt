@@ -1,0 +1,12 @@
+// missing else for if
+
+class smth{
+
+    int a = 1;
+    if(a){
+
+    }els{
+
+    }
+
+}

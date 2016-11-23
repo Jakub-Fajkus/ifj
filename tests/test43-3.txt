@@ -1,0 +1,7 @@
+//undefiened funciton
+
+class smth{
+    static int smth(){
+        fun2();
+    }
+}

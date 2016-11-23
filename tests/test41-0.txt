@@ -1,0 +1,8 @@
+//succ statement call function
+
+class smth{
+
+    static void fun1(){
+        fun2();
+    }
+}

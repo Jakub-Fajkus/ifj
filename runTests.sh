@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-FILES=`find . -iname "test*"`
+FILES=`find test -iname  'test*' | sort -n`
 FAILED_COUNTER=0
 OK_COUNTER=0
 
