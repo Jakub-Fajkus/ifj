@@ -459,14 +459,36 @@ bool ruleStat(){
                     }
                 }
             }
-        //<STAT> -> return <EXP>;
+        //<STAT> -> return <EXP_SEMICOLON>
         } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "return")) {
-            char* resultVariableName;
-            if (parseExpression(dummyInstructionLIst, resultVariableName, NULL, NULL, NULL)) {
-                token = getCachedToken();
-                if (token->type == SEMICOLON) {
-                    return true;
-                }
+//            char* resultVariableName;
+            if (ruleExpSemicolon()) {
+                return true;
+            }
+        }
+    }
+
+    globalTokens->Act = activeElementRuleApplication;
+    return false;
+}
+
+bool ruleExpSemicolon() {
+    tDLElemPtr activeElementRuleApplication = globalTokens->Act;
+    TOKEN *token = getCachedToken();
+
+    if (token->type == SEMICOLON) {
+        return true;
+    } else {
+        returnCachedTokens(1);
+
+        tDLList *dummyInstructionLIst = malloc(sizeof(tDLList));
+        ListInit(dummyInstructionLIst);
+        char *returnValue;
+
+        if(parseExpression(dummyInstructionLIst, returnValue, NULL, NULL, NULL)) {
+            token = getCachedToken();
+            if (token->type == SEMICOLON){
+                return true;
             }
         }
     }

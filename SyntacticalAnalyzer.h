@@ -56,5 +56,6 @@ bool ruleTypeDouble();
 bool ruleTypeString();
 bool ruleTypeVoid();
 bool ruleDefinitionStart();
+bool ruleExpSemicolon();
 
 #endif //IFJ_SYNTACTICANALYZER_H
