@@ -1,0 +1,9 @@
+class Main {
+    static double a = 5.0 + C.b;
+    static void run() {}
+}
+/*
+
+class C {
+    static double b = Main.a + 41.99;
+}

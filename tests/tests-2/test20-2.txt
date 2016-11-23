@@ -1,0 +1,9 @@
+class Main{
+    static int a;
+
+    static int run(){
+       int a;
+
+       if (a = 1) {  }
+    }
+}

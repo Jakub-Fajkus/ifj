@@ -5,11 +5,7 @@ class smth{
         return b;
     }
 
-    static void run() {
-        int a;
-        int b;
-        int c;
+    static int a,b,c;
 
-        fun1(a,b);
-    }
+    fun1(a,b,c);
 }
