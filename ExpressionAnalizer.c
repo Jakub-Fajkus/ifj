@@ -19,7 +19,7 @@ void concatenateString();
 bool stopNow = false;
 
 static char terminalTable[14][14] = {
-        /*+*/ /*-*//***//*(*//*)*//*I*//*/*//*<*//*>*//*>=*//*>=*//*==*//*!=*//*$*/
+           /*+*/ /*-*//***//*(*//*)*//*I*//*/*//*<*//*>*//*>=*//*>=*//*==*//*!=*//*$*/
         /*+*/{'>', '>', '<', '<', '>', '<', '<', '>', '>', '>', '>', '>', '>', '>'},
         /*-*/
              {'>', '>', '<', '<', '>', '<', '<', '>', '>', '>', '>', '>', '>', '>'},
@@ -30,7 +30,7 @@ static char terminalTable[14][14] = {
         /*)*/
              {'>', '>', '>', 'X', '>', 'X', '>', '>', '>', '>', '>', '>', '>', '>'},
         /*I*/
-             {'>', '>', '>', 'X', '>', 'X', '>', '>', '>', '>', '>', '>', '>', '>'},
+             {'>', '>', '>', 'F', '>', 'X', '>', '>', '>', '>', '>', '>', '>', '>'},
         /*/*/
              {'>', '>', '>', '<', '>', '<', '>', '>', '>', '>', '>', '>', '>', '>'},
         /*<*/
@@ -216,7 +216,25 @@ int parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NOD
 //                            varName => returnVal
 //                            dataType
                             return 0;
+                        case 'F':
+                            if (!stackEmpty(stack)) {
+                                stackTop(stack, &stackElement);
+                                stackPop(stack);
+                                if(stackElement.type!=EA_TERMINAL && stackElement.data.terminalData.type==EA_START_END)return 2;
+                            } else return 2;
+                            if (!stackEmpty(stack)) {
+                                stackTop(stack, &stackElement);
+                                stackPop(stack);
+                                if(stackElement.type!=EA_TERMINAL_ACTION)return 2;
+                            } else return 2;
+                            if (!stackEmpty(stack)) {
+                                stackTop(stack, &stackElement);
+                                stackPop(stack);
+                                if(stackElement.type!=EA_TERMINAL && stackElement.data.terminalData.type==EA_I)return 2;
+                            } else return 2;
 
+                            returnCachedTokens(2);
+                            return -1;
                         default:
                             printf("DEBUG END ");
                             exit(99);
