@@ -60,7 +60,7 @@ typedef struct STACK_ELEMENT{
     union STACK_ELEMENT_DATA data;
 }STACK_ELEMENT;
 
-typedef struct tStuck_struct{
+typedef struct tStack_struct{
     struct STACK_ELEMENT *arr;              /* pole pro uložení hodnot */
     int top;                                /* index prvku na vrcholu zásobníku */
     int maxSize;

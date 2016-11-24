@@ -4,22 +4,23 @@
 
 #include "instruction.h"
 #include "Interpret.h"
-//#include "BasicStructures.h"
-
-
 
 /* ************************************************ USED BY INTERPRET *************************************************/
 /* ************************************************ EXECUTE           *************************************************/
 
-tStack *createFrameStack() {
+/// Constructor of frame stack
+/// \return Ptr to Stack
+struct tStack_struct *createFrameStack() {
     tStack *localFrameStack = malloc(sizeof(tStack));
-    //TODO: check malloc
     // WARNING: also mallocs those arrays
     stackInit(localFrameStack);
     localFrameStack->arr->type = STACK_ELEMENT_TYPE_LOCAL_FRAME;
     return localFrameStack;
 }
 
+/// Pushes Local frame on the top of the Stack
+/// \param localFrameStack - Ptr to frame stack
+/// \param frame - upcoming frame, already full of variables
 void pushFrameToStack(tStack *localFrameStack,tDLList *frame) {
     STACK_ELEMENT *newLocalFrame = malloc(sizeof(STACK_ELEMENT));
 
@@ -29,7 +30,8 @@ void pushFrameToStack(tStack *localFrameStack,tDLList *frame) {
     stackPush(localFrameStack, *newLocalFrame);
 }
 
-
+/// Constructor of frame (used for global frame once, and for local ones)
+/// \return Ptr to frame
 tDLList *createFrame() {
     tDLList *frame = malloc(sizeof(tDLList));
     checkMalloc(frame);
@@ -37,17 +39,25 @@ tDLList *createFrame() {
     return frame;
 }
 
+/// Fills frame with one variable
+/// \param frame
+/// \param instruction
 void pushToFrame(tDLList *frame, INSTRUCTION *instruction){
     LIST_ELEMENT variable;
 
     variable.type = LIST_ELEMENT_TYPE_FRAME_ELEMENT;
     variable.data.variable->name = (char *)instruction->address_dst;
     variable.data.variable->type = (DATA_TYPE)instruction->address_src1;
+    //TODO: what if using only "create variable", without value? ~src2 is null
     variable.data.variable->value = *(VARIABLE_VALUE*)instruction->address_src2;
 
     ListInsertLast(frame, variable);
 }
 
+/// Finds variable with given name
+/// \param frame - global frame or top local frame
+/// \param name - given name
+/// \return NULL if not found, otherwise pointer to the variable
 VARIABLE *findFrameVariable(tDLList *frame, char *name) {
 
     if ( name == NULL ) return NULL; // error handling
@@ -63,10 +73,13 @@ VARIABLE *findFrameVariable(tDLList *frame, char *name) {
     return NULL;
 }
 
+/// Returns pointer to local frame on the top of localFrameStack
+/// \param stackOfLocalFrames - Ptr to Stack
+/// \return Ptr of actual local frame
 tDLList *getActualLocalFrame(tStack *stackOfLocalFrames) {
 
     STACK_ELEMENT* stackElement = malloc(sizeof(STACK_ELEMENT));
-    // ošetruj malloc
+    //TODO: malloc
     stackTop(stackOfLocalFrames, stackElement);
     tDLList *actualLocalFrame = stackElement->data.localFrame;
     return actualLocalFrame;
@@ -77,23 +90,69 @@ tDLList *getActualLocalFrame(tStack *stackOfLocalFrames) {
 /* ************************************************ USED BY PARSER ****************************************************/
 /* ************************************************ CREATE         ****************************************************/
 
-INSTRUCTION *createPushGlobalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value) {
+
+INSTRUCTION *PushGlobalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value) {
+    // malloc?
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
-    checkMalloc(instruction); // delete this if you think it is not necessary
 
     instruction->type = Instruction_Push_Global_Variable;
     instruction->address_dst = name;
 
     instruction->address_src1 = malloc(sizeof(DATA_TYPE));
-    checkMalloc(instruction->address_src1); // delete this if you think it is not necessary
     *(int*)instruction->address_src1 = type;
 
     instruction->address_src2 = malloc(sizeof(VARIABLE_VALUE));
-    checkMalloc(instruction->address_src2); // delete this if you think it is not necessary
     *(VARIABLE_VALUE*)instruction->address_src2 = value;
 
     return instruction;
 }
+
+
+INSTRUCTION *CreateGlobalVariable(char *name, DATA_TYPE type) {
+    INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
+
+    instruction->type = Instruction_Push_Global_Variable;
+    instruction->address_dst = name;
+
+    instruction->address_src1 = malloc(sizeof(DATA_TYPE));
+    *(int*)instruction->address_src1 = type;
+
+    // DOES NOT malloc mem for this
+    instruction->address_src2 = NULL;
+    return instruction;
+}
+
+
+INSTRUCTION *PushLocalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value) {
+    INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
+
+    instruction->type = Instruction_Push_Local_Variable;
+    instruction->address_dst = name;
+
+    instruction->address_src1 = malloc(sizeof(DATA_TYPE));
+    *(int*)instruction->address_src1 = type;
+
+    instruction->address_src2 = malloc(sizeof(VARIABLE_VALUE));
+    *(VARIABLE_VALUE*)instruction->address_src2 = value;
+
+    return instruction;
+}
+
+
+INSTRUCTION *CreateLocalVariable(char *name, DATA_TYPE type) {
+    INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
+
+    instruction->type = Instruction_Push_Local_Variable;
+    instruction->address_dst = name;
+
+    instruction->address_src1 = malloc(sizeof(DATA_TYPE));
+    *(int*)instruction->address_src1 = type;
+
+    // DOES NOT malloc mem for this
+    instruction->address_src2 = NULL;
+    return instruction;
+}
+
 
 INSTRUCTION *createInstructionAssign(char *nameDst, char *nameSrc) {
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
@@ -106,7 +165,33 @@ INSTRUCTION *createInstructionAssign(char *nameDst, char *nameSrc) {
     return instruction;
 }
 
+
 INSTRUCTION *createInstructionMathOperation(INSTRUCTION_TYPE instType, char *nameDst, char *nameSrc1, char *nameSrc2) {
-    //todo
-    return NULL;
+    INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
+
+    instruction->type = instType;
+
+    instruction->address_dst = nameDst;
+    instruction->address_src1 = nameSrc1;
+    instruction->address_src2 = nameSrc2;
+
+    return instruction;
 }
+
+
+INSTRUCTION *createInstructionExpressionEvaluation(INSTRUCTION_TYPE instType, char *nameDst, char *nameSrc1, char *nameSrc2) {
+    INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
+
+    instruction->type = instType;
+
+    instruction->address_dst = nameDst;
+    instruction->address_src1 = nameSrc1;
+    instruction->address_src2 = nameSrc2;
+
+    return instruction;
+}
+
+
+
+
+

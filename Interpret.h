@@ -36,12 +36,41 @@ void checkMalloc(void *ptr);
 //TODO: remake the types of functions
 
 /**
- * This functiont
+ * GENERAL FUNCTION FOR EXECUTION OF ANY INSTRUCITON
+ * EXCEPTIONS HAVE THEIR OWN FUNCTIONS
  * @param Instr
  */
 void InstructionExecute(INSTRUCTION *Instr);
+
+/**
+ * ADD (math & concatenation), SUB, MUL, DIV
+ * ANALOGICAL TO createInstructionMathOperation()
+ * @param instr
+ */
 void executeInstructionMathOperation(INSTRUCTION *instr);
 
+/**
+ * ASSIGN execution
+ * ANALOGICAL TO createInstructionAssign()
+ * @param dst
+ * @param src
+ */
 void executeInstructionAssign(VARIABLE *dst, VARIABLE *src); // done
+
+/**
+ * Evaluation of bool expression
+ * Accepted Instruction types:
+ *      Instruction_Bool_Equals:    if ( src1 == src2 ) dst=TRUE else dst=FALSE;
+ *      Instruction_Bool_EqualsNot, if ( src1 != src2 ) dst=TRUE else dst=FALSE;
+ *      Instruction_Bool_More,      if ( src1 > src2 ) dst=TRUE else dst=FALSE;
+ *      Instruction_Bool_Less,      if ( src1 < src2 ) dst=TRUE else dst=FALSE;
+ *      Instruction_Bool_MoreEqual, if ( src1 >= src2 ) dst=TRUE else dst=FALSE;
+ *      Instruction_Bool_LessEqual, if ( src1 <= src2 ) dst=TRUE else dst=FALSE;
+ * @param instr: accepts type, dst, src1, src2
+ */
+void executeInstructionExpressionEvaluation(INSTRUCTION *instr);
+
+void executeInstructionIf(INSTRUCTION *instr);
+
 
 #endif //IFJ_INTERPRET_H
