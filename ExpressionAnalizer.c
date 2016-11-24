@@ -9,7 +9,7 @@
 
 unsigned long iterator = 0;
 char varName[100];
-bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr *globalSymbolTable, SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBOL_TABLE_FUNCTION *calledFunction);
+int generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr *globalSymbolTable, SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBOL_TABLE_FUNCTION *calledFunction);
 void concatenateString();
 bool stopNow = false;
 
@@ -198,6 +198,7 @@ int parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NOD
                             return 0;
 
                         default:
+                            printf("DEBUG END ");
                             exit(99);
                     }
                     break;
@@ -222,7 +223,7 @@ int parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NOD
 
 }
 
-bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr *globalSymbolTable, SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBOL_TABLE_FUNCTION *calledFunction){
+int generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr *globalSymbolTable, SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBOL_TABLE_FUNCTION *calledFunction){
     STACK_ELEMENT stackElement1;
     STACK_ELEMENT stackElement2;
     STACK_ELEMENT stackElement3;
