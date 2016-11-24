@@ -108,7 +108,7 @@ EA_TERMINAL_TYPE getTerminalDataType(TOKEN token) {
     return EA_UNKNOWN;
 }
 
-bool parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NODEPtr *globalSymbolTable, SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBOL_TABLE_FUNCTION *calledFunction) {
+int parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NODEPtr *globalSymbolTable, SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBOL_TABLE_FUNCTION *calledFunction) {
     printf("\nDEBUG expression START\n");
     bool lookingForTerminal = true;
     STACK_ELEMENT stackElement;
@@ -129,7 +129,7 @@ bool parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NO
             token->type == KEYWORD || token->type == OPERATOR_ASSIGN ||
             token->type == SEMICOLON || token->type == END_OF_FILE){
         returnCachedTokens(1);
-        return false;
+        return 2;
     }
     returnCachedTokens(1);
 
@@ -142,7 +142,7 @@ bool parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NO
             // new from cache END
         }
 
-        if(terminalData.type == EA_UNKNOWN)return false;
+        if(terminalData.type == EA_UNKNOWN)return 2;//tODO check error
 
 
         stackTop(stack, &stackElement);
@@ -151,7 +151,7 @@ bool parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NO
                 if(lookingForTerminal) {
                     char  action = terminalTable[stackElement.data.terminalData.type][terminalData.type];
                     if(stopNow && action != 'S'){
-                        return false;
+                        return 2;//tODO check error
                     }
                     switch (action) {
                         case '<':
@@ -187,7 +187,7 @@ bool parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NO
                             terminalData.type = EA_EMPTY;
                             break;
                         case 'X':
-                            return false;
+                            return 2;//tODO check error
                         case 'S':
                             returnCachedTokens(1);
                             printf("\nDEBUG expression END\n");
@@ -195,7 +195,7 @@ bool parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NO
                             stopNow = false;
                             //TODO vhen NOT NULL
 //                            varName => returnVal
-                            return true;
+                            return 0;
 
                         default:
                             exit(136);
@@ -212,9 +212,8 @@ bool parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NO
                     exit(112);
                 }
                 lookingForTerminal = true;
-                if(!generate3AddressCode(stack, backStack,globalSymbolTable, localSymbolTable, calledFunction)){
-                    return false;
-                }
+                int genRetVal= generate3AddressCode(stack, backStack,globalSymbolTable, localSymbolTable, calledFunction);
+                if(genRetVal != 0) return genRetVal;
                 break;
             default:
                 exit(113);
@@ -249,20 +248,20 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
             if(!stackEmpty(backStack)) {
                 stackTop(backStack, &stackElement1);
                 stackPop(backStack);
-            }else return false;
+            }else return 2; // TODO check retVal
 
             if(!stackEmpty(backStack)) {
                 stackTop(backStack, &stackElement2);
                 stackPop(backStack);
-            }else return false;
+            }else return 2; // TODO check retVal
 
             if(!stackEmpty(backStack)) {
                 stackTop(backStack, &stackElement3);
                 stackPop(backStack);
-            }else return false;
+            }else return 2; // TODO check retVal
 
             if(!stackEmpty(backStack)){
-                return false;
+                return 2; // TODO check retVal
             }
 
             break;
@@ -270,10 +269,10 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
             if(!stackEmpty(backStack)) {
                 stackTop(backStack, &stackElement1);
                 stackPop(backStack);
-            }else return false;
+            }else return 2; // TODO check retVal
 
             if(!stackEmpty(backStack)){
-                return false;
+                return 2;//tODO check error;
             }
             break;
         default:
@@ -392,10 +391,18 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
                     stackElement2.data.notTerminalData.name = stackElement1.data.terminalData.token.data.identifier.name;
 //                     TODO when not null
                     SYMBOL_TABLE_VARIABLE *symbolTableVariable = getVariable(localSymbolTable, globalSymbolTable, calledFunction, stackElement2.data.notTerminalData.name);
+                    if(symbolTableVariable == NULL){
+                        return 3;
+                    }
                     stackElement2.data.notTerminalData.type = symbolTableVariable->type;
                     printf("generate: E->i where i = ID\n");
                 }else if(stackElement1.data.terminalData.token.type == IDENTIFIER_FULL){
-                    char *tempName = (char*)malloc(sizeof(char) * (1+strlen(stackElement1.data.terminalData.token.data.identifierFull.class) + strlen(stackElement1.data.terminalData.token.data.identifierFull.class)));
+                    char *tempName = (char*)malloc(
+                            sizeof(char) * (1
+                                            + strlen(stackElement1.data.terminalData.token.data.identifierFull.class)
+                                            + strlen(stackElement1.data.terminalData.token.data.identifierFull.class)
+                                           )
+                    );
                     sprintf(
                             tempName,
                             "%s.%s",
@@ -405,6 +412,9 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
                     stackElement2.data.notTerminalData.name = tempName;
 //                    todo when not null
                     SYMBOL_TABLE_VARIABLE *symbolTableVariable = getVariable(localSymbolTable, globalSymbolTable, calledFunction, stackElement2.data.notTerminalData.name);
+                    if(symbolTableVariable == NULL){
+                        return 3;
+                    }
                     stackElement2.data.notTerminalData.type = symbolTableVariable->type;
                     printf("generate: E->i where i = ID_FULL\n");
                 }else {
