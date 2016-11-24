@@ -198,23 +198,27 @@ void multiLineComment(TOKEN *token) {
 void string1(TOKEN *token) {
     int c, i=0, j = 0;
     bool noEscape = true;
-    char *str = (char *) malloc(sizeof(char));
+    int strSize = 100;
+    char *str = (char *) malloc(sizeof(char) * strSize);
+
     while (true) {
         c = getc(fp);
         if (c == '"' && noEscape) {
+            if(strlen(str)==0){
+                token->type = LITERAL_STRING;
+                token->data.literalString.name = str;
+                break;
+            }
             str[i] = '\0';
-            char *newStr = (char *) malloc(sizeof(char) * strlen(str));
+            char *newStr = (char *) malloc(sizeof(char) *( strlen(str)*2));
             i = 0;
             while (true) {
-//                TODO
                 if (i > (strlen(str) - 1)) {
                     break;
                 }
                 c = str[i];
                 i++;
-                if (c == '\\' && noEscape) { // TODO tests
-                    noEscape = false;
-                }
+
                 if (!noEscape) {
                     noEscape = true;
                     if (c == '\\') {
@@ -231,16 +235,19 @@ void string1(TOKEN *token) {
                             // TODO
                             newStr[j] = (char)c;//provizorni
                         } else{
-                            //fucked
+                            exit(1); //todo asi
                         }
                     }
                 } else {
-                    newStr[j] = (char)c;
+                    if (c == '\\') {
+                        noEscape = false;
+                    }else {
+                        newStr[j] = (char) c;
+                        j++;
+                    }
                 }
-                j++;
 
             }
-//            printf("\n.....%s....\n",newStr);
             token->type = LITERAL_STRING;
             token->data.literalString.name = newStr;
             break;
@@ -251,7 +258,10 @@ void string1(TOKEN *token) {
         } else {
             str[i] = (char) c;
             i++;
-            str = realloc(str, sizeof(char) * (i + 1));
+            if(strSize < (strlen(str)+50)){
+                strSize+=100;
+                str = realloc(str, sizeof(char) * strSize);
+            }
         }
 
         if (c == '\\' && noEscape) {
