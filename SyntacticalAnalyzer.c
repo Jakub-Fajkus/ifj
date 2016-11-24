@@ -4,6 +4,7 @@
 #include "SyntacticalAnalyzer.h"
 #include "ifj16.h"
 #include "Debug.h"
+#include "SemanticalAnalyzer.h"
 #include "LexicalAnalyzerStructures.h"
 #include "BasicStructures.h"
 #include "SymbolTable.h"
@@ -282,6 +283,7 @@ bool rulePropDef(bool *variableInitialized){
 
         char* resultVariableName;
 
+        printf("calling analyzeExpression from rulePropDef\n");
         if (analyzeExpression(dummyInstructionLIst, resultVariableName)) {
             token = getCachedToken();
             if (token->type == SEMICOLON) {
@@ -431,6 +433,7 @@ bool ruleDecl(SYMBOL_TABLE_FUNCTION *function, DATA_TYPE type, char *variableNam
         ListInit(dummyInstructionLIst);
         char* resultVariableName;
 
+        printf("calling analyzeExpression from ruleDecl\n");
         if (analyzeExpression(dummyInstructionLIst, resultVariableName)) {
             token = getCachedToken();
 
@@ -474,6 +477,7 @@ bool ruleStat(){
             token = getCachedToken();
             if (token->type == BRACKET && token->data.bracket.name == '(') {
                 char* resultVariableName;
+                printf("calling analyzeExpression from ruleStat <STAT> -> while ( <EXP> ) { <ST_LIST> }\n");
                 if (analyzeExpression(dummyInstructionLIst, resultVariableName)) {
                     token = getCachedToken();
                     if (token->type == BRACKET && token->data.bracket.name == ')') {
@@ -495,6 +499,7 @@ bool ruleStat(){
             token = getCachedToken();
             if (token->type == BRACKET && token->data.bracket.name == '(') {
                 char* resultVariableName;
+                printf("calling analyzeExpression from ruleStat <STAT> -> if ( <EXP> ) { <ST_LIST> } else { <ST_LIST> }\n");
                 if (analyzeExpression(dummyInstructionLIst, resultVariableName)) {
                     token = getCachedToken();
                     if (token->type == BRACKET && token->data.bracket.name == ')') {
@@ -547,6 +552,7 @@ bool ruleExpSemicolon() {
         ListInit(dummyInstructionLIst);
         char *resultVariableName;
 
+        printf("calling analyzeExpression from ruleExpSemicolon\n");
         if (analyzeExpression(dummyInstructionLIst, resultVariableName)) {
             token = getCachedToken();
             if (token->type == SEMICOLON){
@@ -590,6 +596,7 @@ bool ruleParam(){
     //<PARAM> -> <EXP> <AFTER_FUNCTION_CALL_EXP>
     //<PARAM> -> <ID> <AFTER_FUNCTION_CALL_EXP>
     char* resultVariableName;
+    printf("calling analyzeExpression from ruleParam\n");
     if (analyzeExpression(dummyInstructionLIst, resultVariableName)) {
         if (ruleAfterFunctionCallExp()) {
             return true;
@@ -788,16 +795,16 @@ bool ruleStatBeginningId() {
         char* resultVariableName;
 
         if(token->type == OPERATOR_ASSIGN) {
-            //itodo: f -1, then call function
             char *name;
-            if(-1 == analyzeExpression(dummyInstructionLIst, resultVariableName)) {
+            printf("calling analyzeExpression from ruleStatBeginningId\n");
+            int code = analyzeExpression(dummyInstructionLIst, resultVariableName);
+            if(-1 == code) {
                 if(ruleId(&name)) {
                     if (ruleFuncCall()) {
                         return true;
                     }
                 }
-            }
-            if (analyzeExpression(dummyInstructionLIst, resultVariableName)) {
+            } else if (code == 1) {
                 return true;
             }
         }
@@ -832,6 +839,8 @@ void makeFirstPass() {
     if(result == false) {
         exit(2);
     }
+
+    checkIfFunctionRunExists();
 }
 
 void makeSecondPass() {
@@ -861,3 +870,6 @@ int analyzeExpression(tDLList *instructionList, char *resultVariableName) {
 }
 
 
+void addGlobalVariablesToFrame() {
+
+}
