@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 {
     VARIABLE_VALUE val;
     val.doubleValue = 2.3;
-    INSTRUCTION *instruction = createPushGlobalVariable("prom1", TYPE_DOUBLE, val);
+    INSTRUCTION *instruction = pushGlobalVariable("prom1", TYPE_DOUBLE, val);
 //    simulateSymbolTable();
 
     if (argc != 2) {

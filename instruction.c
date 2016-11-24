@@ -91,7 +91,7 @@ tDLList *getActualLocalFrame(tStack *stackOfLocalFrames) {
 /* ************************************************ CREATE         ****************************************************/
 
 
-INSTRUCTION *PushGlobalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value) {
+INSTRUCTION *pushGlobalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value) {
     // malloc?
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
 
@@ -108,7 +108,7 @@ INSTRUCTION *PushGlobalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value
 }
 
 
-INSTRUCTION *CreateGlobalVariable(char *name, DATA_TYPE type) {
+INSTRUCTION *createGlobalVariable(char *name, DATA_TYPE type) {
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
 
     instruction->type = Instruction_Create_Global_Variable;
@@ -123,7 +123,7 @@ INSTRUCTION *CreateGlobalVariable(char *name, DATA_TYPE type) {
 }
 
 
-INSTRUCTION *PushLocalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value) {
+INSTRUCTION *pushLocalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value) {
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
 
     instruction->type = Instruction_Push_Local_Variable;
@@ -139,7 +139,7 @@ INSTRUCTION *PushLocalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value)
 }
 
 
-INSTRUCTION *CreateLocalVariable(char *name, DATA_TYPE type) {
+INSTRUCTION *createLocalVariable(char *name, DATA_TYPE type) {
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
 
     instruction->type = Instruction_Create_Local_Variable;

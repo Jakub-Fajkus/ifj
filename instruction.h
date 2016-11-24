@@ -94,7 +94,7 @@ tDLList *getActualLocalFrame(struct tStack_struct *stackOfLocalFrames);
  * @param value
  * @return
  */
-INSTRUCTION *PushGlobalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value);
+INSTRUCTION *pushGlobalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value);
 
 /**
  * INSTRUCTION CONSTRUCTOR: Create GLOBAL variable WITHOUT value
@@ -102,7 +102,7 @@ INSTRUCTION *PushGlobalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value
  * @param type
  * @return
  */
-INSTRUCTION *CreateGlobalVariable(char *name, DATA_TYPE type);
+INSTRUCTION *createGlobalVariable(char *name, DATA_TYPE type);
 
 /**
  * INSTRUCTION CONSTRUCTOR: Create LOCAL variable WITH value
@@ -111,7 +111,7 @@ INSTRUCTION *CreateGlobalVariable(char *name, DATA_TYPE type);
  * @param value
  * @return
  */
-INSTRUCTION *PushLocalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value);
+INSTRUCTION *pushLocalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value);
 
 /**
  * INSTRUCTION CONSTRUCTOR: Create LOCAL variable WITHOUT value
@@ -119,7 +119,7 @@ INSTRUCTION *PushLocalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value)
  * @param type
  * @return
  */
-INSTRUCTION *CreateLocalVariable(char *name, DATA_TYPE type);
+INSTRUCTION *createLocalVariable(char *name, DATA_TYPE type);
 
 /**
  * INSTRUCTION CONSTRUCTOR: Assign
