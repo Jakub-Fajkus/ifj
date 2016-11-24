@@ -232,6 +232,7 @@ int parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NOD
                                 stackPop(stack);
                                 if(stackElement.type!=EA_TERMINAL && stackElement.data.terminalData.type==EA_I)return 2;
                             } else return 2;
+                            if(!stackEmpty(stack))return 2;
 
                             returnCachedTokens(2);
                             return -1;
