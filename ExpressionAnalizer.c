@@ -198,7 +198,7 @@ int parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NOD
                             return 0;
 
                         default:
-                            exit(136);
+                            exit(99);
                     }
                     break;
                 }
@@ -209,14 +209,14 @@ int parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NOD
                 break;
             case EA_TERMINAL_ACTION:
                 if(lookingForTerminal){
-                    exit(112);
+                    exit(99);
                 }
                 lookingForTerminal = true;
                 int genRetVal= generate3AddressCode(stack, backStack,globalSymbolTable, localSymbolTable, calledFunction);
                 if(genRetVal != 0) return genRetVal;
                 break;
             default:
-                exit(113);
+                exit(99);
         }
     }
 
@@ -298,7 +298,7 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
                 stackElement1.data.notTerminalData.name =tempName;
                 stackElement1.data.notTerminalData.type = outputType;
                 stackElement1.type = EA_NOT_TERMINAL;
-            } else return  false;
+            } else return  2; //todo check
             break;
         case EA_SUB:
             if(stackElement1.type == EA_NOT_TERMINAL &&
@@ -321,7 +321,7 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
                 stackElement1.data.notTerminalData.name =tempName;
                 stackElement1.data.notTerminalData.type = outputType;
                 stackElement1.type = EA_NOT_TERMINAL;
-            } else return  false;
+            } else return 2; //todo check
             break;
         case EA_MUL:
             if(stackElement1.type == EA_NOT_TERMINAL &&
@@ -344,7 +344,7 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
                 stackElement1.data.notTerminalData.name =tempName;
                 stackElement1.data.notTerminalData.type = outputType;
                 stackElement1.type = EA_NOT_TERMINAL;
-            }else return  false;
+            }else return 2; //todo check
 
             break;
         case EA_DIV:
@@ -367,7 +367,7 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
                 stackElement1.data.notTerminalData.name =tempName;
                 stackElement1.data.notTerminalData.type = outputType;
                 stackElement1.type = EA_NOT_TERMINAL;
-            }else  return  false;
+            }else  return 2; //todo check
             break;
         case EA_LEFT_BR:
             if(stackElement1.type == EA_TERMINAL &&
@@ -378,7 +378,7 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
             {
                 printf("generate: E->(E)\n");
                 stackElement1 = stackElement2;
-            }else return  false;
+            }else return 2; //todo check
 
             break;
         case EA_I:
@@ -433,7 +433,7 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
                             varType = TYPE_INT;
                             break;
                         default:
-                            exit(115);
+                            exit(99);
                     }
                     //todo create local var
 
@@ -443,7 +443,7 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
                 printf("generate: E->i where i = LIT\n");
                 stackElement2.type = EA_NOT_TERMINAL;
                 stackElement1=stackElement2;
-            }else return  false;
+            }else return 2; //todo check
             break;
         case EA_IS_LESS:
         case EA_IS_MORE:
@@ -467,14 +467,14 @@ bool generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr 
                 stackElement1.data.notTerminalData.name =tempName;
                 stackElement1.data.notTerminalData.type = TYPE_INT;
                 stackElement1.type = EA_NOT_TERMINAL;
-            } else return  false;
+            } else return 2; //todo check
             break;
         default:
-            exit(116);
+            exit(99);
     }
 
     stackPush(stack,stackElement1);
-    return  true;
+    return  0;
 };
 
 
