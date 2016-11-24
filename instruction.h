@@ -180,4 +180,19 @@ INSTRUCTION *createInstructionIf(char *nameDst, INSTRUCTION *trueDst, INSTRUCTIO
  */
 INSTRUCTION *createFirstInstruction();
 
+
+
+
+
+
+LIST_ELEMENT createUpcomingInstruction(INSTRUCTION *instr);
+void printInstructionTest(int x, tDLList *TestInstructionList);
+
+
+
+
+
+
+
+
 #endif //IFJ_INSTRUCTION_H

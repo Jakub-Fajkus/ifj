@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
     runSyntacticalAnalysis(argv[1]);
 
 
-//    callInterpret();    // #justInterpretThings
+//  callInterpret();    // #justInterpretThings
 
     printf("\nXXXXKONECXXXX");
     return 0;
