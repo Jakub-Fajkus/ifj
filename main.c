@@ -19,9 +19,9 @@ int main(int argc, char *argv[])
 {
     // uncomment what you need
 
-    /*
-    simulateSymbolTable();
 
+    simulateSymbolTable();
+/*
     if (argc != 2) {
         printf("no input file found\n");
         return 99;
@@ -29,11 +29,7 @@ int main(int argc, char *argv[])
     runSyntacticalAnalysis(argv[1]);
      */
 
-    VARIABLE_VALUE val;
-    val.doubleValue = 2.3;
-    INSTRUCTION *instruction = pushGlobalVariable("prom1", TYPE_DOUBLE, val);
-
-    callInterpret();    // #justInterpretThings
+//    callInterpret();    // #justInterpretThings
 
     printf("\nXXXXKONECXXXX");
     return 0;

@@ -34,7 +34,7 @@ tDLList* getAllTokens(char *fileName);
 
 bool ruleProg();
 bool ruleClassDefinition(char *className);
-bool ruleDefinition(char *className, DATA_TYPE type, char *name, bool *variableInitialized);
+bool ruleDefinition(char *className, DATA_TYPE type, char *name, bool *variableInitialized, bool *isFunction);
 bool rulePropDef(bool *variableInitialized);
 bool ruleFuncDef(SYMBOL_TABLE_FUNCTION *function);
 bool ruleStListDecl(SYMBOL_TABLE_FUNCTION *function);

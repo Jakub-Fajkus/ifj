@@ -7,6 +7,7 @@
 #include "LexicalAnalyzerStructures.h"
 #include "BasicStructures.h"
 #include "SymbolTable.h"
+#include <stdbool.h>
 
 #define stringEquals(x,y) (strcmp(x, y) == 0)
 
@@ -42,6 +43,8 @@ void testTokens();
 
 void makeFirstPass();
 
+void makeSecondPass();
+
 void runSyntacticalAnalysis(char *fileName) {
     globalTokens = getAllTokens(fileName);
     tDLList *tokens = globalTokens; //for debugger
@@ -53,6 +56,7 @@ void runSyntacticalAnalysis(char *fileName) {
 //    actualFunction = function;
 
     makeFirstPass();
+//    makeSecondPass();
 
 //    testTokens(); //todo: this is only for "testing"
 }
@@ -236,16 +240,23 @@ bool ruleClassDefinition(char *className){
     }
 }
 
-bool ruleDefinition(char *className, DATA_TYPE type, char *name, bool *variableInitialized){
+bool ruleDefinition(char *className, DATA_TYPE type, char *name, bool *variableInitialized, bool *isFunction){
     //<DEFINITION> -> <PROP_DEF>
     //<DEFINITION> -> <FUNC_DEF>
     if (rulePropDef(variableInitialized)) {
+        *isFunction = false;
         return true;
     } else {
         char *classNameWithDot = stringConcat(className, ".");
         SYMBOL_TABLE_FUNCTION *function = createAndInsertFunction(globalSymbolTable, stringConcat(classNameWithDot, name), type, 0, NULL);
+        if(ruleFuncDef(function)) {
+            *isFunction = true;
+            return true;
+        } else {
+            *isFunction = false;
+            return false;
+        }
 
-        return ruleFuncDef(function);
     }
 }
 
@@ -716,10 +727,15 @@ bool ruleDefinitionStart(char *className) {
     } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "String")) {
         if (ruleId(&functionOrPropertyName)) {
             bool propertyInitialized = false;
-            if (ruleDefinition(className, type, functionOrPropertyName, &propertyInitialized)) {
+            bool isFunction = false;
+            if (ruleDefinition(className, type, functionOrPropertyName, &propertyInitialized, &isFunction)) {
                 type = TYPE_STRING;
                 char *classNameWithDot = stringConcat(className, ".");
-                createAndInsertStringVariable(globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), propertyInitialized);
+                if(isFunction) {
+                    createAndInsertFunction(globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), TYPE_STRING, 0, NULL);
+                } else {
+                    createAndInsertStringVariable(globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), propertyInitialized);
+                }
                 return true;
             }
         }
@@ -727,10 +743,15 @@ bool ruleDefinitionStart(char *className) {
     } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "int")) {
         if (ruleId(&functionOrPropertyName)) {
             bool propertyInitialized = false;
-            if (ruleDefinition(className, type, functionOrPropertyName, &propertyInitialized)) {
-                type = TYPE_INT;
+            bool isFunction = false;
+            if (ruleDefinition(className, type, functionOrPropertyName, &propertyInitialized, &isFunction)) {
+                type = TYPE_STRING;
                 char *classNameWithDot = stringConcat(className, ".");
-                createAndInsertIntVariable(globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), propertyInitialized);
+                if(isFunction) {
+                    createAndInsertFunction(globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), TYPE_INT, 0, NULL);
+                } else {
+                    createAndInsertStringVariable(globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), propertyInitialized);
+                }
                 return true;
             }
         }
@@ -738,10 +759,15 @@ bool ruleDefinitionStart(char *className) {
     } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "double")) {
         if (ruleId(&functionOrPropertyName)) {
             bool propertyInitialized = false;
-            if (ruleDefinition(className, type, functionOrPropertyName, &propertyInitialized)) {
+            bool isFunction = false;
+            if (ruleDefinition(className, type, functionOrPropertyName, &propertyInitialized, &isFunction)) {
                 type = TYPE_STRING;
                 char *classNameWithDot = stringConcat(className, ".");
-                createAndInsertDoubleVariable(globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), propertyInitialized);
+                if(isFunction) {
+                    createAndInsertFunction(globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), TYPE_DOUBLE, 0, NULL);
+                } else {
+                    createAndInsertStringVariable(globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), propertyInitialized);
+                }
                 return true;
             }
         }
@@ -793,6 +819,16 @@ void testTokens() {
 }
 
 void makeFirstPass() {
+    ListFirst(globalTokens);
+
+    bool result = ruleProg();
+
+    if(result == 0) {
+        exit(2);
+    }
+}
+
+void makeSecondPass() {
     ListFirst(globalTokens);
 
     bool result = ruleProg();
