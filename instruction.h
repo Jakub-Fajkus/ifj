@@ -187,6 +187,7 @@ INSTRUCTION *createFirstInstruction();
 
 LIST_ELEMENT createUpcomingInstruction(INSTRUCTION *instr);
 void printInstructionTest(int x, tDLList *TestInstructionList);
+void printListOfInstructions(tDLList *TestInstructionList);
 
 
 
