@@ -1,5 +1,8 @@
 //some exp
-
+/*
+multiline
+coment
+*/
 class some{
 
     static int a=1;
@@ -7,6 +10,6 @@ class some{
     static int c=2;
     static int d=1;
 
-    static int sm = ( a+b /( c*(a) - d ) + b ); //richard zere!
+    static int sm = ( a+b /( c*(a) - d ) + b );
 
 }

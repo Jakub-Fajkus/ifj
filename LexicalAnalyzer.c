@@ -158,6 +158,7 @@ void slash(TOKEN *token) {
     } else if (testValid(c)) {
         token->type = OPERATOR_ARITHMETIC;
         token->data.operatorArithmetic.name = '/';
+        ungetc(c, fp);
     } else {
         token->type = LEX_ERROR;
     }
