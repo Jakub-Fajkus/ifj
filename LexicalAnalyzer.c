@@ -240,7 +240,7 @@ void string1(TOKEN *token) {
                 j++;
 
             }
-            printf("\n.....%s....\n",newStr);
+//            printf("\n.....%s....\n",newStr);
             token->type = LITERAL_STRING;
             token->data.literalString.name = newStr;
             break;
