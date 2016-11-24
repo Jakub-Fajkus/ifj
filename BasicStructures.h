@@ -19,8 +19,7 @@ typedef struct {
 
 typedef enum{
     TREE_NODE_VARIABLE = 1010,
-    TREE_NODE_FUNCTION = 1011,
-    TREE_NODE_FUNCTION_CALL = 1012,
+    TREE_NODE_FUNCTION = 1011
 } TREE_NODE_DATA_TYPE;
 
 typedef union {

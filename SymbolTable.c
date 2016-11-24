@@ -319,8 +319,9 @@ TREE_NODE_DATA* createFunctionData(SYMBOL_TABLE_FUNCTION *function) {
 
 SYMBOL_TABLE_FUNCTION* createAndInsertFunction(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, unsigned int usages, tDLList *parameters) {
     //if the function already exists
-    if (NULL != getFunctionFromTable(symbolTable, name)) {
-        printf("redeclaration of function %s", name);
+
+    if (NULL != getNodeDataFromTable(symbolTable, name)) {
+        printf("redeclaration of function or variable %s", name);
         exit(3);
     }
 
