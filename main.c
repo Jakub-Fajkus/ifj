@@ -17,19 +17,25 @@ void simulateSymbolTable();
 
 int main(int argc, char *argv[])
 {
-    VARIABLE_VALUE val;
-    val.doubleValue = 2.3;
-    INSTRUCTION *instruction = pushGlobalVariable("prom1", TYPE_DOUBLE, val);
-//    simulateSymbolTable();
+    // uncomment what you need
+
+    /*
+    simulateSymbolTable();
 
     if (argc != 2) {
         printf("no input file found\n");
         return 99;
     }
-
     runSyntacticalAnalysis(argv[1]);
+     */
 
-    printf("\n\n\nXXXXKONECXXXX");
+    VARIABLE_VALUE val;
+    val.doubleValue = 2.3;
+    INSTRUCTION *instruction = pushGlobalVariable("prom1", TYPE_DOUBLE, val);
+
+    callInterpret();    // #justInterpretThings
+
+    printf("\nXXXXKONECXXXX");
     return 0;
 }
 

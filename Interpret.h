@@ -29,7 +29,7 @@ void exitInterpret(int errNumber);
 /// \param ptr - any type of pointer if it is NULL
 void checkMalloc(void *ptr);
 
-
+void callInterpret();
 
 /* ************************************************ EXECUTE ************************************************/
 

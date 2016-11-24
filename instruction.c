@@ -191,7 +191,27 @@ INSTRUCTION *createInstructionExpressionEvaluation(INSTRUCTION_TYPE instType, ch
     return instruction;
 }
 
+INSTRUCTION *createInstructionIf(char *nameDst, INSTRUCTION *trueDst, INSTRUCTION *falseDst) {
+    INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
+
+    instruction->type = Instruction_IF;
+    instruction->address_dst = nameDst;
+    *(INSTRUCTION*)instruction->address_src1 = *trueDst;
+    *(INSTRUCTION*)instruction->address_src2 = *falseDst;
+
+    return instruction;
+}
 
 
+INSTRUCTION *createFirstInstruction() {
+    INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
+
+    instruction->type = Instruction_Create_GlobalFrame_And_LocalStack;
+    instruction->address_dst = NULL;
+    instruction->address_src1 = NULL;
+    instruction->address_src2 =  NULL;
+
+    return instruction;
+}
 
 

@@ -159,4 +159,25 @@ INSTRUCTION *createInstructionMathOperation( INSTRUCTION_TYPE instType, char *na
  */
 INSTRUCTION *createInstructionExpressionEvaluation( INSTRUCTION_TYPE instType, char *nameDst, char *nameSrc1, char *nameSrc2 );
 
+/**
+ * INSTRUCTION CONSTRUCTOR: IF Statement
+ * @param nameDst - Name of TEMPORARY VARIABLE with true/false value
+ *                  value 1/true : Interpret jumps to instruction pointed by trueDst
+ *                  value 0/false: ~ ~ ~ pointed by falseDst
+ * @param trueDst - POINTER TO INSTRUCTION (IN THE SAME LIST)
+ * @param falseDst - ~the same
+ * @return
+ */
+INSTRUCTION *createInstructionIf(char *nameDst, INSTRUCTION *trueDst, INSTRUCTION *falseDst);
+
+/**
+ * INSTRUCTION CONSTRUCTOR: Create GlobalFrame and LocalStack
+ * Due to dumb implementation of the interpret,
+ * THIS NEEDS TO BE THE FIRST INSTRUCTION IN THE FIRST LIST
+ * WARNING: DO NOT CALL THIS INSTRUCTION MORE THAN ONCE
+ * IN WHOLE PROGRAM. Many thanks.
+ * @return
+ */
+INSTRUCTION *createFirstInstruction();
+
 #endif //IFJ_INSTRUCTION_H
