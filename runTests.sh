@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
 FOLDER=''
-FILES=` find tests -iname  'test*' | sort -n | grep txt`
+FILES=`find tests -iname  'test*' | sort -n | grep txt`
 FAILED_COUNTER=0
 OK_COUNTER=0
 
 for FILE in $FILES; do
-    EXPECTED_RETURN_CODE=`echo $FILE | cut -d'/' -f 3 | cut -d'-' -f 2 | cut -d'.' -f 1`
+    EXPECTED_RETURN_CODE=`echo $FILE | cut -d'/' -f 2 | cut -d'-' -f 2`
 
     printf "\n**************** RUNNING INTERPRET FOR $FILE ****************\n"
     printf "executing: ./bin/Debug/ifj %s \n" "$FILE"
