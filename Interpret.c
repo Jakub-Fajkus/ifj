@@ -30,25 +30,45 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         return 1;
     }
 
+    printf("-----------------------------------------------------\n");
+    printf("\n----- Welcome to hell v1.0\n");
+    printf("-----------------------------------------------------\n");
+
+
+
     LIST_ELEMENT *NewPtr = malloc(sizeof(struct LIST_ELEMENT));   //TODO: how to free and exit?
-    INSTRUCTION *Instr = NewPtr->data.instr;
+    INSTRUCTION *Instr;
 
     tDLList *upcomingLocalFrame = NULL;
 
     ListFirst(InstructionList);
 
+    printf("SUCCESS!\n");
+
+
+
     while ( 1 ) {
         // Copy the actual instruction from the list
         ListElementCopy(InstructionList, NewPtr);
+        Instr = NewPtr->data.instr;
 
-        if ( Instr->type == Instruction_Create_GlobalFrame_And_LocalStack ) {
+        if (Instr->type == Instruction_Create_GlobalFrame_And_LocalStack) {
             globalFrame = createFrame();    //!!!
+            printf("GLOBAL\n");
             stackOfLocalFrames = createFrameStack();    //!!!
+            printf("done.\n");
             ListSuccessor(InstructionList);
+            printf("JUMPING ON ANOTHER (IMHO SECOND) INSTRUCTION");
             continue; // Jump to next instruction
         }
 
-        if ( Instr->type == Instruction_Push_Global_Variable ) {
+        if (Instr->type == Instruction_Create_Global_Variable) {
+            printf("fuck you\n");
+            return -1;
+        }
+
+        if (Instr->type == Instruction_Push_Global_Variable) {
+            printf("Now i am trying to fill global frame with: Var w/ value\n");
             pushToFrame(globalFrame, Instr);
             ListSuccessor(InstructionList);
             continue; // Jump to next instruction
@@ -58,6 +78,10 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             upcomingLocalFrame = createFrame();
             ListSuccessor(InstructionList);
             continue; // Jump to next instruction
+        }
+
+        if (Instr->type == Instruction_Create_Local_Variable) {
+
         }
 
         if (Instr->type == Instruction_Push_Local_Variable) {
@@ -116,6 +140,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             case Instruction_Multiply:
             case Instruction_Divide:
                 ;
+                printf("Calling function for calculating math operation.\n");
                 if ( dst ==NULL || src1 == NULL || src2 == NULL ){
                     //TODO: dst, src1 or src2 not found
                 }
@@ -132,8 +157,35 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
                 executeInstructionMathOperation(mathInstruction);
 
-                dst = (VARIABLE *)mathInstruction->address_dst;
+                *dst = *(VARIABLE *)mathInstruction->address_dst;
 
+                break;
+
+            case Instruction_Bool_Equals:
+            case Instruction_Bool_EqualsNot:
+            case Instruction_Bool_More:
+            case Instruction_Bool_Less:
+            case Instruction_Bool_MoreEqual:
+            case Instruction_Bool_LessEqual:
+                printf("Calling function for evaluation bool expression.\n");
+                if ( dst ==NULL || src1 == NULL || src2 == NULL ){
+                    //TODO: dst, src1 or src2 not found
+                }
+
+                // passing 3 pointers to variables in FRAMES!
+                INSTRUCTION *exprInstruction = malloc(sizeof(INSTRUCTION));
+
+                exprInstruction->type = Instr->type;
+                // i hope this sorcery is fine
+                *(VARIABLE *)exprInstruction->address_dst = *dst;
+                *(VARIABLE *)exprInstruction->address_src1 = *src1;
+                *(VARIABLE *)exprInstruction->address_src2 = *src2;
+
+                executeInstructionExpressionEvaluation(exprInstruction);
+
+                *dst = *(VARIABLE *)exprInstruction->address_dst;
+
+                ;
                 break;
 
             default: InstructionExecute(Instr); break;
@@ -469,6 +521,44 @@ int executeInstructionMathOperation(INSTRUCTION *instr) {
     }   // end if Math Instructions switch
 
 }   // end of Executing
+
+//...
+
+void executeInstructionExpressionEvaluation(INSTRUCTION *instr) {
+    // code shortening: access to data value
+    VARIABLE_VALUE *dstVal = &((VARIABLE*)instr->address_dst)->value;
+    VARIABLE_VALUE *src1Val = &((VARIABLE*)instr->address_src1)->value;
+    VARIABLE_VALUE *src2Val = &((VARIABLE*)instr->address_src2)->value;
+    // code shortening: access to data type
+    DATA_TYPE dstType = ((VARIABLE*)instr->address_dst)->type;
+    DATA_TYPE src1Type = ((VARIABLE*)instr->address_src1)->type;
+    DATA_TYPE src2Type = ((VARIABLE*)instr->address_src2)->type;
+
+    switch ( instr->type ) {
+        case Instruction_Bool_Equals:   // if ( src1 == src2 ) dst=TRUE else dst=FALSE;
+            ;
+            break;
+        case Instruction_Bool_EqualsNot:    // if ( src1 != src2 ) dst=TRUE else dst=FALSE;
+            ;
+            break;
+        case Instruction_Bool_More: // if ( src1 > src2 ) dst=TRUE else dst=FALSE;
+            ;
+            break;
+        case Instruction_Bool_Less: // if ( src1 < src2 ) dst=TRUE else dst=FALSE;
+            ;
+            break;
+        case Instruction_Bool_MoreEqual:    // if ( src1 >= src2 ) dst=TRUE else dst=FALSE;
+            ;
+            break;
+        case Instruction_Bool_LessEqual:    // if ( src1 <= src2 ) dst=TRUE else dst=FALSE;
+            ;
+            break;
+
+        default: ;
+    }
+
+
+}
 
 //...
 

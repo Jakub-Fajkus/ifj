@@ -4,6 +4,7 @@
 
 #include "instruction.h"
 #include "Interpret.h"
+#include "BasicStructures.h"
 
 /* ************************************************ USED BY INTERPRET *************************************************/
 /* ************************************************ EXECUTE           *************************************************/
@@ -15,6 +16,7 @@ struct tStack_struct *createFrameStack() {
     // WARNING: also mallocs those arrays
     stackInit(localFrameStack);
     localFrameStack->arr->type = STACK_ELEMENT_TYPE_LOCAL_FRAME;
+    printf("Creating empty stack of frames... ");
     return localFrameStack;
 }
 
@@ -36,6 +38,7 @@ tDLList *createFrame() {
     tDLList *frame = malloc(sizeof(tDLList));
     checkMalloc(frame);
     ListInit(frame);
+    printf("::::: Successfully created frame, type of:");
     return frame;
 }
 
@@ -51,6 +54,7 @@ void pushToFrame(tDLList *frame, INSTRUCTION *instruction){
     //TODO: what if using only "create variable", without value? ~src2 is null
     variable.data.variable->value = *(VARIABLE_VALUE*)instruction->address_src2;
 
+    printf("Successfully inserted this variable: %s, %d", variable.data.variable->name, variable.data.variable->type);
     ListInsertLast(frame, variable);
 }
 

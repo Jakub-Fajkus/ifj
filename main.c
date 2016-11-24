@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 
 //  callInterpret();    // #justInterpretThings
 
-    printf("\nXXXXKONECXXXX");
+    printf("\n-----KONEC-----");
     return 0;
 }
 
