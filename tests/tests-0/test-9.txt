@@ -3,7 +3,7 @@
 multiline
 coment
 */
-class some{
+class Main{
 
     static int a=1;
     static int b=1;
@@ -11,5 +11,9 @@ class some{
     static int d=1;
 
     static int sm = ( a+b /( c*(a) - d ) + b );
+
+    static void run() {
+        //nebavi mne to...
+    }
 
 }

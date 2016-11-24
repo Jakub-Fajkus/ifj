@@ -1,7 +1,11 @@
 //succ id starting with $
 
-class succ{
+class Main{
 
     static String $smth;
+
+    static void run() {
+
+    }
 
 }

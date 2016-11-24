@@ -1,9 +1,9 @@
 //succ statement for return
 //sematic fail??
 
-class smth{
+class Main{
 
-    static void fun1(){
+    static void run(){
         return (2+2);
     }
 }

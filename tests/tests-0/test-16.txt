@@ -1,5 +1,11 @@
 //succ full id
 
-class succ{
+class Main{
     static int smt.sm;
+
+    static void run() {
+
+    }
+
+
 }

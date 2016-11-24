@@ -5,4 +5,6 @@
 #ifndef IFJ_SEMANTICALANALYZER_H
 #define IFJ_SEMANTICALANALYZER_H
 
+void checkIfFunctionRunExists();
+
 #endif //IFJ_SEMANTICALANALYZER_H

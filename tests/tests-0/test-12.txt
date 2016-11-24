@@ -1,5 +1,5 @@
-class _smth{
-    static int smth(){
+class Main{
+    static void run(){
         int a = (3 / 2);
     }
 }

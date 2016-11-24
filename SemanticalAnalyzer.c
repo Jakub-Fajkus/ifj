@@ -5,10 +5,16 @@
 #include "SemanticalAnalyzer.h"
 #include "SymbolTable.h"
 
-SYMBOL_TABLE_NODEPtr *globalSymbolTable;
-SYMBOL_TABLE_NODEPtr *actualSymbolTable;
-SYMBOL_TABLE_FUNCTION *actualFunction;
+extern SYMBOL_TABLE_NODEPtr *globalSymbolTable;
+extern SYMBOL_TABLE_NODEPtr *actualSymbolTable;
+extern SYMBOL_TABLE_FUNCTION *actualFunction;
 
 void checkIfFunctionRunExists() {
+    // get function Main.run
 
+    SYMBOL_TABLE_FUNCTION *function = getFunctionFromTable(globalSymbolTable, "Main.run");
+
+    if (function == NULL) {
+        exit(3);
+    }
 }

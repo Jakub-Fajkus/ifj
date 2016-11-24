@@ -1,5 +1,5 @@
 class Main {
-    static void fun() {
+    static void run() {
         int x = 5;
         int y = 5;
         

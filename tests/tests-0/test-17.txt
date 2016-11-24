@@ -8,8 +8,8 @@ class Smth{
 
 }
 
-class _smth{
-    static int smth(){
+class Main{
+    static void run(){
         while(1+2+3){
             if(0){
 

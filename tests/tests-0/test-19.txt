@@ -1,5 +1,9 @@
 //succes id
 
-class succ{
-    static double _smth;
+class Main{
+    static double neco;
+
+    static void run() {
+
+    }
 }

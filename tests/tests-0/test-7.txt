@@ -1,8 +1,8 @@
 //succ statement call function
 
-class smth{
+class Main{
 
-    static void fun1(){
+    static void run(){
         fun2();
     }
 }

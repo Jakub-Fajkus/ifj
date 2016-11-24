@@ -2,10 +2,6 @@
 
 class Main{
     static void run(){
-        run2();
-    }
-
-    static void run2(){
-
+        fun22();
     }
 }

@@ -1,5 +1,9 @@
 //succ is start with big letter
 
-class succ{
+class Main{
     static int Smth;
+
+    static void run() {
+
+    }
 }

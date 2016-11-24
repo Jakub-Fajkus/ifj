@@ -1,6 +1,6 @@
 class Main {
 
- static void moje_funkce() {
+ static void run() {
     return;
  }
 
