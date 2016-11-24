@@ -2,7 +2,7 @@ class Main{
     static int a;
 
     static void example(){
-        a = -1;
+        a = 1;
     }
 
     static int run(){
