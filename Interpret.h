@@ -42,12 +42,14 @@ void checkMalloc(void *ptr);
  */
 void InstructionExecute(INSTRUCTION *Instr);
 
+
 /**
  * ADD (math & concatenation), SUB, MUL, DIV
  * ANALOGICAL TO createInstructionMathOperation()
  * @param instr
+ * @return  99 - intern error, 10- other runtime error, 9- division by zero, 0- OK
  */
-void executeInstructionMathOperation(INSTRUCTION *instr);
+int executeInstructionMathOperation(INSTRUCTION *instr);
 
 /**
  * ASSIGN execution

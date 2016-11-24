@@ -111,7 +111,7 @@ INSTRUCTION *PushGlobalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value
 INSTRUCTION *CreateGlobalVariable(char *name, DATA_TYPE type) {
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
 
-    instruction->type = Instruction_Push_Global_Variable;
+    instruction->type = Instruction_Create_Global_Variable;
     instruction->address_dst = name;
 
     instruction->address_src1 = malloc(sizeof(DATA_TYPE));
@@ -142,7 +142,7 @@ INSTRUCTION *PushLocalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value)
 INSTRUCTION *CreateLocalVariable(char *name, DATA_TYPE type) {
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
 
-    instruction->type = Instruction_Push_Local_Variable;
+    instruction->type = Instruction_Create_Local_Variable;
     instruction->address_dst = name;
 
     instruction->address_src1 = malloc(sizeof(DATA_TYPE));
