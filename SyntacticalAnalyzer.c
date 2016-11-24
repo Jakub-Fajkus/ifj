@@ -110,8 +110,10 @@ tDLList* getAllTokens(char *fileName) {
 bool ruleId(char **name) {
     TOKEN *token = getCachedToken();
 
+
     if (token->type == IDENTIFIER) {
         *name = token->data.identifier.name;
+        printf("id: %s\n", *name);
         return true;
     }
 
@@ -121,6 +123,7 @@ bool ruleId(char **name) {
         free(classWithDot);
 
         *name = fullName;
+        printf("id: %s\n", *name);
         return true;
     } else {
         returnCachedTokens(1);
@@ -731,9 +734,7 @@ bool ruleDefinitionStart(char *className) {
             if (ruleDefinition(className, type, functionOrPropertyName, &propertyInitialized, &isFunction)) {
                 type = TYPE_STRING;
                 char *classNameWithDot = stringConcat(className, ".");
-                if(isFunction) {
-                    createAndInsertFunction(globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), TYPE_STRING, 0, NULL);
-                } else {
+                if(!isFunction) {
                     createAndInsertStringVariable(globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), propertyInitialized);
                 }
                 return true;
@@ -747,10 +748,8 @@ bool ruleDefinitionStart(char *className) {
             if (ruleDefinition(className, type, functionOrPropertyName, &propertyInitialized, &isFunction)) {
                 type = TYPE_STRING;
                 char *classNameWithDot = stringConcat(className, ".");
-                if(isFunction) {
-                    createAndInsertFunction(globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), TYPE_INT, 0, NULL);
-                } else {
-                    createAndInsertStringVariable(globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), propertyInitialized);
+                if(!isFunction) {
+                    createAndInsertIntVariable(globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), propertyInitialized);
                 }
                 return true;
             }
@@ -763,10 +762,8 @@ bool ruleDefinitionStart(char *className) {
             if (ruleDefinition(className, type, functionOrPropertyName, &propertyInitialized, &isFunction)) {
                 type = TYPE_STRING;
                 char *classNameWithDot = stringConcat(className, ".");
-                if(isFunction) {
-                    createAndInsertFunction(globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), TYPE_DOUBLE, 0, NULL);
-                } else {
-                    createAndInsertStringVariable(globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), propertyInitialized);
+                if(!isFunction) {
+                    createAndInsertDoubleVariable(globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), propertyInitialized);
                 }
                 return true;
             }
@@ -823,7 +820,7 @@ void makeFirstPass() {
 
     bool result = ruleProg();
 
-    if(result == 0) {
+    if(result == false) {
         exit(2);
     }
 }
