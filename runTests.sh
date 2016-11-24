@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 FOLDER=''
-FILES=`find tests/$FOLDER -iname  'test*' | sort -n`
+FILES=` find tests -iname  'test*' | sort -n | grep txt`
 FAILED_COUNTER=0
 OK_COUNTER=0
 
