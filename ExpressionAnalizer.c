@@ -9,7 +9,7 @@
 
 unsigned long iterator = 0;
 char varName[100];
-int generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr *globalSymbolTable, SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBOL_TABLE_FUNCTION *calledFunction);
+int generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr *globalSymbolTable, SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBOL_TABLE_FUNCTION *calledFunction, bool firstPass);
 void concatenateString();
 bool stopNow = false;
 
@@ -195,6 +195,7 @@ int parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NOD
                             stopNow = false;
                             //TODO vhen NOT NULL
 //                            varName => returnVal
+//                            dataType
                             return 0;
 
                         default:
@@ -213,7 +214,7 @@ int parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NOD
                     exit(99);
                 }
                 lookingForTerminal = true;
-                int genRetVal= generate3AddressCode(stack, backStack,globalSymbolTable, localSymbolTable, calledFunction);
+                int genRetVal= generate3AddressCode(stack, backStack,globalSymbolTable, localSymbolTable, calledFunction, firstPass);
                 if(genRetVal != 0) return genRetVal;
                 break;
             default:
@@ -223,7 +224,7 @@ int parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NOD
 
 }
 
-int generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr *globalSymbolTable, SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBOL_TABLE_FUNCTION *calledFunction){
+int generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr *globalSymbolTable, SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBOL_TABLE_FUNCTION *calledFunction, bool firstPass){
     STACK_ELEMENT stackElement1;
     STACK_ELEMENT stackElement2;
     STACK_ELEMENT stackElement3;
@@ -287,16 +288,21 @@ int generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr *
                     stackElement2.data.terminalData.type == EA_ADD &&
                     stackElement3.type == EA_NOT_TERMINAL)
             {
-                concatenateString();
                 DATA_TYPE outputType = getOutputType(stackElement1.data.notTerminalData.type,stackElement3.data.notTerminalData.type);
 
-                char *tempName = (char*)malloc(sizeof(char)*30);
-                strcpy(tempName,varName);
-                // TODO push variable
-                createInstructionMathOperation(Instruction_Addition,tempName,stackElement1.data.notTerminalData.name,stackElement2.data.notTerminalData.name);
-
+                if(!firstPass) {
+                    concatenateString();
+                    char *tempName = (char *) malloc(sizeof(char) * 30);
+                    strcpy(tempName, varName);
+                    // TODO push variable
+                    createInstructionMathOperation(Instruction_Addition, tempName,
+                                                   stackElement1.data.notTerminalData.name,
+                                                   stackElement2.data.notTerminalData.name);
+                    stackElement1.data.notTerminalData.name = tempName;
+                }else {
+                    stackElement1.data.notTerminalData.name = "tempName";
+                }
                 printf("generate: E->E+E\n");
-                stackElement1.data.notTerminalData.name =tempName;
                 stackElement1.data.notTerminalData.type = outputType;
                 stackElement1.type = EA_NOT_TERMINAL;
             } else return  2; //todo check
@@ -307,19 +313,24 @@ int generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr *
                stackElement2.data.terminalData.type == EA_SUB &&
                stackElement3.type == EA_NOT_TERMINAL)
             {
-                concatenateString();
                 DATA_TYPE outputType = getOutputType(stackElement1.data.notTerminalData.type,stackElement3.data.notTerminalData.type);
+                if(!firstPass) {
 
-                if(outputType == TYPE_STRING) exit(3);
+                    concatenateString();
 
-                char *tempName = (char*)malloc(sizeof(char)*30);
-                strcpy(tempName,varName);
-                // TODO push variable
+                    if (outputType == TYPE_STRING) return 3;
 
-                createInstructionMathOperation(Instruction_Subtraction,tempName,stackElement1.data.notTerminalData.name,stackElement2.data.notTerminalData.name);
-
+                    char *tempName = (char *) malloc(sizeof(char) * 30);
+                    strcpy(tempName, varName);
+                    // TODO push variable
+                    createInstructionMathOperation(Instruction_Subtraction, tempName,
+                                                   stackElement1.data.notTerminalData.name,
+                                                   stackElement2.data.notTerminalData.name);
+                    stackElement1.data.notTerminalData.name = tempName;
+                }else {
+                    stackElement1.data.notTerminalData.name = "tempName";
+                }
                 printf("generate: E->E-E\n");
-                stackElement1.data.notTerminalData.name =tempName;
                 stackElement1.data.notTerminalData.type = outputType;
                 stackElement1.type = EA_NOT_TERMINAL;
             } else return 2; //todo check
@@ -328,21 +339,27 @@ int generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr *
             if(stackElement1.type == EA_NOT_TERMINAL &&
                stackElement2.type == EA_TERMINAL &&
                stackElement2.data.terminalData.type == EA_MUL &&
-               stackElement3.type == EA_NOT_TERMINAL)
-            {
-                concatenateString();
+               stackElement3.type == EA_NOT_TERMINAL) {
+                DATA_TYPE outputType = getOutputType(stackElement1.data.notTerminalData.type,
+                                                     stackElement3.data.notTerminalData.type);
+                if (!firstPass) {
+                    concatenateString();
 
-                DATA_TYPE outputType = getOutputType(stackElement1.data.notTerminalData.type,stackElement3.data.notTerminalData.type);
+                    if (outputType == TYPE_STRING) exit(3);
 
-                if(outputType == TYPE_STRING) exit(3);
+                    char *tempName = (char *) malloc(sizeof(char) * 30);
+                    strcpy(tempName, varName);
+                    // TODO push variable
 
-                char *tempName = (char*)malloc(sizeof(char)*30);
-                strcpy(tempName,varName);
-                // TODO push variable
-
-                createInstructionMathOperation(Instruction_Multiply,tempName,stackElement1.data.notTerminalData.name,stackElement2.data.notTerminalData.name);
+                    createInstructionMathOperation(Instruction_Multiply, tempName,
+                                                   stackElement1.data.notTerminalData.name,
+                                                   stackElement2.data.notTerminalData.name);
+                    stackElement1.data.notTerminalData.name = tempName;
+                }else {
+                    stackElement1.data.notTerminalData.name = "tempName";
+                }
                 printf("generate: E->E*E\n");
-                stackElement1.data.notTerminalData.name =tempName;
+
                 stackElement1.data.notTerminalData.type = outputType;
                 stackElement1.type = EA_NOT_TERMINAL;
             }else return 2; //todo check
@@ -354,18 +371,26 @@ int generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr *
                stackElement2.data.terminalData.type == EA_DIV &&
                stackElement3.type == EA_NOT_TERMINAL)
             {
-                concatenateString();
 
                 DATA_TYPE outputType = getOutputType(stackElement1.data.notTerminalData.type,stackElement3.data.notTerminalData.type);
 
-                if(outputType == TYPE_STRING) exit(3); else outputType = TYPE_DOUBLE;
+                if (!firstPass) {
+                    concatenateString();
 
-                char *tempName = (char*)malloc(sizeof(char)*30);
-                strcpy(tempName,varName);
-                // TODO push variable
-                createInstructionMathOperation(Instruction_Multiply,tempName,stackElement1.data.notTerminalData.name,stackElement2.data.notTerminalData.name);
+                    if (outputType == TYPE_STRING) exit(3); else outputType = TYPE_DOUBLE;
+
+                    char *tempName = (char *) malloc(sizeof(char) * 30);
+                    strcpy(tempName, varName);
+                    // TODO push variable
+                    createInstructionMathOperation(Instruction_Multiply, tempName,
+                                                   stackElement1.data.notTerminalData.name,
+                                                   stackElement2.data.notTerminalData.name);
+                    stackElement1.data.notTerminalData.name =tempName;
+
+                }else {
+                    stackElement1.data.notTerminalData.name = "tempName";
+                }
                 printf("generate: E->E/E\n");
-                stackElement1.data.notTerminalData.name =tempName;
                 stackElement1.data.notTerminalData.type = outputType;
                 stackElement1.type = EA_NOT_TERMINAL;
             }else  return 2; //todo check
@@ -391,55 +416,76 @@ int generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr *
                 if(stackElement1.data.terminalData.token.type == IDENTIFIER){
                     stackElement2.data.notTerminalData.name = stackElement1.data.terminalData.token.data.identifier.name;
 //                     TODO when not null
-                    SYMBOL_TABLE_VARIABLE *symbolTableVariable = getVariable(localSymbolTable, globalSymbolTable, calledFunction, stackElement2.data.notTerminalData.name);
-                    if(symbolTableVariable == NULL){
-                        return 3;
+                    if (!firstPass) {
+                        SYMBOL_TABLE_VARIABLE *symbolTableVariable = getVariable(localSymbolTable, globalSymbolTable,
+                                                                                 calledFunction,
+                                                                                 stackElement2.data.notTerminalData.name);
+                        if (symbolTableVariable == NULL) {
+                            return 3;
+                        }
+                        stackElement2.data.notTerminalData.type = symbolTableVariable->type;
+                    }{
+                        stackElement2.data.notTerminalData.type = TYPE_INT;
                     }
-                    stackElement2.data.notTerminalData.type = symbolTableVariable->type;
+
                     printf("generate: E->i where i = ID\n");
                 }else if(stackElement1.data.terminalData.token.type == IDENTIFIER_FULL){
-                    char *tempName = (char*)malloc(
-                            sizeof(char) * (1
-                                            + strlen(stackElement1.data.terminalData.token.data.identifierFull.class)
-                                            + strlen(stackElement1.data.terminalData.token.data.identifierFull.class)
-                                           )
-                    );
-                    sprintf(
-                            tempName,
-                            "%s.%s",
-                            stackElement1.data.terminalData.token.data.identifierFull.class,
-                            stackElement1.data.terminalData.token.data.identifierFull.name
-                    );
-                    stackElement2.data.notTerminalData.name = tempName;
+                    if (!firstPass) {
+                        char *tempName = (char *) malloc(
+                                sizeof(char) * (1
+                                                +
+                                                strlen(stackElement1.data.terminalData.token.data.identifierFull.class)
+                                                +
+                                                strlen(stackElement1.data.terminalData.token.data.identifierFull.class)
+                                )
+                        );
+                        sprintf(
+                                tempName,
+                                "%s.%s",
+                                stackElement1.data.terminalData.token.data.identifierFull.class,
+                                stackElement1.data.terminalData.token.data.identifierFull.name
+                        );
+                        stackElement2.data.notTerminalData.name = tempName;
 //                    todo when not null
-                    SYMBOL_TABLE_VARIABLE *symbolTableVariable = getVariable(localSymbolTable, globalSymbolTable, calledFunction, stackElement2.data.notTerminalData.name);
-                    if(symbolTableVariable == NULL){
-                        return 3;
+                        SYMBOL_TABLE_VARIABLE *symbolTableVariable = getVariable(localSymbolTable, globalSymbolTable,
+                                                                                 calledFunction,
+                                                                                 stackElement2.data.notTerminalData.name);
+                        if (symbolTableVariable == NULL) {
+                            return 3;
+                        }
+                        stackElement2.data.notTerminalData.type = symbolTableVariable->type;
+                    }else {
+                        stackElement2.data.notTerminalData.type = TYPE_INT;
+                        stackElement2.data.notTerminalData.name = "tepName";
                     }
-                    stackElement2.data.notTerminalData.type = symbolTableVariable->type;
                     printf("generate: E->i where i = ID_FULL\n");
                 }else {
-                    concatenateString();
-                    char *tempName = (char*)malloc(sizeof(char)*30);
-                    strcpy(tempName,varName);
-                    DATA_TYPE varType;
-                    switch (stackElement1.data.terminalData.token.type){
-                        case LITERAL_DOUBLE:
-                            varType = TYPE_DOUBLE;
-                            break;
-                        case LITERAL_STRING:
-                            varType = TYPE_STRING;
-                            break;
-                        case LITERAL_INTEGER:
-                            varType = TYPE_INT;
-                            break;
-                        default:
-                            exit(99);
-                    }
-                    //todo create local var
+                    if (!firstPass) {
+                        concatenateString();
+                        char *tempName = (char *) malloc(sizeof(char) * 30);
+                        strcpy(tempName, varName);
+                        DATA_TYPE varType;
+                        switch (stackElement1.data.terminalData.token.type) {
+                            case LITERAL_DOUBLE:
+                                varType = TYPE_DOUBLE;
+                                break;
+                            case LITERAL_STRING:
+                                varType = TYPE_STRING;
+                                break;
+                            case LITERAL_INTEGER:
+                                varType = TYPE_INT;
+                                break;
+                            default:
+                                exit(99);
+                        }
+                        //todo create local var
 
-                    stackElement2.data.notTerminalData.type = varType;
-                    stackElement2.data.notTerminalData.name = tempName;
+                        stackElement2.data.notTerminalData.type = varType;
+                        stackElement2.data.notTerminalData.name = tempName;
+                    }else {
+                        stackElement2.data.notTerminalData.type = TYPE_INT;
+                        stackElement2.data.notTerminalData.name = "tepName";
+                    }
                 }
                 printf("generate: E->i where i = LIT\n");
                 stackElement2.type = EA_NOT_TERMINAL;
@@ -457,15 +503,20 @@ int generate3AddressCode(tStack *stack,tStack *backStack, SYMBOL_TABLE_NODEPtr *
 //               stackElement2.data.terminalData.type == EA_ADD &&
                stackElement3.type == EA_NOT_TERMINAL)
             {
-                concatenateString();
+                if(firstPass) {
+                    concatenateString();
 
-                char *tempName = (char*)malloc(sizeof(char)*30);
-                strcpy(tempName,varName);
-                // TODO push variable
-                // TDO generate LogicOporation
+                    char *tempName = (char *) malloc(sizeof(char) * 30);
+                    strcpy(tempName, varName);
+                    createLocalVariable(tempName, TYPE_INT);
 
-                printf("generate: E->E_LOGIC_E\n");
-                stackElement1.data.notTerminalData.name =tempName;
+                    // TDO generate LogicOporation
+
+                    printf("generate: E->E_LOGIC_E\n");
+                    stackElement1.data.notTerminalData.name = tempName;
+                }else {
+                    stackElement1.data.notTerminalData.name = "tempName";
+                }
                 stackElement1.data.notTerminalData.type = TYPE_INT;
                 stackElement1.type = EA_NOT_TERMINAL;
             } else return 2; //todo check
