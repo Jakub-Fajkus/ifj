@@ -13,7 +13,7 @@ char varName[100];
 
 int generate3AddressCode(tStack *stack, tStack *backStack, SYMBOL_TABLE_NODEPtr *globalSymbolTable,
                          SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBOL_TABLE_FUNCTION *calledFunction, bool firstPass);
-
+int brackets = 0;
 void concatenateString();
 
 bool stopNow = false;
@@ -60,7 +60,6 @@ DATA_TYPE getOutputType(DATA_TYPE type1, DATA_TYPE type2) {
 }
 
 EA_TERMINAL_TYPE getTerminalDataType(TOKEN token) {
-    static int brackets = 0;
     switch (token.type) {
         case KEYWORD:
         case OPERATOR_ASSIGN:
@@ -212,7 +211,7 @@ int parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NOD
                             printf("\nDEBUG expression END\n");
                             //reset globals
                             stopNow = false;
-                            //TODO vhen NOT NULL
+                            //TODO
 //                            varName => returnVal
 //                            dataType
                             return 0;
@@ -233,7 +232,7 @@ int parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NOD
                                 if(stackElement.type!=EA_TERMINAL && stackElement.data.terminalData.type==EA_I)return 2;
                             } else return 2;
                             if(!stackEmpty(stack))return 2;
-
+                            brackets = 0;
                             returnCachedTokens(2);
                             return -1;
                         default:
@@ -571,7 +570,7 @@ int generate3AddressCode(tStack *stack, tStack *backStack, SYMBOL_TABLE_NODEPtr 
                 stackElement2.type == EA_TERMINAL &&
                 //               stackElement2.data.terminalData.type == EA_ADD &&
                 stackElement3.type == EA_NOT_TERMINAL) {
-                if (firstPass) {
+                if (!firstPass) {
                     concatenateString();
                     char *tempName = (char *) malloc(sizeof(char) * 30);
                     strcpy(tempName, varName);
