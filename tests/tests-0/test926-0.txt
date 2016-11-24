@@ -19,9 +19,6 @@ class _smth{
                 } else {
 
                 }
-                else{
-
-                }
             }
         }
     }

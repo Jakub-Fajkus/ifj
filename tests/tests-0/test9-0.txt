@@ -4,7 +4,8 @@ class Main
     {
         if( 3 < 2 ){
             a = 3;
+        } else {
+            //chybelo else :D
         }
-
     }
 }

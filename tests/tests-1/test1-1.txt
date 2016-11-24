@@ -1,8 +1,5 @@
 class Main {
     static void fun() {
         int x = "";
-        int y = 5;
-        
-        ifj16.print("" + x + y);
     }
 }

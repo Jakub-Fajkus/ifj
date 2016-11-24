@@ -1,12 +1,12 @@
 class Main {
 
- void run (void) {
+ static void run () {
     a = 2;
  }
 
- static int a;
+ static int a = 0;
 
- int isprime(int x) {
-    return x = 0;
+ static int isprime(int x) {
+    return x;
  }
 }
