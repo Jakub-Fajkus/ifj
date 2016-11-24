@@ -1,5 +1,6 @@
 class Main {
     static void fun() {
         int x = "";
+
     }
 }
