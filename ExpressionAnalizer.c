@@ -108,7 +108,7 @@ EA_TERMINAL_TYPE getTerminalDataType(TOKEN token) {
     return EA_UNKNOWN;
 }
 
-int parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NODEPtr *globalSymbolTable, SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBOL_TABLE_FUNCTION *calledFunction) {
+int parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NODEPtr *globalSymbolTable, SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBOL_TABLE_FUNCTION *calledFunction, bool firstPass) {
     printf("\nDEBUG expression START\n");
     bool lookingForTerminal = true;
     STACK_ELEMENT stackElement;
