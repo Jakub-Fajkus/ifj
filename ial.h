@@ -17,6 +17,4 @@ char medianIndex(char *s);
 
 void swap(char *arr, int left, int right);
 
-char *stringConcat(char *str1, char *str2);
-
 #endif

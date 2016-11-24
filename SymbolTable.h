@@ -223,4 +223,6 @@ void addFunctionParameter(SYMBOL_TABLE_FUNCTION *function, char *name, DATA_TYPE
  */
 void checkIfVariableIsInitialized(SYMBOL_TABLE_NODEPtr *symbolTable, char *name);
 
+LIST_ELEMENT *createFunctionParamListElement(DATA_TYPE type, char* name);
+
 #endif //IFJ_SYMBOLTABLE_H

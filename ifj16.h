@@ -25,4 +25,6 @@ int ifj16_find(char *, char *);
 
 char *ifj16_sort(char *s);
 
+char *stringConcat(char *str1, char *str2);
+
 #endif

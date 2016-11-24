@@ -1,10 +1,12 @@
 //
 // Created by Jakub Fajkus on 12.11.16.
 //
-#include "ial.h"
 #include "SyntacticalAnalyzer.h"
+#include "ifj16.h"
 #include "Debug.h"
 #include "LexicalAnalyzerStructures.h"
+#include "BasicStructures.h"
+#include "SymbolTable.h"
 
 #define stringEquals(x,y) (strcmp(x, y) == 0)
 
@@ -46,6 +48,9 @@ void runSyntacticalAnalysis(char *fileName) {
 
     initializeSymbolTable(&globalSymbolTable);
     initializeSymbolTable(&actualSymbolTable);
+//    SYMBOL_TABLE_FUNCTION *function = createAndInsertFunction(globalSymbolTable, "Main.run", TYPE_VOID, 0, NULL);
+//    actualFunction = function;
+//    actualFunction = function;
 
     makeFirstPass();
 
@@ -119,11 +124,11 @@ bool ruleId(char **name) {
     }
 }
 
-bool ruleTypeString(char **type) {
+bool ruleTypeString(DATA_TYPE *type) {
     TOKEN *token = getCachedToken();
 
     if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "String")) {
-        *type = "String";
+        *type = TYPE_STRING;
         return true;
     } else {
         returnCachedTokens(1);
@@ -131,11 +136,11 @@ bool ruleTypeString(char **type) {
     }
 }
 
-bool ruleTypeDouble(char **type) {
+bool ruleTypeDouble(DATA_TYPE *type) {
     TOKEN *token = getCachedToken();
 
     if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "double")) {
-        *type = "double";
+        *type = TYPE_DOUBLE;
         return true;
     } else {
         returnCachedTokens(1);
@@ -143,11 +148,11 @@ bool ruleTypeDouble(char **type) {
     }
 }
 
-bool ruleTypeInt(char **type) {
+bool ruleTypeInt(DATA_TYPE *type) {
     TOKEN *token = getCachedToken();
 
     if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "int")) {
-        *type = "int";
+        *type = TYPE_INT;
         return true;
     } else {
         returnCachedTokens(1);
@@ -163,11 +168,10 @@ bool ruleProg(){
     //<PROG> -> class <ID> {<CLASS_DEFINITION> } <PROG>
     if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "class")) {
         if (ruleId(&className)) {
-//            createAndInsertIntVariable(globalSymbolTable, className)
-
+            createAndInsertIntVariable(globalSymbolTable, stringConcat(className, ".*"), false);
             token = getCachedToken();
             if (token->type == BRACKET && token->data.bracket.name == '{') {
-                if (ruleClassDefinition()) {
+                if (ruleClassDefinition(className)) {
                     token = getCachedToken();
                     if (token->type == BRACKET && token->data.bracket.name == '}') {
                         if (ruleProg()) {
@@ -198,14 +202,14 @@ bool ruleProg(){
     return false;
 }
 
-bool ruleClassDefinition(){
+bool ruleClassDefinition(char *className){
     tDLElemPtr activeElementRuleApplication = globalTokens->Act;
     TOKEN *token = getCachedToken();
 
     //<CLASS_DEFINITION> -> static <DEFINITION_START> <CLASS_DEFINITION>
     if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "static")) {
-        if (ruleDefinitionStart()) {
-            if (ruleClassDefinition()) {
+        if (ruleDefinitionStart(className)) {
+            if (ruleClassDefinition(className)) {
                 return true;
             } else {
                 globalTokens->Act = activeElementRuleApplication;
@@ -232,15 +236,23 @@ bool ruleClassDefinition(){
     }
 }
 
-bool ruleDefinition(){
+bool ruleDefinition(char *className, DATA_TYPE type, char *name, bool *variableInitialized){
     //<DEFINITION> -> <PROP_DEF>
     //<DEFINITION> -> <FUNC_DEF>
-    return rulePropDef() || ruleFuncDef();
+    if (rulePropDef(variableInitialized)) {
+        return true;
+    } else {
+        char *classNameWithDot = stringConcat(className, ".");
+        SYMBOL_TABLE_FUNCTION *function = createAndInsertFunction(globalSymbolTable, stringConcat(classNameWithDot, name), type, 0, NULL);
+
+        return ruleFuncDef(function);
+    }
 }
 
-bool rulePropDef(){
+bool rulePropDef(bool *variableInitialized){
     tDLElemPtr activeElementRuleApplication = globalTokens->Act;
     TOKEN *token = getCachedToken();
+    *variableInitialized = false;
 
     if (token->type == SEMICOLON) {
         return true;
@@ -259,6 +271,7 @@ bool rulePropDef(){
         if (parseExpression(dummyInstructionLIst, resultVariableName, globalSymbolTable, actualSymbolTable, actualFunction)) {
             token = getCachedToken();
             if (token->type == SEMICOLON) {
+                *variableInitialized = true;
                 return true;
             } else {
                 //the rule application was unsuccessful, so return the token list to the state in which it was before this function call
@@ -275,16 +288,18 @@ bool rulePropDef(){
     }
 }
 
-bool ruleFuncDef(){
+bool ruleFuncDef(SYMBOL_TABLE_FUNCTION *function){
     tDLElemPtr activeElementRuleApplication = globalTokens->Act;
     TOKEN *token = getCachedToken();
+    actualFunction = function;
+    actualSymbolTable = &function->localSymbolTable;
 
     //<FUNC_DEF> -> ( <FUNC_DEF_PARAMS> { <ST_LIST_DECL> }
     if (token->type == BRACKET && token->data.bracket.name == '(') {
-        if (ruleFuncDefParams()) {
+        if (ruleFuncDefParams(function)) {
             token = getCachedToken();
             if (token->type == BRACKET && token->data.bracket.name == '{') {
-                if (ruleStListDecl()) { //tu nevlezu....!
+                if (ruleStListDecl(function)) {
                     token = getCachedToken();
                     if (token->type == BRACKET && token->data.bracket.name == '}') {
                         return true;
@@ -315,22 +330,22 @@ bool ruleFuncDef(){
     return false;
 }
 
-bool ruleStListDecl(){
+bool ruleStListDecl(SYMBOL_TABLE_FUNCTION *function){
     //<ST_LIST_DECL> -> <TYPE><ID><DECL><ST_LIST_DECL>
-    char *type;
+    DATA_TYPE type;
     char *name;
 
     if (ruleTypeDouble(&type) || ruleTypeInt(&type) || ruleTypeString(&type)) {
         if (ruleId(&name)) {
-            if (ruleDecl()) {
-                if (ruleStListDecl()) {
+            if (ruleDecl(function, type, name)) {
+                if (ruleStListDecl(function)) {
                     return true;
                 }
             }
         }
     //<ST_LIST_DECL> -> <STAT> <ST_LIST_DECL>
     } else if (ruleStat()) {
-        if (ruleStListDecl()) {
+        if (ruleStListDecl(function)) {
             return true;
         }
     } else {
@@ -385,11 +400,12 @@ bool ruleStList(){
     return false;
 }
 
-bool ruleDecl(){
+bool ruleDecl(SYMBOL_TABLE_FUNCTION *function, DATA_TYPE type, char *variableName){
     tDLElemPtr activeElementRuleApplication = globalTokens->Act;
     TOKEN *token = getCachedToken();
 
     if (token->type == SEMICOLON) {
+        createAndInsertVariable(&function->localSymbolTable, variableName, type, false);
         return true;
     } else if (token->type == OPERATOR_ASSIGN) {
         //<DECL> -> = <EXP>;
@@ -406,6 +422,7 @@ bool ruleDecl(){
 
             //<DECL> -> ;
             if (token->type == SEMICOLON) {
+                createAndInsertVariable(&function->localSymbolTable, variableName, type, true);
                 return true;
             } else {
                 //the rule application was unsuccessful, so return the token list to the state in which it was before this function call
@@ -606,20 +623,21 @@ bool ruleAfterFunctionCallExp(){
     return false;
 }
 
-bool ruleFuncDefParams(){
+bool ruleFuncDefParams(SYMBOL_TABLE_FUNCTION *function){
     //<FUNC_DEF_PARAMS> -> <DEF_PARAM>
     //<FUNC_DEF_PARAMS> -> <FUNCTION_DEF_END>
-    return ruleDefParam() || ruleFunctionDefEnd();
+    return ruleDefParam(function) || ruleFunctionDefEnd();
 }
 
-bool ruleDefParam(){
+bool ruleDefParam(SYMBOL_TABLE_FUNCTION *function){
 
-    char *type;
+    DATA_TYPE type;
     char *name;
     //<DEF_PARAM> -> <TYPE> <ID> <DEF_PARAM_BEGIN_TI>
     if (ruleTypeInt(&type) || ruleTypeDouble(&type) || ruleTypeString(&type)) {
         if (ruleId(&name)) {
-            if (ruleDefParamBeginTi()) {
+            DLPostInsert(function->parameters, *createFunctionParamListElement(type, name));
+            if (ruleDefParamBeginTi(function, type, name)) {
                 return true;
             }
         }
@@ -629,7 +647,7 @@ bool ruleDefParam(){
     return false;
 }
 
-bool ruleDefParamBeginTi(){
+bool ruleDefParamBeginTi(SYMBOL_TABLE_FUNCTION *function, DATA_TYPE type, char *name){
     tDLElemPtr activeElementRuleApplication = globalTokens->Act;
     //<DEF_PARAM_BEGIN_TI> ->  <FUNCTION_DEF_END>
     //<DEF_PARAM_BEGIN_TI> -> , <DEF_PARAM>
@@ -640,7 +658,7 @@ bool ruleDefParamBeginTi(){
         TOKEN *token = getCachedToken();
 
         if(token->type == SEPARATOR) {
-            if (ruleDefParam()) {
+            if (ruleDefParam(function)) {
                 return true;
             }
         }
@@ -662,10 +680,9 @@ bool ruleFunctionDefEnd(){
     return false;
 }
 
-bool ruleTypeVoid(char **name) {
-    char *type;
+bool ruleTypeVoid(DATA_TYPE *type) {
 
-    if (ruleTypeInt(&type) || ruleTypeDouble(&type) || ruleTypeString(&type)) {
+    if (ruleTypeInt(type) || ruleTypeDouble(type) || ruleTypeString(type)) {
         return true;
     } else {
         TOKEN *token = getCachedToken();
@@ -678,36 +695,53 @@ bool ruleTypeVoid(char **name) {
     }
 }
 
-bool ruleDefinitionStart() {
+bool ruleDefinitionStart(char *className) {
     tDLElemPtr activeElementRuleApplication = globalTokens->Act;
     TOKEN *token = getCachedToken();
 
-    char *name;
+    char *functionOrPropertyName;
+    DATA_TYPE type;
     //<DEFINITION_START> -> void <ID><FUNC_DEF>
     if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "void")) {
-        if (ruleId(&name)) {
-            if (ruleFuncDef()) {
+        if (ruleId(&functionOrPropertyName)) {
+            char *classNameWithDot = stringConcat(className, ".");
+            tDLList *params = malloc(sizeof(tDLList));
+            ListInit(params);
+            SYMBOL_TABLE_FUNCTION *function = createAndInsertFunction(globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), TYPE_VOID, 0, NULL);
+            if (ruleFuncDef(function)) {
                 return true;
             }
         }
     //<DEFINITION_START> -> string <ID><DEFINITION>
     } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "String")) {
-        if (ruleId(&name)) {
-            if (ruleDefinition()) {
+        if (ruleId(&functionOrPropertyName)) {
+            bool propertyInitialized = false;
+            if (ruleDefinition(className, type, functionOrPropertyName, &propertyInitialized)) {
+                type = TYPE_STRING;
+                char *classNameWithDot = stringConcat(className, ".");
+                createAndInsertStringVariable(globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), propertyInitialized);
                 return true;
             }
         }
     //<DEFINITION_START> -> int <ID><DEFINITION>
     } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "int")) {
-        if (ruleId(&name)) {
-            if (ruleDefinition()) {
+        if (ruleId(&functionOrPropertyName)) {
+            bool propertyInitialized = false;
+            if (ruleDefinition(className, type, functionOrPropertyName, &propertyInitialized)) {
+                type = TYPE_INT;
+                char *classNameWithDot = stringConcat(className, ".");
+                createAndInsertIntVariable(globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), propertyInitialized);
                 return true;
             }
         }
     //<DEFINITION_START> -> double <ID><DEFINITION>
     } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "double")) {
-        if (ruleId(&name)) {
-            if (ruleDefinition()) {
+        if (ruleId(&functionOrPropertyName)) {
+            bool propertyInitialized = false;
+            if (ruleDefinition(className, type, functionOrPropertyName, &propertyInitialized)) {
+                type = TYPE_STRING;
+                char *classNameWithDot = stringConcat(className, ".");
+                createAndInsertDoubleVariable(globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), propertyInitialized);
                 return true;
             }
         }

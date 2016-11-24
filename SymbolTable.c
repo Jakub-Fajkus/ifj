@@ -16,10 +16,10 @@ bool BSTSearch (SYMBOL_TABLE_NODEPtr RootPtr, char* K, TREE_NODE_DATA *Content)	
     }
 
     //the key is the root
-    if (K == RootPtr->key) {
+    if (strcmp(K, RootPtr->key) == 0) {
         *Content = *RootPtr->data;
         return true;
-    } else if (K < RootPtr->key && RootPtr->lPtr != NULL) {
+    } else if (strcmp(K, RootPtr->key) == -1 && RootPtr->lPtr != NULL) {
         //the has lower value than the root
         return BSTSearch(RootPtr->lPtr, K, Content);
     } else if (RootPtr->rPtr != NULL){
@@ -213,13 +213,12 @@ SYMBOL_TABLE_VARIABLE* getVariable(SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBO
     //2. the searching variable is fully qualified name(e.g. class.property) - in this case we want to search for the name as it is
 
     //if it does not contain a dot
-    if (-1 != ifj16_find(name, ".")) {
+    if (-1 == ifj16_find(name, ".")) {
         //add class prefix to it
         char* className = ifj16_substr(calledFunction->name, 0, ifj16_find(calledFunction->name, "."));
-        char *fullyQualifiedName = malloc(sizeof(char)*(strlen(name) + strlen(className) + 2)); //size of argument name + size of class + dot + \0
-        strcat(fullyQualifiedName, className);
-        strcat(fullyQualifiedName, ".");
-        strcat(fullyQualifiedName, name);
+        char *nameWithDot = stringConcat(className, ".");
+        char *fullyQualifiedName = stringConcat(nameWithDot, name);
+        free(nameWithDot);
 
         variable = getVariableFromTable(globalSymbolTable, fullyQualifiedName);
 
@@ -272,12 +271,13 @@ TREE_NODE_DATA* createVariableData(SYMBOL_TABLE_VARIABLE *variable) {
 SYMBOL_TABLE_VARIABLE* createAndInsertVariable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, bool initialized) {
     //if the variable already exists
     if (NULL != getVariableFromTable(symbolTable, name)) {
-        printf("redeclaration of variable %s", name);
+        printf("redeclaration of variable %s\n", name);
         exit(3);
     }
 
     SYMBOL_TABLE_VARIABLE *variable = createVariable(name, type, initialized);
     TREE_NODE_DATA *treeData = createVariableData(variable);
+    printf("inserting variable %s", variable->name);
     BSTInsert(symbolTable, variable->name, *treeData);
 
     return variable;
@@ -297,8 +297,8 @@ SYMBOL_TABLE_FUNCTION* createFunction(char *name, DATA_TYPE type, unsigned int u
     SYMBOL_TABLE_FUNCTION *function = malloc(sizeof(SYMBOL_TABLE_FUNCTION));
 
     //initialize symbol table
-    SYMBOL_TABLE_NODEPtr *ptr = &function->localSymbolTable;
-    initializeSymbolTable(&ptr);
+    function->localSymbolTable = malloc(sizeof(struct SYMBOL_TABLE_NODE));
+    BSTInit(&function->localSymbolTable);
 
     function->type = type;
     function->name = name;
@@ -358,4 +358,15 @@ void checkIfVariableIsInitialized(SYMBOL_TABLE_NODEPtr *symbolTable, char *name)
         printf("variable %s is not initialized", name);
         exit(8);
     }
+}
+
+LIST_ELEMENT *createFunctionParamListElement(DATA_TYPE type, char* name) {
+    FUNCTION_PARAMETER *param = malloc(sizeof(FUNCTION_PARAMETER));
+    param->type = type;
+    param->name = name;
+    LIST_ELEMENT *listElement = malloc(sizeof(LIST_ELEMENT));
+    listElement->type = LIST_ELEMENT_TYPE_FUNCTION_PARAMETER;
+    listElement->data.parameter = param;
+
+    return listElement;
 }

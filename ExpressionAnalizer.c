@@ -212,7 +212,7 @@ bool parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NO
                     exit(112);
                 }
                 lookingForTerminal = true;
-                if(!generate3AddressCode(stack, backStack, localSymbolTable,globalSymbolTable, calledFunction)){
+                if(!generate3AddressCode(stack, backStack,globalSymbolTable, localSymbolTable, calledFunction)){
                     return false;
                 }
                 break;

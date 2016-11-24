@@ -128,3 +128,13 @@ int ifj16_find(char *s, char *search) {
 char *ifj16_sort(char *s) {
     return quickSortWrapper(s);
 }
+
+char *stringConcat(char *str1, char *str2) {
+    char *buffer = malloc(sizeof(char)*(strlen(str1) + strlen(str2)+1));
+    buffer[0] = '\0';
+
+    strcat(buffer, str1);
+    strcat(buffer, str2);
+
+    return buffer;
+}
