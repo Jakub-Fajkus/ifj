@@ -268,7 +268,7 @@ bool rulePropDef(bool *variableInitialized){
 
         char* resultVariableName;
 
-        if (parseExpression(dummyInstructionLIst, resultVariableName, globalSymbolTable, actualSymbolTable, actualFunction)) {
+        if (analyzeExpression(dummyInstructionLIst, resultVariableName)) {
             token = getCachedToken();
             if (token->type == SEMICOLON) {
                 *variableInitialized = true;
@@ -417,7 +417,7 @@ bool ruleDecl(SYMBOL_TABLE_FUNCTION *function, DATA_TYPE type, char *variableNam
         ListInit(dummyInstructionLIst);
         char* resultVariableName;
 
-        if (parseExpression(dummyInstructionLIst, resultVariableName, globalSymbolTable, actualSymbolTable, actualFunction)) {
+        if (analyzeExpression(dummyInstructionLIst, resultVariableName)) {
             token = getCachedToken();
 
             //<DECL> -> ;
@@ -460,7 +460,7 @@ bool ruleStat(){
             token = getCachedToken();
             if (token->type == BRACKET && token->data.bracket.name == '(') {
                 char* resultVariableName;
-                if (parseExpression(dummyInstructionLIst, resultVariableName, globalSymbolTable, actualSymbolTable, actualFunction)) {
+                if (analyzeExpression(dummyInstructionLIst, resultVariableName)) {
                     token = getCachedToken();
                     if (token->type == BRACKET && token->data.bracket.name == ')') {
                         token = getCachedToken();
@@ -481,7 +481,7 @@ bool ruleStat(){
             token = getCachedToken();
             if (token->type == BRACKET && token->data.bracket.name == '(') {
                 char* resultVariableName;
-                if (parseExpression(dummyInstructionLIst, resultVariableName, globalSymbolTable, actualSymbolTable, actualFunction)) {
+                if (analyzeExpression(dummyInstructionLIst, resultVariableName)) {
                     token = getCachedToken();
                     if (token->type == BRACKET && token->data.bracket.name == ')') {
                         token = getCachedToken();
@@ -531,9 +531,9 @@ bool ruleExpSemicolon() {
 
         tDLList *dummyInstructionLIst = malloc(sizeof(tDLList));
         ListInit(dummyInstructionLIst);
-        char *returnValue;
+        char *resultVariableName;
 
-        if(parseExpression(dummyInstructionLIst, returnValue, globalSymbolTable, actualSymbolTable, actualFunction)) {
+        if (analyzeExpression(dummyInstructionLIst, resultVariableName)) {
             token = getCachedToken();
             if (token->type == SEMICOLON){
                 return true;
@@ -576,7 +576,7 @@ bool ruleParam(){
     //<PARAM> -> <EXP> <AFTER_FUNCTION_CALL_EXP>
     //<PARAM> -> <ID> <AFTER_FUNCTION_CALL_EXP>
     char* resultVariableName;
-    if (parseExpression(dummyInstructionLIst, resultVariableName, globalSymbolTable, actualSymbolTable, actualFunction)) {
+    if (analyzeExpression(dummyInstructionLIst, resultVariableName)) {
         if (ruleAfterFunctionCallExp()) {
             return true;
         }
@@ -765,7 +765,7 @@ bool ruleStatBeginningId() {
         char* resultVariableName;
 
         if(token->type == OPERATOR_ASSIGN) {
-            if (parseExpression(dummyInstructionLIst, resultVariableName, globalSymbolTable, actualSymbolTable, actualFunction)) {
+            if (analyzeExpression(dummyInstructionLIst, resultVariableName)) {
                 return true;
             }
         }
@@ -799,6 +799,16 @@ void makeFirstPass() {
 
     if(result == 0) {
         exit(2);
+    }
+}
+
+bool analyzeExpression(tDLList *instructionList, char *resultVariableName) {
+    int code = parseExpression(instructionList, resultVariableName, globalSymbolTable, actualSymbolTable, actualFunction, firstPass);
+
+    if (code == 0) {
+        return true;
+    } else {
+        exit(code);
     }
 }
 

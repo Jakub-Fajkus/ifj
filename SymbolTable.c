@@ -325,6 +325,10 @@ SYMBOL_TABLE_FUNCTION* createAndInsertFunction(SYMBOL_TABLE_NODEPtr *symbolTable
     }
 
     SYMBOL_TABLE_FUNCTION *function = createFunction(name, type, usages, parameters);
+    if (function->parameters == NULL) {
+        function->parameters = malloc(sizeof(tDLList));
+        ListInit(function->parameters);
+    }
     TREE_NODE_DATA *treeData = createFunctionData(function);
     BSTInsert(symbolTable, function->name, *treeData);
 

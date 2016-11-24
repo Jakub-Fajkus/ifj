@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-FOLDER='.'
+FOLDER=''
 FILES=`find tests/$FOLDER -iname  'test*' | sort -n`
 FAILED_COUNTER=0
 OK_COUNTER=0

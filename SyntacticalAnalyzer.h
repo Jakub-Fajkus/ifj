@@ -58,4 +58,5 @@ bool ruleTypeVoid(DATA_TYPE *type);
 bool ruleDefinitionStart(char *className);
 bool ruleExpSemicolon();
 
+bool analyzeExpression(tDLList *instructionList, char *resultVariableName);
 #endif //IFJ_SYNTACTICANALYZER_H
