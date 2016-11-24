@@ -8,3 +8,7 @@
 SYMBOL_TABLE_NODEPtr *globalSymbolTable;
 SYMBOL_TABLE_NODEPtr *actualSymbolTable;
 SYMBOL_TABLE_FUNCTION *actualFunction;
+
+void checkIfFunctionRunExists() {
+
+}

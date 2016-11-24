@@ -788,6 +788,15 @@ bool ruleStatBeginningId() {
         char* resultVariableName;
 
         if(token->type == OPERATOR_ASSIGN) {
+            //itodo: f -1, then call function
+            char *name;
+            if(-1 == analyzeExpression(dummyInstructionLIst, resultVariableName)) {
+                if(ruleId(&name)) {
+                    if (ruleFuncCall()) {
+                        return true;
+                    }
+                }
+            }
             if (analyzeExpression(dummyInstructionLIst, resultVariableName)) {
                 return true;
             }
@@ -835,12 +844,18 @@ void makeSecondPass() {
     }
 }
 
-bool analyzeExpression(tDLList *instructionList, char *resultVariableName) {
+int analyzeExpression(tDLList *instructionList, char *resultVariableName) {
     int code = parseExpression(instructionList, resultVariableName, globalSymbolTable, actualSymbolTable, actualFunction, firstPass);
 
+    //todo: if code -1
     if (code == 0) {
-        return true;
-    } else {
+        return 1;
+
+    //it is a function call
+    } else if (code == -1) {
+        return -1;
+    }
+    else {
         exit(code);
     }
 }

@@ -1,0 +1,12 @@
+class smthing{
+
+    static int a;
+
+    static int func1() {
+        return 10;
+    }
+
+    static void run() {
+        a = func1();
+    }
+}
