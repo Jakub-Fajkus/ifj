@@ -4,6 +4,7 @@
 
 #include "SemanticalAnalyzer.h"
 #include "ifj16.h"
+#include "BasicStructures.h"
 
 extern SYMBOL_TABLE_NODEPtr *globalSymbolTable;
 extern SYMBOL_TABLE_FUNCTION *actualFunction;
@@ -70,4 +71,22 @@ SYMBOL_TABLE_VARIABLE *semantic_getInitializedVariable(char * name) {
         exit(8);
     }
     return variable;
+}
+
+void checkFunctionParametersType(char *functionName, tDLList *parameters){
+    struct SYMBOL_TABLE_FUNCTION_STR *function = semantic_getFunction(functionName);
+    ListFirst(parameters);
+    ListFirst(function->parameters);
+    while(true){
+        if(function->parameters->Act->element.data.parameter->type != parameters->Act->element.data.parameter->type){
+            exit(4);
+        }
+        if(function->parameters->Act == function->parameters->Last && parameters->Act == parameters->Last){
+            break;
+        }else if((function->parameters->Act == function->parameters->Last && parameters->Act != parameters->Last) ||
+                (function->parameters->Act != function->parameters->Last && parameters->Act == parameters->Last)){
+            printf("Wrong number of Parameters");
+            exit(4);
+        }
+    }
 }
