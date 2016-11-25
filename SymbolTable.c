@@ -157,6 +157,7 @@ SYMBOL_TABLE_VARIABLE* getVariableFromTable(SYMBOL_TABLE_NODEPtr *symbolTable, c
 
     if(nodeData == NULL) {
         return NULL;
+    }
 
     if (nodeData->type != TREE_NODE_VARIABLE) {
         printf("internal error, requested %s is not a variable", name);
