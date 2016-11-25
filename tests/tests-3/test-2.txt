@@ -2,4 +2,5 @@ class Main{
 
     static double neco;
     static double neco;
+    static void run() {}
 }

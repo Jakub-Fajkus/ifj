@@ -814,7 +814,7 @@ void runSyntacticalAnalysis(char *fileName) {
     initializeSymbolTable(&actualSymbolTable);
 
     makeFirstPass();
-    makeSecondPass();
+    //makeSecondPass();
 }
 
 

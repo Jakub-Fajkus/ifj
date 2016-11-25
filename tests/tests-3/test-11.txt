@@ -1,0 +1,6 @@
+// there is no main
+
+
+class smth{
+    static void run() {}
+}

@@ -6,4 +6,5 @@ class Main {
 
 class C {
     static double b = Main.a + 41.99;
+    static void run() {}
 }

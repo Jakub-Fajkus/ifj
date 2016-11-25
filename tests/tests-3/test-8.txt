@@ -1,10 +1,11 @@
 //redefinition funciton
 
-class smth{
+class Main{
     static int sm(){
 
     }
     static void sm(){
 
     }
+    static void run() {}
 }

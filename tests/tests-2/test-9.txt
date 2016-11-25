@@ -1,4 +1,5 @@
-class some{
+class Main{
 
     static int a=1,b=1,c=2,d=1;
+    static void run() {}
 }

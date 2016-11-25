@@ -5,4 +5,5 @@ class Main{
     static double neco() {
         int \a;
     }
+    static void run() {}
 }

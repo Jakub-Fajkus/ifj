@@ -1,7 +1,9 @@
 //fail syntax miss bracket
 
-class smth{
+class Main{
     while(){
+
+    static void run() {}
 
 
 }

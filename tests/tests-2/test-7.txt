@@ -1,9 +1,10 @@
 //testing statement while miss condition
 
-class smth{
+class Main{
     static void fun(){
         while(){
 
         }
     }
+    static void run() {}
 }

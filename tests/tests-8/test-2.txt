@@ -10,6 +10,6 @@ class Main{
         int b;
         int c;
 
-        fun1(a);
+        fun1(a,b);
     }
 }

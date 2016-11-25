@@ -5,4 +5,5 @@ class Main {
 
         ifj16.print(x + y);
     }
+    static void run() {}
 }

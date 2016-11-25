@@ -1,5 +1,5 @@
 //missing { after class ID
 class Main
 
-
+    static void run() {}
 }

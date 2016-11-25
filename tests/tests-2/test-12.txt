@@ -1,4 +1,4 @@
-class smthing{
+class Main{
 
     static int a;
 

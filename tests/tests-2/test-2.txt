@@ -1,7 +1,7 @@
 class Main{
     static int a;
 
-    static int run(){
+    static void run(){
        int a;
 
        if (a = 1) {  }

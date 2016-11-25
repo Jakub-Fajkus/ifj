@@ -1,6 +1,6 @@
 //wrong count of parameters for function
 
-class smth{
+class Main{
     static int fun1(int b){
         return b;
     }
@@ -10,4 +10,5 @@ class smth{
     static int run(){
         fun1(a,b,c);
     }
+    static void run() {}
 }

@@ -2,4 +2,5 @@
 
 class smt{
     static double .dot;
+    static void run() {}
 }

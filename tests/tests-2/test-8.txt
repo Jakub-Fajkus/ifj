@@ -1,6 +1,6 @@
 // missing else for if
 
-class smth{
+class Main{
 
     int a = 1;
     if(a){
@@ -8,5 +8,6 @@ class smth{
     }els{
 
     }
+    static void run() {}
 
 }

@@ -3,4 +3,5 @@
 
 class smth{
     int 12lol;
+    static void run() {}
 }

@@ -1,7 +1,11 @@
 class Main {
 
- static void moje_funkce() {
-    return 5;
- }
+    static void moje_funkce() {
+        return 5;
+    }
+
+    static void run(){
+
+    }
 
 }

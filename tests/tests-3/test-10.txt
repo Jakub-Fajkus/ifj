@@ -1,7 +1,9 @@
 //undefined function
+//redefined function
 
 class Main{
     static void run(){
         fun22();
     }
+    static void run() {}
 }

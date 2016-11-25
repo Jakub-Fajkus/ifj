@@ -2,4 +2,5 @@
 
 class fail{
     static string $mst.;
+    static void run() {}
 }

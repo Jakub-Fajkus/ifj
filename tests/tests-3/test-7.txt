@@ -1,7 +1,8 @@
 //undefiened funciton
 
-class smth{
+class Main{
     static int smth(){
         fun2();
     }
+    static void run() {}
 }

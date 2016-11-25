@@ -1,5 +1,6 @@
 //missing bracket for if
-class smthing{
+class Main{
+    static void run() {}
     int a;
     if a){
         int b;
