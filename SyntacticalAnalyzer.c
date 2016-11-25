@@ -890,8 +890,9 @@ void makeSecondPass() {
 
 }
 
-int analyzeExpression(tDLList *instructionList, char *resultVariableName,DATA_TYPE *resultVariableType) {
-    int code = parseExpression(instructionList, resultVariableName, resultVariableType, firstPass);
+int analyzeExpression(tDLList *instructionList, char *resultVariableName/*,DATA_TYPE *resultVariableType*/) {
+    DATA_TYPE resultDatatype;
+    int code = parseExpression(instructionList, resultVariableName, &resultDatatype, firstPass);
 
     if (code == 0) {
         return 1;
