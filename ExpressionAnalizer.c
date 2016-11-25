@@ -12,7 +12,7 @@
 unsigned long iterator = 0;
 char varName[100];
 
-int generate3AddressCode(tStack *stack, tStack *backStack, bool firstPass);
+int generate3AddressCode(tDLList *threeAddressCode,tStack *stack, tStack *backStack, bool firstPass);
 int brackets = 0;
 void concatenateString();
 
@@ -125,7 +125,7 @@ EA_TERMINAL_TYPE getTerminalDataType(TOKEN token) {
     return EA_UNKNOWN;
 }
 
-int parseExpression(char *returnVal, bool firstPass) {
+int parseExpression(tDLList *threeAddressCode, char *returnVal, bool firstPass) {
     printf("\nDEBUG expression START\n");
     bool lookingForTerminal = true;
     STACK_ELEMENT stackElement;
@@ -167,7 +167,7 @@ int parseExpression(char *returnVal, bool firstPass) {
                 if (lookingForTerminal) {
                     char action = terminalTable[stackElement.data.terminalData.type][terminalData.type];
                     if (stopNow && action != 'S') {
-                        return 2;//tODO check error
+                        return 2;
                     }
                     switch (action) {
                         case '<':
@@ -249,7 +249,7 @@ int parseExpression(char *returnVal, bool firstPass) {
                     exit(99);
                 }
                 lookingForTerminal = true;
-                int genRetVal = generate3AddressCode(stack, backStack, firstPass);
+                int genRetVal = generate3AddressCode(threeAddressCode, stack, backStack, firstPass);
                 if (genRetVal != 0) return genRetVal;
                 break;
             default:
@@ -297,7 +297,7 @@ void tokenTypeToVarTypeAndValue(TOKEN token, DATA_TYPE *varType, VARIABLE_VALUE 
 }
 
 
-int generate3AddressCode(tStack *stack, tStack *backStack, bool firstPass) {
+int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backStack, bool firstPass) {
     STACK_ELEMENT stackElement1;
     STACK_ELEMENT stackElement2;
     STACK_ELEMENT stackElement3;
@@ -367,10 +367,19 @@ int generate3AddressCode(tStack *stack, tStack *backStack, bool firstPass) {
                     concatenateString();
                     char *tempName = (char *) malloc(sizeof(char) * 30);
                     strcpy(tempName, varName);
-                    createLocalVariable(tempName, outputType);
-                    createInstructionMathOperation(Instruction_Addition, tempName,
+                    LIST_ELEMENT listElement;
+                    INSTRUCTION *instruction1 = createLocalVariable(tempName, outputType);
+                    listElement.type = LIST_ELEMENT_TYPE_INSTRUCTION;
+                    listElement.data.instr = instruction1;
+                    ListInsertLast(threeAddressCode, listElement);
+
+                    INSTRUCTION *instruction2 = createInstructionMathOperation(Instruction_Addition, tempName,
                                                    stackElement1.data.notTerminalData.name,
                                                    stackElement2.data.notTerminalData.name);
+
+                    listElement.type = LIST_ELEMENT_TYPE_INSTRUCTION;
+                    listElement.data.instr = instruction2;
+                    ListInsertLast(threeAddressCode, listElement);
                     stackElement1.data.notTerminalData.name = tempName;
                 } else {
                     stackElement1.data.notTerminalData.name = "tempName";
@@ -395,10 +404,18 @@ int generate3AddressCode(tStack *stack, tStack *backStack, bool firstPass) {
 
                     char *tempName = (char *) malloc(sizeof(char) * 30);
                     strcpy(tempName, varName);
-                    createLocalVariable(tempName, outputType);
-                    createInstructionMathOperation(Instruction_Subtraction, tempName,
+                    LIST_ELEMENT listElement;
+                    INSTRUCTION *instruction1 = createLocalVariable(tempName, outputType);
+                    listElement.type = LIST_ELEMENT_TYPE_INSTRUCTION;
+                    listElement.data.instr = instruction1;
+                    ListInsertLast(threeAddressCode, listElement);
+
+                    INSTRUCTION *instruction2 = createInstructionMathOperation(Instruction_Subtraction, tempName,
                                                    stackElement1.data.notTerminalData.name,
                                                    stackElement2.data.notTerminalData.name);
+                    listElement.type = LIST_ELEMENT_TYPE_INSTRUCTION;
+                    listElement.data.instr = instruction2;
+                    ListInsertLast(threeAddressCode, listElement);
                     stackElement1.data.notTerminalData.name = tempName;
                 } else {
                     stackElement1.data.notTerminalData.name = "tempName";
@@ -422,11 +439,19 @@ int generate3AddressCode(tStack *stack, tStack *backStack, bool firstPass) {
 
                     char *tempName = (char *) malloc(sizeof(char) * 30);
                     strcpy(tempName, varName);
-                    createLocalVariable(tempName, outputType);
+                    LIST_ELEMENT listElement;
+                    INSTRUCTION *instruction1 = createLocalVariable(tempName, outputType);
+                    listElement.type = LIST_ELEMENT_TYPE_INSTRUCTION;
+                    listElement.data.instr = instruction1;
+                    ListInsertLast(threeAddressCode, listElement);
 
-                    createInstructionMathOperation(Instruction_Multiply, tempName,
+                    INSTRUCTION *instruction2 = createInstructionMathOperation(Instruction_Multiply, tempName,
                                                    stackElement1.data.notTerminalData.name,
                                                    stackElement2.data.notTerminalData.name);
+                    listElement.type = LIST_ELEMENT_TYPE_INSTRUCTION;
+                    listElement.data.instr = instruction2;
+                    ListInsertLast(threeAddressCode, listElement);
+
                     stackElement1.data.notTerminalData.name = tempName;
                 } else {
                     stackElement1.data.notTerminalData.name = "tempName";
@@ -455,12 +480,21 @@ int generate3AddressCode(tStack *stack, tStack *backStack, bool firstPass) {
                     char *tempName = (char *) malloc(sizeof(char) * 30);
                     strcpy(tempName, varName);
 
-                    createLocalVariable(tempName, outputType);
+                    LIST_ELEMENT listElement;
+                    INSTRUCTION *instruction1 = createLocalVariable(tempName, outputType);
+                    listElement.type = LIST_ELEMENT_TYPE_INSTRUCTION;
+                    listElement.data.instr = instruction1;
+                    ListInsertLast(threeAddressCode, listElement);
+
+                    INSTRUCTION *instruction2 = createLocalVariable(tempName, outputType);
                     createInstructionMathOperation(Instruction_Multiply, tempName,
                                                    stackElement1.data.notTerminalData.name,
                                                    stackElement2.data.notTerminalData.name);
-                    stackElement1.data.notTerminalData.name = tempName;
+                    listElement.type = LIST_ELEMENT_TYPE_INSTRUCTION;
+                    listElement.data.instr = instruction2;
+                    ListInsertLast(threeAddressCode, listElement);
 
+                    stackElement1.data.notTerminalData.name = tempName;
                 } else {
                     stackElement1.data.notTerminalData.name = "tempName";
                 }
@@ -528,8 +562,12 @@ int generate3AddressCode(tStack *stack, tStack *backStack, bool firstPass) {
                         VARIABLE_VALUE *varVal = (VARIABLE_VALUE*)malloc(sizeof(VARIABLE_VALUE));
                         DATA_TYPE *varType = (DATA_TYPE*)malloc(sizeof(DATA_TYPE));
                         tokenTypeToVarTypeAndValue(stackElement1.data.terminalData.token, varType,varVal);
+                        LIST_ELEMENT listElement;
+                        INSTRUCTION *instruction1 = pushLocalVariable(tempName,*varType,*varVal);
+                        listElement.type = LIST_ELEMENT_TYPE_INSTRUCTION;
+                        listElement.data.instr = instruction1;
+                        ListInsertLast(threeAddressCode, listElement);
 
-                        pushLocalVariable(tempName,*varType,*varVal);
                         stackElement2.data.notTerminalData.type = *varType;
                         free(varVal);
                         free(varType);
@@ -558,10 +596,18 @@ int generate3AddressCode(tStack *stack, tStack *backStack, bool firstPass) {
                     concatenateString();
                     char *tempName = (char *) malloc(sizeof(char) * 30);
                     strcpy(tempName, varName);
-                    createLocalVariable(tempName, TYPE_INT);
-                    createInstructionExpressionEvaluation(actionToLogicInstruction(actionType), tempName,
+                    LIST_ELEMENT listElement;
+                    INSTRUCTION *instruction1 = createLocalVariable(tempName, TYPE_INT);
+                    listElement.type = LIST_ELEMENT_TYPE_INSTRUCTION;
+                    listElement.data.instr = instruction1;
+                    ListInsertLast(threeAddressCode, listElement);
+
+                    INSTRUCTION *instruction2 =  createInstructionExpressionEvaluation(actionToLogicInstruction(actionType), tempName,
                                                           stackElement1.data.notTerminalData.name,
                                                           stackElement2.data.notTerminalData.name);
+                    listElement.type = LIST_ELEMENT_TYPE_INSTRUCTION;
+                    listElement.data.instr = instruction2;
+                    ListInsertLast(threeAddressCode, listElement);
                     printf("generate: E->E_LOGIC_E\n");
                     stackElement1.data.notTerminalData.name = tempName;
                 } else {
