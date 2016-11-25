@@ -62,7 +62,7 @@ struct tStack_struct *createFrameStack();
 /// Pushes Local frame on the top of the Stack
 /// \param localFrameStack  - Ptr to frame stack
 /// \param frame - upcoming frame, already full of variables
-void pushFrameToStack(struct tStack_struct *localFrameStack,tDLList *frame);
+void pushFrameToStack(struct STACK_STR *localFrameStack,tDLList *frame);
 
 /// Constructor of frame (used for global frame once, and for local ones)
 /// \return Ptr to frame
@@ -82,8 +82,7 @@ VARIABLE *findFrameVariable(tDLList *frame, char *name);
 /// Returns pointer to local frame on the top of localFrameStack
 /// \param stackOfLocalFrames - Ptr to Stack
 /// \return Ptr of actual local frame
-tDLList *getActualLocalFrame(struct tStack_struct *stackOfLocalFrames);
-
+tDLList *getActualLocalFrame(struct STACK_STR *stackOfLocalFrames);
 
 /* ************************************************ CREATE *************************************************/
 
@@ -180,20 +179,8 @@ INSTRUCTION *createInstructionIf(char *nameDst, INSTRUCTION *trueDst, INSTRUCTIO
  */
 INSTRUCTION *createFirstInstruction();
 
-
-
-
-
-
 LIST_ELEMENT createUpcomingInstruction(INSTRUCTION *instr);
 void printInstructionTest(int x, tDLList *TestInstructionList);
 void printListOfInstructions(tDLList *TestInstructionList);
-
-
-
-
-
-
-
 
 #endif //IFJ_INSTRUCTION_H

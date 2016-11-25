@@ -4,7 +4,7 @@
 
 #include "SymbolTable.h"
 #include "ifj16.h"
-#include "BasicStructures.h"
+#include "Stack.h"
 
 void BSTInit (SYMBOL_TABLE_NODEPtr *RootPtr) {
     *RootPtr = NULL;
@@ -374,4 +374,39 @@ LIST_ELEMENT *createFunctionParamListElement(DATA_TYPE type, char* name) {
     listElement->data.parameter = param;
 
     return listElement;
+}
+
+void Leftmost_Inorder(struct SYMBOL_TABLE_NODE *ptr, struct STACK_STR *Stack){
+    while ( ptr != NULL ) {
+        struct STACK_ELEMENT element;
+        element.type = STACK_ELEMENT_TYPE_SYMBOL_TABLE_PTR;
+        element.data.symbolTableNode = ptr;
+        stackPush(Stack, element);
+        ptr = ptr->lPtr;
+    }
+
+}
+
+tStack *BTInorder (struct SYMBOL_TABLE_NODE *RootPtr){
+    tStack *StackHelper = malloc(sizeof(tStack));
+    stackInit(StackHelper);
+    tStack *ReturnStack = malloc(sizeof(tStack));
+    stackInit(ReturnStack);
+
+    Leftmost_Inorder (RootPtr, StackHelper);
+
+    while ( !stackEmpty(StackHelper) ) {
+        //get top element
+        STACK_ELEMENT *elem = malloc(sizeof(STACK_ELEMENT));
+        stackTop(StackHelper, elem);
+        RootPtr = elem->data.symbolTableNode;
+        //pop top element
+        stackPop(StackHelper);
+
+        //push to return stack
+        stackPush(ReturnStack, *elem);
+        Leftmost_Inorder (RootPtr->rPtr, StackHelper);
+    }
+
+    return ReturnStack;
 }

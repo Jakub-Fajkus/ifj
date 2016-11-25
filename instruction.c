@@ -23,7 +23,7 @@ struct tStack_struct *createFrameStack() {
 /// Pushes Local frame on the top of the Stack
 /// \param localFrameStack - Ptr to frame stack
 /// \param frame - upcoming frame, already full of variables
-void pushFrameToStack(tStack *localFrameStack,tDLList *frame) {
+void pushFrameToStack(tStack *localFrameStack, tDLList *frame) {
     STACK_ELEMENT *newLocalFrame = malloc(sizeof(STACK_ELEMENT));
 
     newLocalFrame->type = STACK_ELEMENT_TYPE_LOCAL_FRAME;
@@ -80,14 +80,13 @@ VARIABLE *findFrameVariable(tDLList *frame, char *name) {
 /// Returns pointer to local frame on the top of localFrameStack
 /// \param stackOfLocalFrames - Ptr to Stack
 /// \return Ptr of actual local frame
-tDLList *getActualLocalFrame(tStack *stackOfLocalFrames) {
+tDLList *getActualLocalFrame(struct STACK_STR *stackOfLocalFrames) {
 
     STACK_ELEMENT* stackElement = malloc(sizeof(STACK_ELEMENT));
     //TODO: malloc
     stackTop(stackOfLocalFrames, stackElement);
     tDLList *actualLocalFrame = stackElement->data.localFrame;
     return actualLocalFrame;
-
 }
 
 

@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include "BasicStructures.h"
 #include "DoubleLinkedList.h"
+#include "Stack.h"
 
 /*
  * global symbol table will contain only variables(without their values) and functions
@@ -32,7 +33,7 @@ typedef struct {
 //this states that the structure SYMBOL_TABLE_NODE will be declared later and before that, it will be called SYMBOL_TABLE_NODE_FORWARD
 typedef struct SYMBOL_TABLE_NODE SYMBOL_TABLE_NODE_FORWARD_DECLARATION;
 
-typedef struct {
+typedef struct SYMBOL_TABLE_FUNCTION_STR{
     char *name; //name of the function
     DATA_TYPE type; //return type of the function
     unsigned int usages; //number of usages of the function
@@ -224,5 +225,6 @@ void addFunctionParameter(SYMBOL_TABLE_FUNCTION *function, char *name, DATA_TYPE
 void checkIfVariableIsInitialized(SYMBOL_TABLE_NODEPtr *symbolTable, char *name);
 
 LIST_ELEMENT *createFunctionParamListElement(DATA_TYPE type, char* name);
-
+void Leftmost_Inorder(struct SYMBOL_TABLE_NODE *ptr, struct STACK_STR *Stack);
+struct STACK_STR *BTInorder (struct SYMBOL_TABLE_NODE *RootPtr);
 #endif //IFJ_SYMBOLTABLE_H

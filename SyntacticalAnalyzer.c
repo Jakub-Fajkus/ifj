@@ -841,22 +841,58 @@ void makeFirstPass() {
     }
 
     checkIfFunctionRunExists();
+
+
+    //test inorder
+    struct STACK_STR *symbolTableStacked = BTInorder(*globalSymbolTable);
+
+    while (!stackEmpty(symbolTableStacked)) {
+        struct STACK_ELEMENT actualElement;
+        stackTop(symbolTableStacked, &actualElement);
+
+        //filter all records for classe itself
+        if (actualElement.data.symbolTableNode->data->type == TREE_NODE_VARIABLE) {
+            printf("variable name: %s\n", actualElement.data.symbolTableNode->data->item->variable->name);
+            if (ifj16_find(actualElement.data.symbolTableNode->data->item->variable->name, ".*")) {
+
+                stackPop(symbolTableStacked);
+                continue;
+            }
+        } else {
+            printf("function name: %s\n", actualElement.data.symbolTableNode->data->item->function->name);
+        }
+
+
+        stackPop(symbolTableStacked);
+    }
 }
 
 void makeSecondPass() {
     ListFirst(globalTokens);
+    firstPass = false;
 
     bool result = ruleProg();
 
     if(result == 0) {
         exit(2);
     }
+
+    //call interpret
+
+//    //test inorder
+//    struct STACK_STR *symbolTableStacked = BTInorder(*globalSymbolTable);
+//
+//    while (!stackEmpty(symbolTableStacked)) {
+//        struct STACK_ELEMENT actualElement;
+//        stackTop(symbolTableStacked, &actualElement);
+//        stackPop(symbolTableStacked);
+//    }
+
 }
 
 int analyzeExpression(tDLList *instructionList, char *resultVariableName) {
-    int code = parseExpression(instructionList, resultVariableName, globalSymbolTable, actualSymbolTable, actualFunction, firstPass);
+    int code = parseExpression(instructionList, resultVariableName, firstPass);
 
-    //todo: if code -1
     if (code == 0) {
         return 1;
 

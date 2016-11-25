@@ -16,7 +16,8 @@ typedef enum STACK_ELEMENT_TYPE {
     EA_TERMINAL = 15001,
     EA_NOT_TERMINAL = 15002,
     EA_TERMINAL_ACTION = 15003,
-    STACK_ELEMENT_TYPE_LOCAL_FRAME = 15004
+    STACK_ELEMENT_TYPE_LOCAL_FRAME = 15004,
+    STACK_ELEMENT_TYPE_SYMBOL_TABLE_PTR = 15005
 }STACK_ELEMENT_TYPE;
 
 typedef enum EA_TERMINAL_TYPE_ENUM{
@@ -53,14 +54,16 @@ typedef union STACK_ELEMENT_DATA {
     tDLList *localFrame;
     EA_NOT_TERMINAL_DATA notTerminalData;
     EA_TERMINAL_TYPE actionType;
+    struct SYMBOL_TABLE_NODE *symbolTableNode;
 }STACK_ELEMENT_DATA;
 
 typedef struct STACK_ELEMENT{
     enum STACK_ELEMENT_TYPE type;
     union STACK_ELEMENT_DATA data;
+
 }STACK_ELEMENT;
 
-typedef struct tStack_struct{
+typedef struct STACK_STR{
     struct STACK_ELEMENT *arr;              /* pole pro uložení hodnot */
     int top;                                /* index prvku na vrcholu zásobníku */
     int maxSize;
