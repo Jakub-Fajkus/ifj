@@ -1,5 +1,5 @@
 class Main {
-    static double a = 5;
+    static double a = b + 5;
     static void run() {}
 }
 
