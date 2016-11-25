@@ -10,12 +10,19 @@
 #include "SemanticalAnalyzer.h"
 
 unsigned long iterator = 0;
-char varName[100];
-
+char *varName = NULL;
 int generate3AddressCode(tDLList *threeAddressCode,tStack *stack, tStack *backStack, bool firstPass);
 int brackets = 0;
 void concatenateString();
 DATA_TYPE returnType;
+
+void setVarName(char *name){
+    if(varName != NULL)
+        varName = (char*)realloc(varName,sizeof(char)*(strlen(name)+1));
+    else
+        varName = (char*)malloc(sizeof(char)*(strlen(name)+1));
+    strcpy(varName,name);
+}
 
 void setReturnType(DATA_TYPE type){
     if(type == TYPE_BOOL){
@@ -232,10 +239,11 @@ int parseExpression(tDLList *threeAddressCode, char *returnValName, DATA_TYPE *r
                             //reset globals
                             stopNow = false;
                             //TODO
-                            returnValName = (char*)malloc(sizeof(char)*(strlen(varName)+1));
-                            strcpy(returnValName,varName);
-                            (*returnValType) = returnType;
-//                            dataType
+                            if(!firstPass) {
+                                returnValName = (char *) malloc(sizeof(char) * (strlen(varName) + 1));
+                                strcpy(returnValName, varName);
+                                (*returnValType) = returnType;
+                            }
                             return 0;
                         case 'F':
                             if (!stackEmpty(stack)) {
@@ -526,6 +534,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
 
                 if (stackElement1.data.terminalData.token.type == IDENTIFIER) {
                     stackElement2.data.notTerminalData.name = stackElement1.data.terminalData.token.data.identifier.name;
+                    setVarName(stackElement2.data.notTerminalData.name);
                     if (!firstPass) {
                         SYMBOL_TABLE_VARIABLE *symbolTableVariable= semantic_getInitializedVariable(stackElement2.data.notTerminalData.name);
                         stackElement2.data.notTerminalData.type = symbolTableVariable->type;
@@ -536,7 +545,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
 
                     printf("generate: E->i where i = ID\n");
 
-                    setReturnType(stackElement2.data.notTerminalData.type );
+                    setReturnType(stackElement2.data.notTerminalData.type);
                 } else if (stackElement1.data.terminalData.token.type == IDENTIFIER_FULL) {
                     if (!firstPass) {
                         char *tempName = (char *) malloc(
@@ -553,6 +562,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                                 stackElement1.data.terminalData.token.data.identifierFull.class,
                                 stackElement1.data.terminalData.token.data.identifierFull.name
                         );
+                        setVarName(tempName);
                         stackElement2.data.notTerminalData.name = tempName;
                         SYMBOL_TABLE_VARIABLE *symbolTableVariable= semantic_getInitializedVariable(tempName);
                         stackElement2.data.notTerminalData.type = symbolTableVariable->type;
@@ -627,6 +637,10 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
 
 
 void concatenateString() {
+    if(varName != NULL)
+        varName = (char*)realloc(varName,sizeof(char)*100);
+    else
+        varName = (char*)malloc(sizeof(char)*100);
     iterator++;
     sprintf(varName, "#ExpressionAnalyzerVar%lu", iterator);
 }

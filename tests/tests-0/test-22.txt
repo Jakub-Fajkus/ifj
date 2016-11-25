@@ -1,0 +1,6 @@
+class Main {
+    static void run() {
+        int x = 5;
+        int y = x;
+    }
+}
