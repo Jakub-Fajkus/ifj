@@ -833,7 +833,7 @@ void makeFirstPass() {
         exit(2);
     }
 
-    checkIfFunctionRunExists();
+    semanticCheckForFunctionRun();
 
 
 }

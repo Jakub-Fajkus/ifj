@@ -528,6 +528,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
 
             break;
         case EA_I:
+            //TODO tests/8/test2.txt
             if (stackElement1.type == EA_TERMINAL &&
                 stackElement1.data.terminalData.type == EA_I) {
 //                stackElement2 = temp :)
