@@ -39,6 +39,7 @@ typedef struct SYMBOL_TABLE_FUNCTION_STR{
     unsigned int usages; //number of usages of the function
     tDLList *parameters; //parameters of the function
     struct SYMBOL_TABLE_NODE *localSymbolTable; //local symbol table of the function
+    tDLList *instructions; //instructions of the function
 } SYMBOL_TABLE_FUNCTION;
 
 //the symbol table can contain 2 types of nodes
@@ -92,7 +93,7 @@ SYMBOL_TABLE_VARIABLE* getVariable(SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBO
  *
  * @param symbolTable
  */
-void initializeSymbolTable(SYMBOL_TABLE_NODEPtr **symbolTable);
+void initializeSymbolTable(struct SYMBOL_TABLE_NODE *symbolTable);
 
 /**
  * Create a SYMBOL_TABLE_VARIABLE pointer with given values. This represents creating a record for a symbol table.
@@ -183,9 +184,10 @@ SYMBOL_TABLE_VARIABLE * createAndInsertStringVariable(SYMBOL_TABLE_NODEPtr *symb
  * @param type
  * @param usages
  * @param parameters
+ * @param instructions
  * @return
  */
-SYMBOL_TABLE_FUNCTION* createFunction(char *name, DATA_TYPE type, unsigned int usages, tDLList *parameters);
+SYMBOL_TABLE_FUNCTION* createFunction(char *name, DATA_TYPE type, unsigned int usages, tDLList *parameters, tDLList *instructions);
 
 /**
  * Wrap SYMBOL_TABLE_FUNCTION into TREE_NODE_DATA which can be inserted into a tree.
@@ -202,8 +204,9 @@ TREE_NODE_DATA* createFunctionData(SYMBOL_TABLE_FUNCTION *function);
  * @param type
  * @param usages
  * @param parameters
+ * @param instructions
  */
-SYMBOL_TABLE_FUNCTION *createAndInsertFunction(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, unsigned int usages, tDLList *parameters);
+SYMBOL_TABLE_FUNCTION *createAndInsertFunction(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, unsigned int usages, tDLList *parameters, tDLList *instructions);
 
 /**
  * Add function parameter to the end of the function parameters

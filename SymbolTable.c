@@ -231,10 +231,9 @@ SYMBOL_TABLE_VARIABLE* getVariable(SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBO
     return variable;
 }
 
-void initializeSymbolTable(SYMBOL_TABLE_NODEPtr **symbolTable) {
-    *symbolTable = malloc(sizeof(SYMBOL_TABLE_NODEPtr));
-    **symbolTable = malloc(sizeof(struct SYMBOL_TABLE_NODE));
-    BSTInit(*symbolTable);
+void initializeSymbolTable(struct SYMBOL_TABLE_NODE *symbolTable) {
+    symbolTable = malloc(sizeof(struct SYMBOL_TABLE_NODE));
+    BSTInit(&symbolTable);
 }
 
 SYMBOL_TABLE_VARIABLE* createVariable(char *name, DATA_TYPE type, bool initialized) {
@@ -293,7 +292,7 @@ SYMBOL_TABLE_VARIABLE* createAndInsertStringVariable(SYMBOL_TABLE_NODEPtr *symbo
     return createAndInsertVariable(symbolTable, name, TYPE_STRING, initialized);
 }
 
-SYMBOL_TABLE_FUNCTION* createFunction(char *name, DATA_TYPE type, unsigned int usages, tDLList *parameters) {
+SYMBOL_TABLE_FUNCTION* createFunction(char *name, DATA_TYPE type, unsigned int usages, tDLList *parameters, tDLList *instructions) {
     SYMBOL_TABLE_FUNCTION *function = malloc(sizeof(SYMBOL_TABLE_FUNCTION));
 
     //initialize symbol table
@@ -304,6 +303,7 @@ SYMBOL_TABLE_FUNCTION* createFunction(char *name, DATA_TYPE type, unsigned int u
     function->name = name;
     function->usages = usages;
     function->parameters = parameters;
+    function->instructions = instructions;
 
     return function;
 }
@@ -317,7 +317,7 @@ TREE_NODE_DATA* createFunctionData(SYMBOL_TABLE_FUNCTION *function) {
     return treeData;
 }
 
-SYMBOL_TABLE_FUNCTION* createAndInsertFunction(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, unsigned int usages, tDLList *parameters) {
+SYMBOL_TABLE_FUNCTION* createAndInsertFunction(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, unsigned int usages, tDLList *parameters, tDLList *instructions) {
     //if the function already exists
 
     if (NULL != getNodeDataFromTable(symbolTable, name)) {
@@ -325,13 +325,22 @@ SYMBOL_TABLE_FUNCTION* createAndInsertFunction(SYMBOL_TABLE_NODEPtr *symbolTable
         exit(3);
     }
 
-    SYMBOL_TABLE_FUNCTION *function = createFunction(name, type, usages, parameters);
+    SYMBOL_TABLE_FUNCTION *function = createFunction(name, type, usages, parameters, instructions);
     if (function->parameters == NULL) {
         function->parameters = malloc(sizeof(tDLList));
         ListInit(function->parameters);
     }
+
+    if (function->instructions == NULL) {
+        function->instructions = malloc(sizeof(tDLList));
+        ListInit(function->instructions);
+    }
+
     TREE_NODE_DATA *treeData = createFunctionData(function);
     BSTInsert(symbolTable, function->name, *treeData);
+
+    function->localSymbolTable = malloc(sizeof(struct SYMBOL_TABLE_NODE *));
+    initializeSymbolTable(function->localSymbolTable);
 
     return function;
 }
@@ -349,6 +358,20 @@ void addFunctionParameter(SYMBOL_TABLE_FUNCTION *function, char *name, DATA_TYPE
     element.data.parameter->type = type;
 
     ListInsertLast (function->parameters, element);
+}
+
+void addFunctionInstruction(SYMBOL_TABLE_FUNCTION *function, INSTRUCTION *instruction) {
+    if (function->instructions == NULL) {
+        function->instructions = malloc(sizeof(tDLList));
+        ListInit(function->instructions);
+    }
+
+    LIST_ELEMENT element;
+    element.type = LIST_ELEMENT_TYPE_INSTRUCTION;
+    element.data.parameter = malloc(sizeof(FUNCTION_PARAMETER));
+    element.data.instr = instruction;
+
+    ListInsertLast (function->instructions, element);
 }
 
 void checkIfVariableIsInitialized(SYMBOL_TABLE_NODEPtr *symbolTable, char *name) {

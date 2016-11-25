@@ -35,11 +35,11 @@ tDLList* getAllTokens(char *fileName);
 bool ruleProg();
 bool ruleClassDefinition(char *className);
 bool ruleDefinition(char *className, DATA_TYPE type, char *name, bool *variableInitialized, bool *isFunction);
-bool rulePropDef(bool *variableInitialized);
-bool ruleFuncDef(struct SYMBOL_TABLE_FUNCTION_STR *function);
-bool ruleStListDecl(struct SYMBOL_TABLE_FUNCTION_STR *function);
+bool rulePropDef(bool *variableInitialized, DATA_TYPE variableType, char *variableName, char *className);
+bool ruleFuncDef();
+bool ruleStListDecl();
 bool ruleStList();
-bool ruleDecl(struct SYMBOL_TABLE_FUNCTION_STR *function, DATA_TYPE type, char *variableName);
+bool ruleDecl(DATA_TYPE type, char *variableName);
 bool ruleStat();
 bool ruleStatBeginningId();
 bool ruleFuncCall();
@@ -47,9 +47,9 @@ bool ruleFuncParams();
 bool ruleParam();
 bool ruleFunctionCallEnd();
 bool ruleAfterFunctionCallExp();
-bool ruleFuncDefParams(struct SYMBOL_TABLE_FUNCTION_STR *function);
-bool ruleDefParam(struct SYMBOL_TABLE_FUNCTION_STR *function);
-bool ruleDefParamBeginTi(struct SYMBOL_TABLE_FUNCTION_STR *function, DATA_TYPE type, char *name);
+bool ruleFuncDefParams();
+bool ruleDefParam();
+bool ruleDefParamBeginTi(DATA_TYPE type, char *name);
 bool ruleFunctionDefEnd();
 bool ruleTypeInt(DATA_TYPE *type);
 bool ruleTypeDouble(DATA_TYPE *type);
@@ -58,6 +58,8 @@ bool ruleTypeVoid(DATA_TYPE *type);
 bool ruleDefinitionStart(char *className);
 bool ruleExpSemicolon();
 bool ruleIdFunctionCall(char *name);
+
+
 
 int analyzeExpression(tDLList *instructionList, char *resultVariableName/*,DATA_TYPE *resultVariableType*/);
 #endif //IFJ_SYNTACTICANALYZER_H

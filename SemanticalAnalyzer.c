@@ -6,13 +6,12 @@
 #include "ifj16.h"
 #include "BasicStructures.h"
 
-extern SYMBOL_TABLE_NODEPtr *globalSymbolTable;
-extern SYMBOL_TABLE_FUNCTION *actualFunction;
+struct SYMBOL_TABLE_NODE *globalSymbolTable;
+SYMBOL_TABLE_FUNCTION *actualFunction;
 
 void semanticCheckForFunctionRun() {
     // get function Main.run
-
-    SYMBOL_TABLE_FUNCTION *function = getFunctionFromTable(globalSymbolTable, "Main.run");
+    SYMBOL_TABLE_FUNCTION *function = getFunctionFromTable(&globalSymbolTable, "Main.run");
     if (function == NULL) {
         exit(3);
     }
@@ -30,12 +29,12 @@ SYMBOL_TABLE_FUNCTION *semantic_getFunction(char * functionName) {
         char *fullyQualifiedName = stringConcat(nameWithDot, functionName);
         free(nameWithDot);
 
-        function = getFunctionFromTable(globalSymbolTable, fullyQualifiedName);
+        function = getFunctionFromTable(&globalSymbolTable, fullyQualifiedName);
         free(className);
         free(fullyQualifiedName);
     } else {
         //the name is already fully qualified
-        function = getFunctionFromTable(globalSymbolTable, functionName);
+        function = getFunctionFromTable(&globalSymbolTable, functionName);
     }
     if(function == NULL){
         exit(3);
@@ -52,12 +51,12 @@ SYMBOL_TABLE_VARIABLE *semantic_getVariable(char * name) {
         char *fullyQualifiedName = stringConcat(nameWithDot, name);
         free(nameWithDot);
 
-        variable = getVariableFromTable(globalSymbolTable, fullyQualifiedName);
+        variable = getVariableFromTable(&globalSymbolTable, fullyQualifiedName);
         free(className);
         free(fullyQualifiedName);
     } else {
         //the name is already fully qualified
-        variable = getVariableFromTable(globalSymbolTable, name);
+        variable = getVariableFromTable(&globalSymbolTable, name);
     }
     if(variable == NULL){
         exit(3);

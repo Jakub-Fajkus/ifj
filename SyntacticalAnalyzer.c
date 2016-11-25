@@ -14,9 +14,9 @@
 
 tDLList *globalTokens;
 
-SYMBOL_TABLE_NODEPtr *globalSymbolTable;
-SYMBOL_TABLE_NODEPtr *actualSymbolTable;
+struct SYMBOL_TABLE_NODE *globalSymbolTable;
 SYMBOL_TABLE_FUNCTION *actualFunction;
+struct tDLListStruct *mainInstructionList;
 
 bool firstPass = true;
 
@@ -42,7 +42,8 @@ tDLList* getAllTokens(char *fileName);
 void testTokens();
 void makeFirstPass();
 void makeSecondPass();
-void createInstructionsForGlobalVariables(struct tDLListStruct *mainInstructionList);
+//void createInstructionsForGlobalVariables(struct tDLListStruct *mainInstructionList);
+LIST_ELEMENT wrapInstructionIntoListElement(INSTRUCTION *instr);
 
 TOKEN *getCachedToken() {
     LIST_ELEMENT *element = malloc(sizeof(LIST_ELEMENT));
@@ -157,7 +158,7 @@ bool ruleProg(){
     //<PROG> -> class <ID> {<CLASS_DEFINITION> } <PROG>
     if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "class")) {
         if (ruleId(&className)) {
-            createAndInsertIntVariable(globalSymbolTable, stringConcat(className, ".*"), false);
+            createAndInsertIntVariable(&globalSymbolTable, stringConcat(className, ".*"), false);
             token = getCachedToken();
             if (token->type == BRACKET && token->data.bracket.name == '{') {
                 if (ruleClassDefinition(className)) {
@@ -225,16 +226,17 @@ bool ruleClassDefinition(char *className){
     }
 }
 
-bool ruleDefinition(char *className, DATA_TYPE type, char *name, bool *variableInitialized, bool *isFunction){
+bool ruleDefinition(char *className, DATA_TYPE type, char *functionOrPropertyName, bool *variableInitialized, bool *isFunction){
     //<DEFINITION> -> <PROP_DEF>
     //<DEFINITION> -> <FUNC_DEF>
-    if (rulePropDef(variableInitialized)) {
+    if (rulePropDef(variableInitialized, type, functionOrPropertyName, className)) {
         *isFunction = false;
         return true;
     } else {
         char *classNameWithDot = stringConcat(className, ".");
-        SYMBOL_TABLE_FUNCTION *function = createAndInsertFunction(globalSymbolTable, stringConcat(classNameWithDot, name), type, 0, NULL);
-        if(ruleFuncDef(function)) {
+        SYMBOL_TABLE_FUNCTION *function = createAndInsertFunction(&globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), type, 0, NULL, NULL);
+        actualFunction = function;
+        if(ruleFuncDef()) {
             *isFunction = true;
             return true;
         } else {
@@ -245,12 +247,20 @@ bool ruleDefinition(char *className, DATA_TYPE type, char *name, bool *variableI
     }
 }
 
-bool rulePropDef(bool *variableInitialized){
+//only for static variables
+bool rulePropDef(bool *variableInitialized, DATA_TYPE variableType, char *variableName, char *className){
     tDLElemPtr activeElementRuleApplication = globalTokens->Act;
     TOKEN *token = getCachedToken();
     *variableInitialized = false;
+    char *fullyQualifiedVariableName = stringConcat(stringConcat(className, "."), variableName);
 
     if (token->type == SEMICOLON) {
+        if (firstPass) {
+
+            createAndInsertVariable(&globalSymbolTable, fullyQualifiedVariableName, variableType, false);
+            ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createGlobalVariable(fullyQualifiedVariableName, variableType)));
+            // noo need to check type
+        }
         return true;
     } else if (token->type == OPERATOR_ASSIGN) {
 
@@ -259,16 +269,22 @@ bool rulePropDef(bool *variableInitialized){
         //the check should return true if the expression was successfully parsed, false otherwise
         //the check should set the active token to the token which is right after the expression(example: tokens:"3+4)", the active token should be ')'
         //todo: replace dummy test with actual list of instruction
-        tDLList *dummyInstructionLIst = malloc(sizeof(tDLList));
-        ListInit(dummyInstructionLIst);
+//        tDLList *dummyInstructionLIst = malloc(sizeof(tDLList));
+//        ListInit(dummyInstructionLIst);
 
         char* resultVariableName;
 
         printf("calling analyzeExpression from rulePropDef\n");
-        if (analyzeExpression(dummyInstructionLIst, resultVariableName)) {
+        if (analyzeExpression(mainInstructionList, resultVariableName)) {
             token = getCachedToken();
             if (token->type == SEMICOLON) {
                 *variableInitialized = true;
+                createAndInsertVariable(&globalSymbolTable, fullyQualifiedVariableName, variableType, true);
+                ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createInstructionAssign(fullyQualifiedVariableName, resultVariableName)));
+                //todo: check type of the result variable with variable declaration
+
+
+
                 return true;
             } else {
                 //the rule application was unsuccessful, so return the token list to the state in which it was before this function call
@@ -285,18 +301,16 @@ bool rulePropDef(bool *variableInitialized){
     }
 }
 
-bool ruleFuncDef(SYMBOL_TABLE_FUNCTION *function){
+bool ruleFuncDef(){
     tDLElemPtr activeElementRuleApplication = globalTokens->Act;
     TOKEN *token = getCachedToken();
-    actualFunction = function;
-    actualSymbolTable = &function->localSymbolTable;
 
     //<FUNC_DEF> -> ( <FUNC_DEF_PARAMS> { <ST_LIST_DECL> }
     if (token->type == BRACKET && token->data.bracket.name == '(') {
-        if (ruleFuncDefParams(function)) {
+        if (ruleFuncDefParams()) {
             token = getCachedToken();
             if (token->type == BRACKET && token->data.bracket.name == '{') {
-                if (ruleStListDecl(function)) {
+                if (ruleStListDecl()) {
                     token = getCachedToken();
                     if (token->type == BRACKET && token->data.bracket.name == '}') {
                         return true;
@@ -327,22 +341,23 @@ bool ruleFuncDef(SYMBOL_TABLE_FUNCTION *function){
     return false;
 }
 
-bool ruleStListDecl(SYMBOL_TABLE_FUNCTION *function){
+//todo was function redundant? global variable should do well?
+bool ruleStListDecl(){
     //<ST_LIST_DECL> -> <TYPE><ID><DECL><ST_LIST_DECL>
     DATA_TYPE type;
     char *name;
 
     if (ruleTypeDouble(&type) || ruleTypeInt(&type) || ruleTypeString(&type)) {
         if (ruleId(&name)) {
-            if (ruleDecl(function, type, name)) {
-                if (ruleStListDecl(function)) {
+            if (ruleDecl(type, name)) {
+                if (ruleStListDecl()) {
                     return true;
                 }
             }
         }
     //<ST_LIST_DECL> -> <STAT> <ST_LIST_DECL>
     } else if (ruleStat()) {
-        if (ruleStListDecl(function)) {
+        if (ruleStListDecl()) {
             return true;
         }
     } else {
@@ -397,12 +412,16 @@ bool ruleStList(){
     return false;
 }
 
-bool ruleDecl(SYMBOL_TABLE_FUNCTION *function, DATA_TYPE type, char *variableName){
+bool ruleDecl(DATA_TYPE type, char *variableName){
     tDLElemPtr activeElementRuleApplication = globalTokens->Act;
     TOKEN *token = getCachedToken();
 
     if (token->type == SEMICOLON) {
-        createAndInsertVariable(&function->localSymbolTable, variableName, type, false);
+        if (!firstPass) {
+            createAndInsertVariable(&actualFunction->localSymbolTable, variableName, type, false);
+            //no need to check types
+        }
+
         return true;
     } else if (token->type == OPERATOR_ASSIGN) {
         //<DECL> -> = <EXP>;
@@ -410,17 +429,21 @@ bool ruleDecl(SYMBOL_TABLE_FUNCTION *function, DATA_TYPE type, char *variableNam
         //the check should return true if the expression was successfully parsed, false otherwise
         //the check should set the active token to the token which is right after the expression(example: tokens:"3+4)", the active token should be ')'
         //todo: rep;ace dummy test with actual list of instruction
-        tDLList *dummyInstructionLIst = malloc(sizeof(tDLList));
-        ListInit(dummyInstructionLIst);
+//        tDLList *dummyInstructionLIst = malloc(sizeof(tDLList));
+//        ListInit(dummyInstructionLIst);
         char* resultVariableName;
 
         printf("calling analyzeExpression from ruleDecl\n");
-        if (analyzeExpression(dummyInstructionLIst, resultVariableName)) {
+        if (analyzeExpression(actualFunction->instructions, resultVariableName)) { //todo
             token = getCachedToken();
 
             //<DECL> -> ;
             if (token->type == SEMICOLON) {
-                createAndInsertVariable(&function->localSymbolTable, variableName, type, true);
+                if (!firstPass) {
+                    createAndInsertVariable(&actualFunction->localSymbolTable, variableName, type, true);
+                    //todo: check type of the result variable with variable declaration
+                }
+
                 return true;
             } else {
                 //the rule application was unsuccessful, so return the token list to the state in which it was before this function call
@@ -620,21 +643,21 @@ bool ruleAfterFunctionCallExp(){
     return false;
 }
 
-bool ruleFuncDefParams(SYMBOL_TABLE_FUNCTION *function){
+bool ruleFuncDefParams(){
     //<FUNC_DEF_PARAMS> -> <DEF_PARAM>
     //<FUNC_DEF_PARAMS> -> <FUNCTION_DEF_END>
-    return ruleDefParam(function) || ruleFunctionDefEnd();
+    return ruleDefParam() || ruleFunctionDefEnd();
 }
 
-bool ruleDefParam(SYMBOL_TABLE_FUNCTION *function){
+bool ruleDefParam(){
 
     DATA_TYPE type;
     char *name;
     //<DEF_PARAM> -> <TYPE> <ID> <DEF_PARAM_BEGIN_TI>
     if (ruleTypeInt(&type) || ruleTypeDouble(&type) || ruleTypeString(&type)) {
         if (ruleId(&name)) {
-            DLPostInsert(function->parameters, *createFunctionParamListElement(type, name));
-            if (ruleDefParamBeginTi(function, type, name)) {
+            DLPostInsert(actualFunction->parameters, *createFunctionParamListElement(type, name));
+            if (ruleDefParamBeginTi(type, name)) {
                 return true;
             }
         }
@@ -644,7 +667,7 @@ bool ruleDefParam(SYMBOL_TABLE_FUNCTION *function){
     return false;
 }
 
-bool ruleDefParamBeginTi(SYMBOL_TABLE_FUNCTION *function, DATA_TYPE type, char *name){
+bool ruleDefParamBeginTi(DATA_TYPE type, char *name){
     tDLElemPtr activeElementRuleApplication = globalTokens->Act;
     //<DEF_PARAM_BEGIN_TI> ->  <FUNCTION_DEF_END>
     //<DEF_PARAM_BEGIN_TI> -> , <DEF_PARAM>
@@ -655,7 +678,7 @@ bool ruleDefParamBeginTi(SYMBOL_TABLE_FUNCTION *function, DATA_TYPE type, char *
         TOKEN *token = getCachedToken();
 
         if(token->type == SEPARATOR) {
-            if (ruleDefParam(function)) {
+            if (ruleDefParam()) {
                 return true;
             }
         }
@@ -704,8 +727,9 @@ bool ruleDefinitionStart(char *className) {
             char *classNameWithDot = stringConcat(className, ".");
             tDLList *params = malloc(sizeof(tDLList));
             ListInit(params);
-            SYMBOL_TABLE_FUNCTION *function = createAndInsertFunction(globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), TYPE_VOID, 0, NULL);
-            if (ruleFuncDef(function)) {
+            SYMBOL_TABLE_FUNCTION *function = createAndInsertFunction(&globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), TYPE_VOID, 0, NULL, NULL);
+            actualFunction = function;
+            if (ruleFuncDef()) {
                 return true;
             }
         }
@@ -714,12 +738,12 @@ bool ruleDefinitionStart(char *className) {
         if (ruleId(&functionOrPropertyName)) {
             bool propertyInitialized = false;
             bool isFunction = false;
+            type = TYPE_STRING;
             if (ruleDefinition(className, type, functionOrPropertyName, &propertyInitialized, &isFunction)) {
-                type = TYPE_STRING;
-                char *classNameWithDot = stringConcat(className, ".");
-                if(!isFunction) {
-                    createAndInsertStringVariable(globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), propertyInitialized);
-                }
+//                char *classNameWithDot = stringConcat(className, ".");
+//                if(!isFunction) {
+//                    createAndInsertStringVariable(&globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), propertyInitialized);
+//                }
                 return true;
             }
         }
@@ -728,12 +752,12 @@ bool ruleDefinitionStart(char *className) {
         if (ruleId(&functionOrPropertyName)) {
             bool propertyInitialized = false;
             bool isFunction = false;
+            type = TYPE_STRING;
             if (ruleDefinition(className, type, functionOrPropertyName, &propertyInitialized, &isFunction)) {
-                type = TYPE_STRING;
-                char *classNameWithDot = stringConcat(className, ".");
-                if(!isFunction) {
-                    createAndInsertIntVariable(globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), propertyInitialized);
-                }
+//                char *classNameWithDot = stringConcat(className, ".");
+//                if(!isFunction) {
+//                    createAndInsertIntVariable(&globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), propertyInitialized);
+//                }
                 return true;
             }
         }
@@ -742,12 +766,12 @@ bool ruleDefinitionStart(char *className) {
         if (ruleId(&functionOrPropertyName)) {
             bool propertyInitialized = false;
             bool isFunction = false;
+            type = TYPE_STRING;
             if (ruleDefinition(className, type, functionOrPropertyName, &propertyInitialized, &isFunction)) {
-                type = TYPE_STRING;
-                char *classNameWithDot = stringConcat(className, ".");
-                if(!isFunction) {
-                    createAndInsertDoubleVariable(globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), propertyInitialized);
-                }
+//                char *classNameWithDot = stringConcat(className, ".");
+//                if(!isFunction) {
+//                    createAndInsertDoubleVariable(&globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), propertyInitialized);
+//                }
                 return true;
             }
         }
@@ -810,8 +834,7 @@ void testTokens() {
 void runSyntacticalAnalysis(char *fileName) {
     globalTokens = getAllTokens(fileName);
 
-    initializeSymbolTable(&globalSymbolTable);
-    initializeSymbolTable(&actualSymbolTable);
+    initializeSymbolTable(globalSymbolTable);
 
     makeFirstPass();
     //makeSecondPass();
@@ -819,7 +842,15 @@ void runSyntacticalAnalysis(char *fileName) {
 
 
 void makeFirstPass() {
+    //set active to the first element
     ListFirst(globalTokens);
+    //create main instruction list
+    mainInstructionList = malloc(sizeof(struct tDLListStruct));
+    ListInit(mainInstructionList);
+    //create instruction Instruction_Create_GlobalFrame_And_LocalStack
+    INSTRUCTION *createGlobalFrameInstruction = createFirstInstruction();
+    ListFirst(mainInstructionList);
+    ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createGlobalFrameInstruction));
 
     bool result = ruleProg();
 
@@ -829,17 +860,15 @@ void makeFirstPass() {
 
     semanticCheckForFunctionRun();
 
+    //just "testing"
+    printListOfInstructions(mainInstructionList);
+
 
 }
 
 void makeSecondPass() {
     ListFirst(globalTokens);
     firstPass = false;
-
-    struct tDLListStruct *mainInstructionList = malloc(sizeof(struct tDLListStruct));
-    ListInit(mainInstructionList);
-
-//    createInstructionsForGlobalVariables(mainInstructionList);
 
     bool result = ruleProg();
 
@@ -868,35 +897,46 @@ int analyzeExpression(tDLList *instructionList, char *resultVariableName/*,DATA_
 }
 
 
-void createInstructionsForGlobalVariables(struct tDLListStruct *mainInstructionList) {
-    struct STACK_STR *symbolTableStacked = BTInorder(*globalSymbolTable);
+//void createInstructionsForGlobalVariables(struct tDLListStruct *mainInstructionList) {
+//    struct STACK_STR *symbolTableStacked = BTInorder(*globalSymbolTable);
+//
+////    Create_GlobalFrame_And_LocalStack
+//    INSTRUCTION *createGlobalFrameInstruction = createFirstInstruction();
+//    ListFirst(mainInstructionList); //just in case
+//
+//    //insert the first instruction
+//    DLPostInsert(mainInstructionList, wrapInstructionIntoListElement(createGlobalFrameInstruction));
+//
+//    //insert global variables
+//    while (!stackEmpty(symbolTableStacked)) {
+//        struct STACK_ELEMENT actualElement;
+//        stackTop(symbolTableStacked, &actualElement);
+//
+//        //filter all records for classe itself
+//        if (actualElement.data.symbolTableNode->data->type == TREE_NODE_VARIABLE) {
+//            printf("variable name: %s\n", actualElement.data.symbolTableNode->data->item->variable->name);
+//            if (ifj16_find(actualElement.data.symbolTableNode->data->item->variable->name, ".*")) {
+//
+//                stackPop(symbolTableStacked);
+//                continue;
+//            }
+//        } else {
+//            printf("function name: %s\n", actualElement.data.symbolTableNode->data->item->function->name);
+//        }
+//
+////        DLPostInsert(mainInstructionList, wrapInstructionIntoListElement(createGlobalVariable(actualElement.data.symbolTableNode->data->item->variable->name, actualElement.data.symbolTableNode->data->item->variable->type)));
+//
+//
+//        stackPop(symbolTableStacked);
+//    }
+//}
 
-//    Create_GlobalFrame_And_LocalStack
-    INSTRUCTION *createGlobalFrameInstruction = createFirstInstruction();
-    ListFirst(mainInstructionList); //just in case
 
-//    DLPostInsert(mainInstructionList, )
+LIST_ELEMENT wrapInstructionIntoListElement(INSTRUCTION *instr) {
+    LIST_ELEMENT newElement;
 
+    newElement.type = LIST_ELEMENT_TYPE_INSTRUCTION;
+    newElement.data.instr = instr;
 
-
-    while (!stackEmpty(symbolTableStacked)) {
-        struct STACK_ELEMENT actualElement;
-        stackTop(symbolTableStacked, &actualElement);
-
-        //filter all records for classe itself
-        if (actualElement.data.symbolTableNode->data->type == TREE_NODE_VARIABLE) {
-            printf("variable name: %s\n", actualElement.data.symbolTableNode->data->item->variable->name);
-            if (ifj16_find(actualElement.data.symbolTableNode->data->item->variable->name, ".*")) {
-
-                stackPop(symbolTableStacked);
-                continue;
-            }
-        } else {
-            printf("function name: %s\n", actualElement.data.symbolTableNode->data->item->function->name);
-        }
-
-        INSTRUCTION *instruction;
-
-        stackPop(symbolTableStacked);
-    }
+    return newElement;
 }
