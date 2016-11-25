@@ -520,6 +520,7 @@ int executeInstructionMathOperation(INSTRUCTION *instr) {
     default: ;
     }   // end if Math Instructions switch
 
+    return 0;
 }   // end of Executing
 
 //...
@@ -537,21 +538,245 @@ void executeInstructionExpressionEvaluation(INSTRUCTION *instr) {
     switch ( instr->type ) {
         case Instruction_Bool_Equals:   // if ( src1 == src2 ) dst=TRUE else dst=FALSE;
             ;
+            if (src1Type == TYPE_STRING || src2Type == TYPE_STRING) exitInterpret(10);
+
+            switch (src1Type){
+                case TYPE_INT:
+                    ;
+                    if (src2Type==TYPE_INT){ // src1->int == src2->int
+                        if (src1Val->intValue == src2Val->intValue) dstVal->stringValue = "TRUE";
+                        else dstVal->stringValue = "FALSE";
+
+                    } else if (src2Type==TYPE_DOUBLE) { // src1->int == src2->double
+                        src1Val->doubleValue = (double) src1Val->intValue;
+                        if (src1Val->doubleValue == src2Val->doubleValue) dstVal->stringValue = "TRUE";
+                        else dstVal->stringValue = "FALSE";
+                    } else {
+                        // error: unsupported format
+                        exitInterpret(10);
+                    }
+                    break;
+
+                case TYPE_DOUBLE:
+                    ;
+                    if (src2Type==TYPE_DOUBLE){ // src1->double == src2->double
+                        if (src1Val->doubleValue == src2Val->doubleValue) dstVal->stringValue = "TRUE";
+                        else dstVal->stringValue = "FALSE";
+
+                    } else if (src2Type==TYPE_INT) { // src1->double == src2->int
+                        src2Val->doubleValue = (double) src2Val->intValue;
+                        if (src1Val->doubleValue == src2Val->doubleValue) dstVal->stringValue = "TRUE";
+                        else dstVal->stringValue = "FALSE";
+                    } else {
+                        // error: unsupported format
+                        exitInterpret(10);
+                    }
+                    break;
+
+                default: ;
+            }
+
             break;
         case Instruction_Bool_EqualsNot:    // if ( src1 != src2 ) dst=TRUE else dst=FALSE;
             ;
+            if (src1Type == TYPE_STRING || src2Type == TYPE_STRING) exitInterpret(10);
+
+            switch (src1Type){
+                case TYPE_INT:
+                    ;
+                    if (src2Type==TYPE_INT){ // src1->int != src2->int
+                        if (src1Val->intValue != src2Val->intValue) dstVal->stringValue = "TRUE";
+                        else dstVal->stringValue = "FALSE";
+
+                    } else if (src2Type==TYPE_DOUBLE) { // src1->int != src2->double
+                        src1Val->doubleValue = (double) src1Val->intValue;
+                        if (src1Val->doubleValue != src2Val->doubleValue) dstVal->stringValue = "TRUE";
+                        else dstVal->stringValue = "FALSE";
+                    } else {
+                        // error: unsupported format
+                        exitInterpret(10);
+                    }
+                    break;
+
+                case TYPE_DOUBLE:
+                    ;
+                    if (src2Type==TYPE_DOUBLE){ // src1->double != src2->double
+                        if (src1Val->doubleValue == src2Val->doubleValue) dstVal->stringValue = "TRUE";
+                        else dstVal->stringValue = "FALSE";
+
+                    } else if (src2Type==TYPE_INT) { // src1->double != src2->int
+                        src2Val->doubleValue = (double) src2Val->intValue;
+                        if (src1Val->doubleValue == src2Val->doubleValue) dstVal->stringValue = "TRUE";
+                        else dstVal->stringValue = "FALSE";
+                    } else {
+                        // error: unsupported format
+                        exitInterpret(10);
+                    }
+                    break;
+
+                default: ;
+            }
+
             break;
         case Instruction_Bool_More: // if ( src1 > src2 ) dst=TRUE else dst=FALSE;
             ;
+            if (src1Type == TYPE_STRING || src2Type == TYPE_STRING) exitInterpret(10);
+
+            switch (src1Type){
+                case TYPE_INT:
+                    ;
+                    if (src2Type==TYPE_INT){ // src1->int > src2->int
+                        if (src1Val->intValue > src2Val->intValue) dstVal->stringValue = "TRUE";
+                        else dstVal->stringValue = "FALSE";
+
+                    } else if (src2Type==TYPE_DOUBLE) { // src1->int > src2->double
+                        src1Val->doubleValue = (double) src1Val->intValue;
+                        if (src1Val->doubleValue > src2Val->doubleValue) dstVal->stringValue = "TRUE";
+                        else dstVal->stringValue = "FALSE";
+                    } else {
+                        // error: unsupported format
+                        exitInterpret(10);
+                    }
+                    break;
+
+                case TYPE_DOUBLE:
+                    ;
+                    if (src2Type==TYPE_DOUBLE){ // src1->double > src2->double
+                        if (src1Val->doubleValue > src2Val->doubleValue) dstVal->stringValue = "TRUE";
+                        else dstVal->stringValue = "FALSE";
+
+                    } else if (src2Type==TYPE_INT) { // src1->double > src2->int
+                        src2Val->doubleValue = (double) src2Val->intValue;
+                        if (src1Val->doubleValue > src2Val->doubleValue) dstVal->stringValue = "TRUE";
+                        else dstVal->stringValue = "FALSE";
+                    } else {
+                        // error: unsupported format
+                        exitInterpret(10);
+                    }
+                    break;
+
+                default: ;
+            }
             break;
         case Instruction_Bool_Less: // if ( src1 < src2 ) dst=TRUE else dst=FALSE;
             ;
+            if (src1Type == TYPE_STRING || src2Type == TYPE_STRING) exitInterpret(10);
+
+            switch (src1Type){
+                case TYPE_INT:
+                    ;
+                    if (src2Type==TYPE_INT){ // src1->int < src2->int
+                        if (src1Val->intValue < src2Val->intValue) dstVal->stringValue = "TRUE";
+                        else dstVal->stringValue = "FALSE";
+
+                    } else if (src2Type==TYPE_DOUBLE) { // src1->int < src2->double
+                        src1Val->doubleValue = (double) src1Val->intValue;
+                        if (src1Val->doubleValue < src2Val->doubleValue) dstVal->stringValue = "TRUE";
+                        else dstVal->stringValue = "FALSE";
+                    } else {
+                        // error: unsupported format
+                        exitInterpret(10);
+                    }
+                    break;
+
+                case TYPE_DOUBLE:
+                    ;
+                    if (src2Type==TYPE_DOUBLE){ // src1->double < src2->double
+                        if (src1Val->doubleValue < src2Val->doubleValue) dstVal->stringValue = "TRUE";
+                        else dstVal->stringValue = "FALSE";
+
+                    } else if (src2Type==TYPE_INT) { // src1->double < src2->int
+                        src2Val->doubleValue = (double) src2Val->intValue;
+                        if (src1Val->doubleValue < src2Val->doubleValue) dstVal->stringValue = "TRUE";
+                        else dstVal->stringValue = "FALSE";
+                    } else {
+                        // error: unsupported format
+                        exitInterpret(10);
+                    }
+                    break;
+
+                default: ;
+            }
             break;
         case Instruction_Bool_MoreEqual:    // if ( src1 >= src2 ) dst=TRUE else dst=FALSE;
             ;
+            if (src1Type == TYPE_STRING || src2Type == TYPE_STRING) exitInterpret(10);
+
+            switch (src1Type){
+                case TYPE_INT:
+                    ;
+                    if (src2Type==TYPE_INT){ // src1->int >= src2->int
+                        if (src1Val->intValue >= src2Val->intValue) dstVal->stringValue = "TRUE";
+                        else dstVal->stringValue = "FALSE";
+
+                    } else if (src2Type==TYPE_DOUBLE) { // src1->int >= src2->double
+                        src1Val->doubleValue = (double) src1Val->intValue;
+                        if (src1Val->doubleValue >= src2Val->doubleValue) dstVal->stringValue = "TRUE";
+                        else dstVal->stringValue = "FALSE";
+                    } else {
+                        // error: unsupported format
+                        exitInterpret(10);
+                    }
+                    break;
+
+                case TYPE_DOUBLE:
+                    ;
+                    if (src2Type==TYPE_DOUBLE){ // src1->double >= src2->double
+                        if (src1Val->doubleValue >= src2Val->doubleValue) dstVal->stringValue = "TRUE";
+                        else dstVal->stringValue = "FALSE";
+
+                    } else if (src2Type==TYPE_INT) { // src1->double >= src2->int
+                        src2Val->doubleValue = (double) src2Val->intValue;
+                        if (src1Val->doubleValue >= src2Val->doubleValue) dstVal->stringValue = "TRUE";
+                        else dstVal->stringValue = "FALSE";
+                    } else {
+                        // error: unsupported format
+                        exitInterpret(10);
+                    }
+                    break;
+
+                default: ;
+            }
             break;
         case Instruction_Bool_LessEqual:    // if ( src1 <= src2 ) dst=TRUE else dst=FALSE;
             ;
+            if (src1Type == TYPE_STRING || src2Type == TYPE_STRING) exitInterpret(10);
+
+            switch (src1Type){
+                case TYPE_INT:
+                    ;
+                    if (src2Type==TYPE_INT){ // src1->int <= src2->int
+                        if (src1Val->intValue <= src2Val->intValue) dstVal->stringValue = "TRUE";
+                        else dstVal->stringValue = "FALSE";
+
+                    } else if (src2Type==TYPE_DOUBLE) { // src1->int <= src2->double
+                        src1Val->doubleValue = (double) src1Val->intValue;
+                        if (src1Val->doubleValue <= src2Val->doubleValue) dstVal->stringValue = "TRUE";
+                        else dstVal->stringValue = "FALSE";
+                    } else {
+                        // error: unsupported format
+                        exitInterpret(10);
+                    }
+                    break;
+
+                case TYPE_DOUBLE:
+                    ;
+                    if (src2Type==TYPE_DOUBLE){ // src1->double >= src2->double
+                        if (src1Val->doubleValue <= src2Val->doubleValue) dstVal->stringValue = "TRUE";
+                        else dstVal->stringValue = "FALSE";
+
+                    } else if (src2Type==TYPE_INT) { // src1->double >= src2->int
+                        src2Val->doubleValue = (double) src2Val->intValue;
+                        if (src1Val->doubleValue <= src2Val->doubleValue) dstVal->stringValue = "TRUE";
+                        else dstVal->stringValue = "FALSE";
+                    } else {
+                        // error: unsupported format
+                        exitInterpret(10);
+                    }
+                    break;
+
+                default: ;
+            }
             break;
 
         default: ;
