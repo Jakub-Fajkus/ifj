@@ -594,14 +594,9 @@ bool ruleParam(){
     char *name;
 
     //<PARAM> -> <EXP> <AFTER_FUNCTION_CALL_EXP>
-    //<PARAM> -> <ID> <AFTER_FUNCTION_CALL_EXP>
     char* resultVariableName;
     printf("calling analyzeExpression from ruleParam\n");
     if (analyzeExpression(dummyInstructionLIst, resultVariableName)) {
-        if (ruleAfterFunctionCallExp()) {
-            return true;
-        }
-    } else if (ruleId(&name)) {
         if (ruleAfterFunctionCallExp()) {
             return true;
         }
