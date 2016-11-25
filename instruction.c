@@ -217,4 +217,9 @@ INSTRUCTION *createFirstInstruction() {
     return instruction;
 }
 
-
+LIST_ELEMENT createInstruction(INSTRUCTION *instruction){
+    LIST_ELEMENT listElement;
+    listElement.type = LIST_ELEMENT_TYPE_INSTRUCTION;
+    listElement.data.instr = instruction;
+    return listElement;
+}

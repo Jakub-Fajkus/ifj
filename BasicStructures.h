@@ -9,7 +9,8 @@ typedef enum{
     TYPE_INT = 1000,
     TYPE_DOUBLE = 1001,
     TYPE_STRING = 1002,
-    TYPE_VOID = 1003
+    TYPE_VOID = 1003,
+    TYPE_BOOL = 1004
 } DATA_TYPE;
 
 typedef struct {

@@ -183,4 +183,11 @@ LIST_ELEMENT createUpcomingInstruction(INSTRUCTION *instr);
 void printInstructionTest(int x, tDLList *TestInstructionList);
 void printListOfInstructions(tDLList *TestInstructionList);
 
+
+LIST_ELEMENT createInstruction(INSTRUCTION *instruction);
+
+
+
+
+
 #endif //IFJ_INSTRUCTION_H
