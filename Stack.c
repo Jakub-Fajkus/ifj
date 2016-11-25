@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include "Stack.h"
 
-void stackInit ( tStack* s) {
+void stackInit ( struct STACK_STR* s) {
     if (s == NULL) {
         printf("stack is null!");
         exit(99);
@@ -20,7 +20,7 @@ void stackInit ( tStack* s) {
     s->arr = malloc(s->maxSize * sizeof(struct STACK_ELEMENT));
 }
 
-void increaseStackSize(tStack* s) {
+void increaseStackSize(struct STACK_STR* s) {
     s->maxSize += 100;
 
     if (s->maxSize > STACK_SIZE_LIMIT) {
@@ -30,11 +30,11 @@ void increaseStackSize(tStack* s) {
     s->arr = realloc(s->arr, s->maxSize * sizeof(struct STACK_ELEMENT));
 }
 
-int stackEmpty ( const tStack* s ) {
+int stackEmpty ( const struct STACK_STR* s ) {
     return s->top == -1;
 }
 
-void stackTop ( const tStack* s, struct STACK_ELEMENT* element ) {
+void stackTop ( const struct STACK_STR* s, struct STACK_ELEMENT* element ) {
     if (s->top == -1) {
         printf("stack is empty!");
         return;
@@ -44,7 +44,7 @@ void stackTop ( const tStack* s, struct STACK_ELEMENT* element ) {
 }
 
 
-void stackPop ( tStack* s ) {
+void stackPop ( struct STACK_STR* s ) {
 /*   --------
 ** Odstraní prvek z vrcholu zásobníku. Pro ověření, zda je zásobník prázdný,
 ** použijte dříve definovanou funkci stackEmpty.
@@ -64,12 +64,12 @@ void stackPop ( tStack* s ) {
     s->actualSize--;
 }
 
-int stackFull ( const tStack* s ) {
+int stackFull ( const struct STACK_STR* s ) {
     return s->actualSize == s->maxSize;
 }
 
 
-void stackPush ( tStack* s, struct STACK_ELEMENT element ) {
+void stackPush ( struct STACK_STR* s, struct STACK_ELEMENT element ) {
 
     if (stackFull(s)) {
         increaseStackSize(s);

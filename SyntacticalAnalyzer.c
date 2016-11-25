@@ -39,12 +39,10 @@ void returnCachedTokens(unsigned int count);
  * @return
  */
 tDLList* getAllTokens(char *fileName);
-
 void testTokens();
-
 void makeFirstPass();
-
 void makeSecondPass();
+void createInstructionForGlobalVariables(struct tDLListStruct *mainInstructionList);
 
 void runSyntacticalAnalysis(char *fileName) {
     globalTokens = getAllTokens(fileName);
@@ -838,33 +836,13 @@ void makeFirstPass() {
     checkIfFunctionRunExists();
 
 
-    //test inorder
-    struct STACK_STR *symbolTableStacked = BTInorder(*globalSymbolTable);
-
-    while (!stackEmpty(symbolTableStacked)) {
-        struct STACK_ELEMENT actualElement;
-        stackTop(symbolTableStacked, &actualElement);
-
-        //filter all records for classe itself
-        if (actualElement.data.symbolTableNode->data->type == TREE_NODE_VARIABLE) {
-            printf("variable name: %s\n", actualElement.data.symbolTableNode->data->item->variable->name);
-            if (ifj16_find(actualElement.data.symbolTableNode->data->item->variable->name, ".*")) {
-
-                stackPop(symbolTableStacked);
-                continue;
-            }
-        } else {
-            printf("function name: %s\n", actualElement.data.symbolTableNode->data->item->function->name);
-        }
-
-
-        stackPop(symbolTableStacked);
-    }
 }
 
 void makeSecondPass() {
     ListFirst(globalTokens);
     firstPass = false;
+
+//    createInstructionForGlobalVariables(mainInstructionLists);
 
     bool result = ruleProg();
 
@@ -873,16 +851,7 @@ void makeSecondPass() {
     }
 
     //call interpret
-
-//    //test inorder
-//    struct STACK_STR *symbolTableStacked = BTInorder(*globalSymbolTable);
-//
-//    while (!stackEmpty(symbolTableStacked)) {
-//        struct STACK_ELEMENT actualElement;
-//        stackTop(symbolTableStacked, &actualElement);
-//        stackPop(symbolTableStacked);
-//    }
-
+    //todo:
 }
 
 int analyzeExpression(tDLList *instructionList, char *resultVariableName/*,DATA_TYPE *resultVariableType*/) {
@@ -902,6 +871,27 @@ int analyzeExpression(tDLList *instructionList, char *resultVariableName/*,DATA_
 }
 
 
-void addGlobalVariablesToFrame() {
+void createInstructionForGlobalVariables(struct tDLListStruct *mainInstructionList) {
+    struct STACK_STR *symbolTableStacked = BTInorder(*globalSymbolTable);
 
+    while (!stackEmpty(symbolTableStacked)) {
+        struct STACK_ELEMENT actualElement;
+        stackTop(symbolTableStacked, &actualElement);
+
+        //filter all records for classe itself
+        if (actualElement.data.symbolTableNode->data->type == TREE_NODE_VARIABLE) {
+            printf("variable name: %s\n", actualElement.data.symbolTableNode->data->item->variable->name);
+            if (ifj16_find(actualElement.data.symbolTableNode->data->item->variable->name, ".*")) {
+
+                stackPop(symbolTableStacked);
+                continue;
+            }
+        } else {
+            printf("function name: %s\n", actualElement.data.symbolTableNode->data->item->function->name);
+        }
+
+        INSTRUCTION *instruction;
+
+        stackPop(symbolTableStacked);
+    }
 }

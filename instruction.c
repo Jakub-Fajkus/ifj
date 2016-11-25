@@ -11,8 +11,8 @@
 
 /// Constructor of frame stack
 /// \return Ptr to Stack
-struct tStack_struct *createFrameStack() {
-    tStack *localFrameStack = malloc(sizeof(tStack));
+struct STACK_STR *createFrameStack() {
+    struct STACK_STR *localFrameStack = malloc(sizeof(struct STACK_STR));
     // WARNING: also mallocs those arrays
     stackInit(localFrameStack);
     localFrameStack->arr->type = STACK_ELEMENT_TYPE_LOCAL_FRAME;

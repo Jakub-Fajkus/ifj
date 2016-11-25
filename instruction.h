@@ -57,7 +57,7 @@ typedef struct sINSTRUCTION{
 
 /// Constructor of frame stack
 /// \return Ptr to Stack
-struct tStack_struct *createFrameStack();
+struct STACK_STR *createFrameStack();
 
 /// Pushes Local frame on the top of the Stack
 /// \param localFrameStack  - Ptr to frame stack

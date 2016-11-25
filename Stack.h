@@ -70,11 +70,11 @@ typedef struct STACK_STR{
     int actualSize;
 } tStack;
 
-void stackInit ( tStack* s );
-int stackEmpty ( const tStack* s );
-int stackFull ( const tStack* s );
-void stackTop ( const tStack* s, struct STACK_ELEMENT* element );
-void stackPop ( tStack* s );
-void stackPush ( tStack* s, struct STACK_ELEMENT element );
+void stackInit ( struct STACK_STR* s );
+int stackEmpty ( const struct STACK_STR* s );
+int stackFull ( const struct STACK_STR* s );
+void stackTop ( const struct STACK_STR* s, struct STACK_ELEMENT* element );
+void stackPop ( struct STACK_STR* s );
+void stackPush ( struct STACK_STR* s, struct STACK_ELEMENT element );
 
 #endif //IFJ_STACK_H
