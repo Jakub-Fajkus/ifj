@@ -32,7 +32,13 @@ void callInterpret() {
     //printf("\n----- %g\n", *(VARIABLE_VALUE*)TestInstructionList->Last->element.data.instr->address_src2);
 
 
-    ListInsertLast(TestInstructionList, createUpcomingInstruction((createInstructionAssign("Main.x", "Main.a"))));
+    insertValue.doubleValue = 0.5;
+    ListInsertLast(TestInstructionList, createUpcomingInstruction(pushGlobalVariable("Main.dest", TYPE_DOUBLE, insertValue)));
+
+    insertValue.intValue = 99;
+    ListInsertLast(TestInstructionList, createUpcomingInstruction(pushGlobalVariable("Main.cele", TYPE_INT, insertValue)));
+
+    ListInsertLast(TestInstructionList, createUpcomingInstruction((createInstructionAssign("Main.dest", "Main.cele"))));
     //printf("-------------------------- fuck you guys --------------------");
     //printf("\n----- %s", (char *)TestInstructionList->Last->element.data.instr->address_dst);
     //printf("\n----- %s", (char *)TestInstructionList->Last->element.data.instr->address_src1);
@@ -46,15 +52,16 @@ void callInterpret() {
     //--------------------------------------------------------------------------------------------------------------
     //------ HERE COMES THE HELL
 
-    printf("----- Drzte si kabaty, volame interpret!!!");
+    printf("----- Drzte si kabaty, volame interpret!!!\n");
     printf("Calling Instructions: \n");
     printf("\tInstruction_Create_GlobalFrame_And_LocalStack\tZERO PARAMS\n");
     printf("\tInstruction_Create_Global_Variable\t Name:Main.x, Type:double\n");
     printf("\tInstruction_Push_Global_Variable\t Name:Main.a, Type:double, Val: 4.2\n");
-    printf("\tInstruction_Assign\t Main.x = Main.a\n");
+    printf("\tInstruction_Push_Global_Variable\t Name:Main.dest, Type:double, Val: 0.5\n");
+    printf("\tInstruction_Push_Global_Variable\t Name:Main.cele, Type:int, Val: 99\n");
+    printf("\tInstruction_Assign\t Main.dest = Main.cele\n");
 
     Interpret(TestInstructionList, NULL, NULL);
-
 
 }
 
@@ -86,6 +93,7 @@ void printListOfInstructions(tDLList *TestInstructionList) {
     do {
         printf("Instruction number %d: %d\n", number, TestInstructionList->Act->element.data.instr->type);
         ListSuccessor(TestInstructionList);
+        number++;
     } while( TestInstructionList->Act != NULL );
 
 

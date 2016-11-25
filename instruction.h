@@ -179,6 +179,13 @@ INSTRUCTION *createInstructionIf(char *nameDst, INSTRUCTION *trueDst, INSTRUCTIO
  */
 INSTRUCTION *createFirstInstruction();
 
+
+/**
+ * CONSTRUCTOR FOR SINGLE INSTRUCTION
+ * RETURN VALUE CAN BE USED FOR INSERTION TO THE
+ * @param instr
+ * @return
+ */
 LIST_ELEMENT createUpcomingInstruction(INSTRUCTION *instr);
 void printInstructionTest(int x, tDLList *TestInstructionList);
 void printListOfInstructions(tDLList *TestInstructionList);

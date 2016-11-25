@@ -13,17 +13,16 @@
 /// \return Ptr to Stack
 struct STACK_STR *createFrameStack() {
     struct STACK_STR *localFrameStack = malloc(sizeof(struct STACK_STR));
-    // WARNING: also mallocs those arrays
+    // WARNING: also allocates memory for the array inside!
     stackInit(localFrameStack);
     localFrameStack->arr->type = STACK_ELEMENT_TYPE_LOCAL_FRAME;
-    printf("Creating empty stack of frames... ");
     return localFrameStack;
 }
 
 /// Pushes Local frame on the top of the Stack
 /// \param localFrameStack - Ptr to frame stack
 /// \param frame - upcoming frame, already full of variables
-void pushFrameToStack(tStack *localFrameStack, tDLList *frame) {
+void pushFrameToStack(struct STACK_STR *localFrameStack, tDLList *frame) {
     STACK_ELEMENT *newLocalFrame = malloc(sizeof(STACK_ELEMENT));
 
     newLocalFrame->type = STACK_ELEMENT_TYPE_LOCAL_FRAME;
@@ -36,9 +35,7 @@ void pushFrameToStack(tStack *localFrameStack, tDLList *frame) {
 /// \return Ptr to frame
 tDLList *createFrame() {
     tDLList *frame = malloc(sizeof(tDLList));
-    checkMalloc(frame);
     ListInit(frame);
-    printf("::::: Successfully created frame, type of:");
     return frame;
 }
 
@@ -46,16 +43,28 @@ tDLList *createFrame() {
 /// \param frame
 /// \param instruction
 void pushToFrame(tDLList *frame, INSTRUCTION *instruction){
-    LIST_ELEMENT variable;
+    LIST_ELEMENT *listElem = malloc(sizeof(LIST_ELEMENT));
+    VARIABLE *var = malloc(sizeof(VARIABLE));
 
-    variable.type = LIST_ELEMENT_TYPE_FRAME_ELEMENT;
-    variable.data.variable->name = (char *)instruction->address_dst;
-    variable.data.variable->type = (DATA_TYPE)instruction->address_src1;
-    //TODO: what if using only "create variable", without value? ~src2 is null
-    variable.data.variable->value = *(VARIABLE_VALUE*)instruction->address_src2;
+    listElem->type = LIST_ELEMENT_TYPE_FRAME_ELEMENT;
+    listElem->data.variable = var;
 
-    printf("Successfully inserted this variable: %s, %d", variable.data.variable->name, variable.data.variable->type);
-    ListInsertLast(frame, variable);
+    var->name = (char *)instruction->address_dst;
+    var->type = *(DATA_TYPE*)instruction->address_src1;
+
+    if (instruction->address_src2 != NULL)  // Instruction is inserting VAR with value
+        var->value = *(VARIABLE_VALUE*)instruction->address_src2;
+
+    /*DEBUG PRINT
+    if (instruction->address_src2 == NULL)
+        printf("Successfully inserted this variable: %s, %d\n", listElem->data.variable->name, listElem->data.variable->type);
+    else {
+        if (var->type == TYPE_INT) printf("Successfully inserted this variable: %s, %d %d\n", listElem->data.variable->name, listElem->data.variable->type, listElem->data.variable->value.intValue);
+        if (var->type == TYPE_DOUBLE) printf("Successfully inserted this variable: %s, %d %g\n", listElem->data.variable->name, listElem->data.variable->type, listElem->data.variable->value.doubleValue);
+        if (var->type == TYPE_STRING) printf("Successfully inserted this variable: %s, %d %s\n", listElem->data.variable->name, listElem->data.variable->type, listElem->data.variable->value.stringValue);
+    }
+    */
+    ListInsertLast(frame, *listElem);
 }
 
 /// Finds variable with given name
@@ -64,16 +73,19 @@ void pushToFrame(tDLList *frame, INSTRUCTION *instruction){
 /// \return NULL if not found, otherwise pointer to the variable
 VARIABLE *findFrameVariable(tDLList *frame, char *name) {
 
+    //printf("i am seeking for: %s\t", name);
+
     if ( name == NULL ) return NULL; // error handling
     int compare;
     ListFirst(frame);
     do { // Search for the variable in the globalFrame
         compare = strcmp(name, frame->Act->element.data.variable->name);
         if ( compare == 0 ) {   // found the right variable
+            //printf("i have found: %s\n", frame->Act->element.data.variable->name);
             return frame->Act->element.data.variable;
         }
         ListSuccessor(frame);
-    } while ( frame->Act != frame->Last );
+    } while ( frame->Act != NULL );
     return NULL;
 }
 
@@ -82,10 +94,14 @@ VARIABLE *findFrameVariable(tDLList *frame, char *name) {
 /// \return Ptr of actual local frame
 tDLList *getActualLocalFrame(struct STACK_STR *stackOfLocalFrames) {
 
-    STACK_ELEMENT* stackElement = malloc(sizeof(STACK_ELEMENT));
-    //TODO: malloc
-    stackTop(stackOfLocalFrames, stackElement);
-    tDLList *actualLocalFrame = stackElement->data.localFrame;
+    tDLList *actualLocalFrame = NULL;
+
+    if (!stackEmpty(stackOfLocalFrames)) {
+        STACK_ELEMENT* stackElement = malloc(sizeof(STACK_ELEMENT));
+        stackTop(stackOfLocalFrames, stackElement);
+        actualLocalFrame = stackElement->data.localFrame;
+    }
+
     return actualLocalFrame;
 }
 

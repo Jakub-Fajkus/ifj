@@ -36,7 +36,7 @@ int stackEmpty ( const struct STACK_STR* s ) {
 
 void stackTop ( const struct STACK_STR* s, struct STACK_ELEMENT* element ) {
     if (s->top == -1) {
-        printf("stack is empty!");
+        //printf("stack is empty!");
         return;
     }
 

@@ -16,60 +16,39 @@
 
 int Interpret(tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames);
 void InstructionExecute(INSTRUCTION *instr);
-
-
 int executeInstructionMathOperation(INSTRUCTION *instr);
+void executeInstructionExpressionEvaluation(INSTRUCTION *instr);
 void executeInstructionAssign(VARIABLE *dst, VARIABLE *src);
+
+// YET TO DO
+void executeInstructionIf(INSTRUCTION *instr);
 
 // TODO: funkcie pre tvorbu a prácu s rámcom
 
 int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames ){
-
-    if (InstructionList == NULL) {
-        fprintf(stderr, "Interpret obtained NULL pointer to list of instructions.\n");
-        return 1;
-    }
-
+    if (InstructionList == NULL) return 99;
     printf("-----------------------------------------------------\n");
     printf("\n----- Welcome to hell v1.0\n");
     printf("-----------------------------------------------------\n");
 
-
-
+    //NewPtr - pointer to list element (allowing work with instructions inside InstructionList)
     LIST_ELEMENT *NewPtr = malloc(sizeof(struct LIST_ELEMENT));   //TODO: how to free and exit?
     INSTRUCTION *Instr;
 
-    tDLList *upcomingLocalFrame = NULL;
+    tDLList *upcomingLocalFrame = NULL; // creating the pointer, yet not using it
 
+    // DON'T EVER FORGET THIS
     ListFirst(InstructionList);
 
-    printf("SUCCESS!\n");
-
-
-
-    while ( 1 ) {
+    while ( 1 ) {   // The great cycle
         // Copy the actual instruction from the list
         ListElementCopy(InstructionList, NewPtr);
         Instr = NewPtr->data.instr;
 
+        // Instruction to create both global frame & stack of local frames (the stack will be empty!)
         if (Instr->type == Instruction_Create_GlobalFrame_And_LocalStack) {
-            globalFrame = createFrame();    //!!!
-            printf("GLOBAL\n");
-            stackOfLocalFrames = createFrameStack();    //!!!
-            printf("done.\n");
-            ListSuccessor(InstructionList);
-            printf("JUMPING ON ANOTHER (IMHO SECOND) INSTRUCTION");
-            continue; // Jump to next instruction
-        }
-
-        if (Instr->type == Instruction_Create_Global_Variable) {
-            printf("fuck you\n");
-            return -1;
-        }
-
-        if (Instr->type == Instruction_Push_Global_Variable) {
-            printf("Now i am trying to fill global frame with: Var w/ value\n");
-            pushToFrame(globalFrame, Instr);
+            globalFrame = createFrame();
+            stackOfLocalFrames = createFrameStack();
             ListSuccessor(InstructionList);
             continue; // Jump to next instruction
         }
@@ -80,59 +59,69 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             continue; // Jump to next instruction
         }
 
-        if (Instr->type == Instruction_Create_Local_Variable) {
-
+        // Inserting variable into global frame (with or without value)
+        if (Instr->type == Instruction_Create_Global_Variable || Instr->type == Instruction_Push_Global_Variable) {
+            pushToFrame(globalFrame, Instr);
+            ListSuccessor(InstructionList);
+            continue; // Jump to next instruction
         }
-
-        if (Instr->type == Instruction_Push_Local_Variable) {
+        // Inserting variable into UPCOMING local frame (the frame is not in stack)
+        if (Instr->type == Instruction_Create_Local_Variable || Instr->type == Instruction_Push_Local_Variable) {
+            if (upcomingLocalFrame == NULL) {
+                return 99;
+            }
             pushToFrame(upcomingLocalFrame, Instr);
             ListSuccessor(InstructionList);
             continue; // Jump to next instruction
         }
 
+        // Pushing upcoming local frame into stack of local frames
+        // THINGS TO KEEP: global frame, stack of local frames
         if (Instr->type == Instruction_CallFunction) {
+            printf("CALLING FUNCTION!!! GET REKT\n");
+            //return 99;
+            //TODO: Call Function, recursion inside
             // many things to do
             // but...
             pushFrameToStack(stackOfLocalFrames, upcomingLocalFrame);
             // HERE COMES THE FUCKING RECURSION
-            Interpret(Instr->address_dst, globalFrame, stackOfLocalFrames);
+            Interpret((tDLList*)Instr->address_dst, globalFrame, stackOfLocalFrames);
         }
 
         // other special instructions: IF & WHILE
 
-        //-----------------------------------------------------------------------
         //--- Special instructions are captured, now we will execute the rest ---
-        //-----------------------------------------------------------------------
 
-        // prečítaj mená inštrukcii a vytvor novú inštrukciu
-        // do ktorej narveš priamo hodnoty a jebeš na všetko
-
-        //... sem sa dostane program až po odchytení inštrukcii, ktoré majú
-
+        // EXECUTING OTHER INSTRUCTIONS, REPOINTING REQUIRED
         VARIABLE *dst = NULL;
         VARIABLE *src1 = NULL;
         VARIABLE *src2 = NULL;
 
         tDLList *actualLocalFrame = getActualLocalFrame(stackOfLocalFrames);
         if (actualLocalFrame != NULL) {
-            //... hľadanie premennej v stacku
+            //existing local frame
+            dst = findFrameVariable(actualLocalFrame, Instr->address_dst);
+            src1 = findFrameVariable(actualLocalFrame, Instr->address_src1);
+            src2 = findFrameVariable(actualLocalFrame, Instr->address_src2);
         }
-
-        //TODO: first look into top local frame (in stack)
-        // ...
-
-        // Not found in local frame
-        dst = findFrameVariable(globalFrame, Instr->address_dst);
-        src1 = findFrameVariable(globalFrame, Instr->address_src1);
-        src2 = findFrameVariable(globalFrame, Instr->address_src1);
+        else {
+            // Not found in local frame
+            dst = findFrameVariable(globalFrame, Instr->address_dst);
+            src1 = findFrameVariable(globalFrame, Instr->address_src1);
+            src2 = findFrameVariable(globalFrame, Instr->address_src2);
+        }
 
         switch (Instr->type) {
             case Instruction_Assign:    // expecting DST & SRC variable name
                 ;
                 if ( dst ==NULL || src1 == NULL || src2 != NULL ){
-                    //TODO: dst or src1 not found, or accidentally found src2
+                    // free?
+                    return 99;
                 }
+
+                printf("i am executing instruction ASSIGN with variables: %s & %s\n", dst->name, src1->name);
                 executeInstructionAssign(dst, src1);
+
                 break;
 
             case Instruction_Addition:
@@ -188,18 +177,17 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 ;
                 break;
 
-            default: InstructionExecute(Instr); break;
+            default:
+                ;
+                printf("TRYING TO HANDLE INSTRUCTION WITHOUT SOLUTION\n");
+                //InstructionExecute(Instr);
+                break;
         }
 
-        // po vykonaní novo vytvorenej špeci inštrukcie a narvatí
-        // premennných do nej sa dostaň k týmto číslam a vraz ich
-        // do frames... zas podľa mena
-
-        // p.s. pri assignment to už netreba. asi to ošéfujem tak aby to vôbec nebolo treba
-
+        // break condition
         if (InstructionList->Last->element.data.instr == Instr) break;
         ListSuccessor(InstructionList);
-    } // end of while
+    } // end of the big cycle
     return 0; // I had no idea what have I done
 }
 
