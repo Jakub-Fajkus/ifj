@@ -7,12 +7,12 @@
 #include "SymbolTable.h"
 #include "Stack.h"
 #include "BasicStructures.h"
+#include "SemanticalAnalyzer.h"
 
 unsigned long iterator = 0;
 char varName[100];
 
-int generate3AddressCode(tStack *stack, tStack *backStack, SYMBOL_TABLE_NODEPtr *globalSymbolTable,
-                         SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBOL_TABLE_FUNCTION *calledFunction, bool firstPass);
+int generate3AddressCode(tStack *stack, tStack *backStack, bool firstPass);
 int brackets = 0;
 void concatenateString();
 
@@ -125,8 +125,7 @@ EA_TERMINAL_TYPE getTerminalDataType(TOKEN token) {
     return EA_UNKNOWN;
 }
 
-int parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NODEPtr *globalSymbolTable,
-                    SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBOL_TABLE_FUNCTION *calledFunction, bool firstPass) {
+int parseExpression(char *returnVal, bool firstPass) {
     printf("\nDEBUG expression START\n");
     bool lookingForTerminal = true;
     STACK_ELEMENT stackElement;
@@ -141,7 +140,6 @@ int parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NOD
 
     stackPush(stack, stackElement);
 
-    //todo: validate
     TOKEN *token = getCachedToken();
     if ((token->type == BRACKET && token->data.bracket.name == ')') ||
         token->type == KEYWORD || token->type == OPERATOR_ASSIGN ||
@@ -251,8 +249,7 @@ int parseExpression(tDLList *threeAddressCode, char *returnVal, SYMBOL_TABLE_NOD
                     exit(99);
                 }
                 lookingForTerminal = true;
-                int genRetVal = generate3AddressCode(stack, backStack, globalSymbolTable, localSymbolTable,
-                                                     calledFunction, firstPass);
+                int genRetVal = generate3AddressCode(stack, backStack, firstPass);
                 if (genRetVal != 0) return genRetVal;
                 break;
             default:
@@ -300,9 +297,7 @@ void tokenTypeToVarTypeAndValue(TOKEN token, DATA_TYPE *varType, VARIABLE_VALUE 
 }
 
 
-int generate3AddressCode(tStack *stack, tStack *backStack, SYMBOL_TABLE_NODEPtr *globalSymbolTable,
-                         SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBOL_TABLE_FUNCTION *calledFunction,
-                         bool firstPass) {
+int generate3AddressCode(tStack *stack, tStack *backStack, bool firstPass) {
     STACK_ELEMENT stackElement1;
     STACK_ELEMENT stackElement2;
     STACK_ELEMENT stackElement3;
@@ -328,20 +323,20 @@ int generate3AddressCode(tStack *stack, tStack *backStack, SYMBOL_TABLE_NODEPtr 
             if (!stackEmpty(backStack)) {
                 stackTop(backStack, &stackElement1);
                 stackPop(backStack);
-            } else return 2; // TODO check retVal
+            } else return 2;
 
             if (!stackEmpty(backStack)) {
                 stackTop(backStack, &stackElement2);
                 stackPop(backStack);
-            } else return 2; // TODO check retVal
+            } else return 2;
 
             if (!stackEmpty(backStack)) {
                 stackTop(backStack, &stackElement3);
                 stackPop(backStack);
-            } else return 2; // TODO check retVal
+            } else return 2;
 
             if (!stackEmpty(backStack)) {
-                return 2; // TODO check retVal
+                return 2;
             }
 
             break;
@@ -349,10 +344,10 @@ int generate3AddressCode(tStack *stack, tStack *backStack, SYMBOL_TABLE_NODEPtr 
             if (!stackEmpty(backStack)) {
                 stackTop(backStack, &stackElement1);
                 stackPop(backStack);
-            } else return 2; // TODO check retVal
+            } else return 2;
 
             if (!stackEmpty(backStack)) {
-                return 2;//tODO check error;
+                return 2;
             }
             break;
         default:
@@ -383,7 +378,7 @@ int generate3AddressCode(tStack *stack, tStack *backStack, SYMBOL_TABLE_NODEPtr 
                 printf("generate: E->E+E\n");
                 stackElement1.data.notTerminalData.type = outputType;
                 stackElement1.type = EA_NOT_TERMINAL;
-            } else return 2; //todo check
+            } else return 2;
             break;
         case EA_SUB:
             if (stackElement1.type == EA_NOT_TERMINAL &&
@@ -493,12 +488,7 @@ int generate3AddressCode(tStack *stack, tStack *backStack, SYMBOL_TABLE_NODEPtr 
                 if (stackElement1.data.terminalData.token.type == IDENTIFIER) {
                     stackElement2.data.notTerminalData.name = stackElement1.data.terminalData.token.data.identifier.name;
                     if (!firstPass) {
-                        SYMBOL_TABLE_VARIABLE *symbolTableVariable = getVariable(localSymbolTable, globalSymbolTable,
-                                                                                 calledFunction,
-                                                                                 stackElement2.data.notTerminalData.name);
-                        if (symbolTableVariable == NULL) {
-                            return 3;
-                        }
+                        SYMBOL_TABLE_VARIABLE *symbolTableVariable= semantic_getInitializedVariable(stackElement2.data.notTerminalData.name);
                         stackElement2.data.notTerminalData.type = symbolTableVariable->type;
                     }
                     {
@@ -523,13 +513,7 @@ int generate3AddressCode(tStack *stack, tStack *backStack, SYMBOL_TABLE_NODEPtr 
                                 stackElement1.data.terminalData.token.data.identifierFull.name
                         );
                         stackElement2.data.notTerminalData.name = tempName;
-                        SYMBOL_TABLE_VARIABLE *symbolTableVariable = getVariable(localSymbolTable, globalSymbolTable,
-                                                                                 calledFunction,
-                                                                                 stackElement2.data.notTerminalData.name);
-                        if (symbolTableVariable == NULL) {
-                            return 3;
-                        }
-                        // NOT CREATING  NEW VAR
+                        SYMBOL_TABLE_VARIABLE *symbolTableVariable= semantic_getInitializedVariable(tempName);
                         stackElement2.data.notTerminalData.type = symbolTableVariable->type;
                     } else {
                         stackElement2.data.notTerminalData.type = TYPE_INT;

@@ -62,3 +62,12 @@ SYMBOL_TABLE_VARIABLE *semantic_getVariable(char * name) {
     //the variable was either found(is global) or not found at all
     return variable;
 }
+
+SYMBOL_TABLE_VARIABLE *semantic_getInitializedVariable(char * name) {
+    SYMBOL_TABLE_VARIABLE *variable = semantic_getVariable(name);
+    if (variable->initialized == false) {
+        printf("variable %s is not initialized", name);
+        exit(8);
+    }
+    return variable;
+}
