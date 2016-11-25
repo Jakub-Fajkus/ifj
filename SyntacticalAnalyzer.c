@@ -42,24 +42,7 @@ tDLList* getAllTokens(char *fileName);
 void testTokens();
 void makeFirstPass();
 void makeSecondPass();
-void createInstructionForGlobalVariables(struct tDLListStruct *mainInstructionList);
-
-void runSyntacticalAnalysis(char *fileName) {
-    globalTokens = getAllTokens(fileName);
-    tDLList *tokens = globalTokens; //for debugger
-
-    initializeSymbolTable(&globalSymbolTable);
-    initializeSymbolTable(&actualSymbolTable);
-//    SYMBOL_TABLE_FUNCTION *function = createAndInsertFunction(globalSymbolTable, "Main.run", TYPE_VOID, 0, NULL);
-//    actualFunction = function;
-//    actualFunction = function;
-
-    makeFirstPass();
-//    makeSecondPass();
-
-//    testTokens(); //todo: this is only for "testing"
-}
-
+void createInstructionsForGlobalVariables(struct tDLListStruct *mainInstructionList);
 
 TOKEN *getCachedToken() {
     LIST_ELEMENT *element = malloc(sizeof(LIST_ELEMENT));
@@ -824,6 +807,17 @@ void testTokens() {
     printToken(actualToken);
 }
 
+void runSyntacticalAnalysis(char *fileName) {
+    globalTokens = getAllTokens(fileName);
+
+    initializeSymbolTable(&globalSymbolTable);
+    initializeSymbolTable(&actualSymbolTable);
+
+    makeFirstPass();
+    makeSecondPass();
+}
+
+
 void makeFirstPass() {
     ListFirst(globalTokens);
 
@@ -842,7 +836,10 @@ void makeSecondPass() {
     ListFirst(globalTokens);
     firstPass = false;
 
-//    createInstructionForGlobalVariables(mainInstructionLists);
+    struct tDLListStruct *mainInstructionList = malloc(sizeof(struct tDLListStruct));
+    ListInit(mainInstructionList);
+
+//    createInstructionsForGlobalVariables(mainInstructionList);
 
     bool result = ruleProg();
 
@@ -871,8 +868,16 @@ int analyzeExpression(tDLList *instructionList, char *resultVariableName/*,DATA_
 }
 
 
-void createInstructionForGlobalVariables(struct tDLListStruct *mainInstructionList) {
+void createInstructionsForGlobalVariables(struct tDLListStruct *mainInstructionList) {
     struct STACK_STR *symbolTableStacked = BTInorder(*globalSymbolTable);
+
+//    Create_GlobalFrame_And_LocalStack
+    INSTRUCTION *createGlobalFrameInstruction = createFirstInstruction();
+    ListFirst(mainInstructionList); //just in case
+
+//    DLPostInsert(mainInstructionList, )
+
+
 
     while (!stackEmpty(symbolTableStacked)) {
         struct STACK_ELEMENT actualElement;
