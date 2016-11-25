@@ -423,7 +423,7 @@ int generate3AddressCode(tStack *stack, tStack *backStack, SYMBOL_TABLE_NODEPtr 
                 if (!firstPass) {
                     concatenateString();
 
-                    if (outputType == TYPE_STRING) exit(3);
+                    if (outputType == TYPE_STRING) return 3;
 
                     char *tempName = (char *) malloc(sizeof(char) * 30);
                     strcpy(tempName, varName);
@@ -455,7 +455,7 @@ int generate3AddressCode(tStack *stack, tStack *backStack, SYMBOL_TABLE_NODEPtr 
                 if (!firstPass) {
                     concatenateString();
 
-                    if (outputType == TYPE_STRING) exit(3); else outputType = TYPE_DOUBLE;
+                    if (outputType == TYPE_STRING) return 3; else outputType = TYPE_DOUBLE;
 
                     char *tempName = (char *) malloc(sizeof(char) * 30);
                     strcpy(tempName, varName);
