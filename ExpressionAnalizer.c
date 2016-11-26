@@ -147,6 +147,8 @@ EA_TERMINAL_TYPE getTerminalDataType(TOKEN token) {
                     break;
             }
         }
+        case SEPARATOR:
+            return EA_START_END;
         default:
             break;
     }
