@@ -141,9 +141,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 }
 
                 printf("i am executing instruction ASSIGN with variables: %s & %s\n", dst->name, src1->name);
-                printf("VALUES: DST = %g, SRC = %d\n", dst->value.doubleValue, src1->value.intValue);
                 executeInstructionAssign(dst, src1);
-                printf("VALUES: DST = %g, SRC = %d\n", dst->value.doubleValue, src1->value.intValue);
 
                 break;
 
@@ -158,6 +156,9 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                     //free resources
                     return 99;
                 }
+
+                printf("exiting math operation.\n");
+                exit(42);
 
                 // passing 3 pointers to variables in FRAMES!
                 INSTRUCTION *mathInstruction = malloc(sizeof(INSTRUCTION));
@@ -825,16 +826,22 @@ void exitInterpret(int errNumber) {
     switch (errNumber) {
         case 6:
             fprintf(stderr, "Semantic error: other.\n");
+            break;
         case 7:
             fprintf(stderr, "Runtime error: loading values from input.\n");
+            break;
         case 8:
             fprintf(stderr, "Runtime error: working with uninitialized variables\n");
+            break;
         case 9:
             fprintf(stderr, "Runtime error: dividing by zero.\n");
+            break;
         case 10:
             fprintf(stderr, "Interpret: Other runtime error.\n");
+            break;
         case 99:
             fprintf(stderr, "Intern error: Unable to allocate memory.");
+            break;
         default: ;
     } // end of switch
 
