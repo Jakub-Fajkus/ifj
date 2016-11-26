@@ -199,7 +199,7 @@ INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList);
  * @return
  */
 INSTRUCTION *createFirstInstruction();
-
+INSTRUCTION *createLastInstruction();
 
 /**
  * CONSTRUCTOR FOR SINGLE INSTRUCTION
@@ -207,7 +207,7 @@ INSTRUCTION *createFirstInstruction();
  * @param instr
  * @return
  */
-LIST_ELEMENT createUpcomingInstruction(INSTRUCTION *instr);
+LIST_ELEMENT createInstruction(INSTRUCTION *instr);
 
 
 /// DEBUG FUNCTIONS, to be deleted

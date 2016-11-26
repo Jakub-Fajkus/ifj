@@ -248,7 +248,7 @@ INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList) {
 }
 
 
-INSTRUCTION *createFirstInstr() {
+INSTRUCTION *createFirstInstruction() {
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
 
     instruction->type = Instruction_Create_GlobalFrame_And_LocalStack;
@@ -260,7 +260,7 @@ INSTRUCTION *createFirstInstr() {
 }
 
 
-INSTRUCTION *createLastInstr() {
+INSTRUCTION *createLastInstruction() {
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
 
     instruction->type = Instruction_End_Interpret;
@@ -271,17 +271,17 @@ INSTRUCTION *createLastInstr() {
     return instruction;
 }
 
-
+/*
 INSTRUCTION *createInstruction(INSTRUCTION_TYPE instrType) {
 
 }
-
+*/
 
 /* ************************************************ USED BY PARSER ****************************************************/
 /* ******************************************* INSTRUCTION CONSTRUCTORS  **********************************************/
 
 
-LIST_ELEMENT createUpcomingInstruction(INSTRUCTION *instruction){
+LIST_ELEMENT createInstruction(INSTRUCTION *instruction){
     LIST_ELEMENT listElement;
     listElement.type = LIST_ELEMENT_TYPE_INSTRUCTION;
     listElement.data.instr = instruction;

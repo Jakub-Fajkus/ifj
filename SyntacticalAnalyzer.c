@@ -280,7 +280,7 @@ bool rulePropDef(bool *variableInitialized, DATA_TYPE variableType, char *variab
             if (token->type == SEMICOLON) {
                 *variableInitialized = true;
                 createAndInsertVariable(&globalSymbolTable, fullyQualifiedVariableName, variableType, true);
-                ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createInstructionAssign(fullyQualifiedVariableName, resultVariableName)));
+                ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createInstrAssign(fullyQualifiedVariableName, resultVariableName)));
                 //todo: check type of the result variable with variable declaration
 
 

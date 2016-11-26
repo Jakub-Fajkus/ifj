@@ -12,6 +12,7 @@
 #include "ifj16.h"  // Built-in functions & most libraries
 #include "Stack.h"
 #include "Interpret.h"
+#include "BasicStructures.h"
 
 int Interpret(tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames);
 void InstructionExecute(INSTRUCTION *instr);
@@ -140,7 +141,9 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 }
 
                 printf("i am executing instruction ASSIGN with variables: %s & %s\n", dst->name, src1->name);
+                printf("VALUES: DST = %g, SRC = %d\n", dst->value.doubleValue, src1->value.intValue);
                 executeInstructionAssign(dst, src1);
+                printf("VALUES: DST = %g, SRC = %d\n", dst->value.doubleValue, src1->value.intValue);
 
                 break;
 

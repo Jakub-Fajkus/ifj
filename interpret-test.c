@@ -12,17 +12,17 @@ void callInterpret() {
     tDLList *TestInstructionList = malloc(sizeof(tDLList));
     ListInit(TestInstructionList);
     // Inserting instruction "Create Global Frame & Local Stack of Frames"
-    InsertFirst(TestInstructionList, createUpcomingInstruction(createFirstInstruction()));
+    InsertFirst(TestInstructionList, createInstruction(createFirstInstruction()));
     ListFirst(TestInstructionList);
     //printInstructionTest(1,TestInstructionList);
     // Inserting instruction "Create Global Variable Without Value"
-    ListInsertLast(TestInstructionList, createUpcomingInstruction(createGlobalVariable("Main.x", TYPE_DOUBLE)));
+    ListInsertLast(TestInstructionList, createInstruction(createGlobalVariable("Main.x", TYPE_DOUBLE)));
     ListSuccessor(TestInstructionList);
     //printInstructionTest(2,TestInstructionList);
 
     VARIABLE_VALUE insertValue;
     insertValue.doubleValue = 4.2;
-    ListInsertLast(TestInstructionList, createUpcomingInstruction(pushGlobalVariable("Main.a", TYPE_DOUBLE, insertValue)));
+    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("Main.a", TYPE_DOUBLE, insertValue)));
     ListSuccessor(TestInstructionList);
     //printInstructionTest(3,TestInstructionList);
 
@@ -33,12 +33,12 @@ void callInterpret() {
 
 
     insertValue.doubleValue = 0.5;
-    ListInsertLast(TestInstructionList, createUpcomingInstruction(pushGlobalVariable("Main.dest", TYPE_DOUBLE, insertValue)));
+    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("Main.dest", TYPE_DOUBLE, insertValue)));
 
     insertValue.intValue = 99;
-    ListInsertLast(TestInstructionList, createUpcomingInstruction(pushGlobalVariable("Main.cele", TYPE_INT, insertValue)));
+    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("Main.cele", TYPE_INT, insertValue)));
 
-    ListInsertLast(TestInstructionList, createUpcomingInstruction((createInstrAssign("Main.dest", "Main.cele"))));
+    ListInsertLast(TestInstructionList, createInstruction((createInstrAssign("Main.dest", "Main.cele"))));
     //printf("-------------------------- fuck you guys --------------------");
     //printf("\n----- %s", (char *)TestInstructionList->Last->element.data.instr->address_dst);
     //printf("\n----- %s", (char *)TestInstructionList->Last->element.data.instr->address_src1);

@@ -402,7 +402,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                     INSTRUCTION *instruction1 = createLocalVariable(tempName, outputType);
                     ListInsertLast(threeAddressCode,createInstruction(instruction1));
 
-                    INSTRUCTION *instruction2 = createInstructionMathOperation(Instruction_Addition, tempName,
+                    INSTRUCTION *instruction2 = createInstrMath(Instruction_Addition, tempName,
                                                    stackElement1.data.notTerminalData.name,
                                                    stackElement2.data.notTerminalData.name);
                     ListInsertLast(threeAddressCode,createInstruction(instruction2));
@@ -434,7 +434,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                     INSTRUCTION *instruction1 = createLocalVariable(tempName, outputType);
                     ListInsertLast(threeAddressCode,createInstruction(instruction1));
 
-                    INSTRUCTION *instruction2 = createInstructionMathOperation(Instruction_Subtraction, tempName,
+                    INSTRUCTION *instruction2 = createInstrMath(Instruction_Subtraction, tempName,
                                                    stackElement1.data.notTerminalData.name,
                                                    stackElement2.data.notTerminalData.name);
                     ListInsertLast(threeAddressCode,createInstruction(instruction2));
@@ -465,7 +465,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                     INSTRUCTION *instruction1 = createLocalVariable(tempName, outputType);
                     ListInsertLast(threeAddressCode,createInstruction(instruction1));
 
-                    INSTRUCTION *instruction2 = createInstructionMathOperation(Instruction_Multiply, tempName,
+                    INSTRUCTION *instruction2 = createInstrMath(Instruction_Multiply, tempName,
                                                    stackElement1.data.notTerminalData.name,
                                                    stackElement2.data.notTerminalData.name);
                     ListInsertLast(threeAddressCode,createInstruction(instruction2));
@@ -502,9 +502,9 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                     ListInsertLast(threeAddressCode,createInstruction(instruction1));
 
                     INSTRUCTION *instruction2 = createLocalVariable(tempName, outputType);
-                    createInstructionMathOperation(Instruction_Multiply, tempName,
-                                                   stackElement1.data.notTerminalData.name,
-                                                   stackElement2.data.notTerminalData.name);
+                    createInstrMath(Instruction_Multiply, tempName,
+                                    stackElement1.data.notTerminalData.name,
+                                    stackElement2.data.notTerminalData.name);
                     ListInsertLast(threeAddressCode,createInstruction(instruction2));
 
                     stackElement1.data.notTerminalData.name = tempName;
@@ -615,7 +615,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                     strcpy(tempName, varName);
                     INSTRUCTION *instruction1 = createLocalVariable(tempName, TYPE_INT);
                     ListInsertLast(threeAddressCode,createInstruction(instruction1));
-                    INSTRUCTION *instruction2 =  createInstructionExpressionEvaluation(actionToLogicInstruction(actionType), tempName,
+                    INSTRUCTION *instruction2 =  createInstrExprEval(actionToLogicInstruction(actionType), tempName,
                                                           stackElement1.data.notTerminalData.name,
                                                           stackElement2.data.notTerminalData.name);
                     ListInsertLast(threeAddressCode,createInstruction(instruction2));
