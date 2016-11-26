@@ -1,0 +1,9 @@
+class Main{
+
+    static String jmeno = "Kveton";
+    static double neco = 12e9;
+
+    static void run(){
+        ifj16.print("Klucina: " + jmeno + " meri " + neco);
+    }
+}

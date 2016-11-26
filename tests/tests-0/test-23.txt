@@ -1,0 +1,17 @@
+//test Case sensitive
+
+class Main{
+
+    static int Int;
+    static double Double;
+    static String string;
+
+
+    static void run(){
+
+    }
+
+    static void Run(){
+
+    }
+}

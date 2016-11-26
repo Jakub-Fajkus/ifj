@@ -1,0 +1,34 @@
+//rekurze
+
+class Main(){
+
+    static void run() {
+
+        int a; int vysl; int neg;
+        ifj16.print("Vypocitame si faktorial z cisla 9.\n");
+        a = 9;
+        if (a < 0) {
+            ifj16.print("Faktorial nelze spocitat, ale to bychom videt nemeli mame 9ku!\n");
+        }
+        else {
+            vysl = factorial(a);
+            neg = 0 - vysl;
+            ifj16.print("Vysledek: " + vysl);
+            ifj16.print(" (zaporny: " + neg+ ")\n");
+        }
+    }
+
+    static int factorial(int n) // Definice funkce pro vypocet faktorialu
+    {
+        int temp_result;
+        int decremented_n = n - 1;
+        if (n < 2) {
+            return 1;
+        }
+        else {
+            temp_result = factorial(decremented_n);
+            temp_result = n * temp_result;
+            return temp_result;
+        }
+    }
+}

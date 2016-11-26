@@ -1,0 +1,11 @@
+//definition class ifj16
+
+class Main{
+    static void run(){
+
+    }
+}
+
+class ifj16{
+
+}

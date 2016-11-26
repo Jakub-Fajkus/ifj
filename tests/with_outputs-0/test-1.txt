@@ -1,0 +1,11 @@
+//check comments
+/* smthing */
+
+class Main{
+
+    static void run(){
+        String oktalTest = "Neco pico\nvole\tprede /*plesk! tady je komentar, vubec by se nemel objevit v outputu:D*/mnou je tab.\012\134testuj oktal cype\n-tohle bys vubec nemel videt-\015\nXXX";
+        ifj16.print(oktalTest);
+    }
+
+}
