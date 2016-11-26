@@ -19,6 +19,7 @@ void callInterpret() {
     // Inserting instruction "Create Global Variable Without Value"
     ListInsertLast(TestInstructionList, createInstruction(createGlobalVariable("Main.x", TYPE_DOUBLE)));
 
+    // Inserting instruction "Create Global Variable with value"
     insertValue.doubleValue = 4.2;
     ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("Main.a", TYPE_DOUBLE, insertValue)));
 
@@ -28,6 +29,7 @@ void callInterpret() {
     insertValue.intValue = 99;
     ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("Main.cele", TYPE_INT, insertValue)));
 
+    // Inserting instruction Assign
     ListInsertLast(TestInstructionList, createInstruction((createInstrAssign("Main.dest", "Main.cele"))));
 
 
@@ -40,15 +42,6 @@ void callInterpret() {
 
 }
 
-
-LIST_ELEMENT createUpcomingInstruction(INSTRUCTION *instr) {
-    LIST_ELEMENT newElement;
-
-    newElement.type = LIST_ELEMENT_TYPE_INSTRUCTION;
-    newElement.data.instr = instr;
-
-    return newElement;
-}
 
 void printInstructionTest(int x, tDLList *TestInstructionList) {
 

@@ -271,15 +271,6 @@ INSTRUCTION *createLastInstruction() {
     return instruction;
 }
 
-/*
-INSTRUCTION *createInstruction(INSTRUCTION_TYPE instrType) {
-
-}
-*/
-
-/* ************************************************ USED BY PARSER ****************************************************/
-/* ******************************************* INSTRUCTION CONSTRUCTORS  **********************************************/
-
 
 LIST_ELEMENT createInstruction(INSTRUCTION *instruction){
     LIST_ELEMENT listElement;
