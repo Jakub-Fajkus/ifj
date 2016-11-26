@@ -7,7 +7,7 @@
 #include "BasicStructures.h"
 
 /* ************************************************ USED BY INTERPRET *************************************************/
-/* ************************************************ EXECUTE           *************************************************/
+/* ************************************************ DATA CONSTRUCTORS *************************************************/
 
 /// Constructor of frame stack
 /// \return Ptr to Stack
@@ -107,7 +107,7 @@ tDLList *getActualLocalFrame(struct STACK_STR *stackOfLocalFrames) {
 
 
 /* ************************************************ USED BY PARSER ****************************************************/
-/* ************************************************ CREATE         ****************************************************/
+/* ******************************************* INSTRUCTION CONSTRUCTORS  **********************************************/
 
 
 INSTRUCTION *pushGlobalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value) {
@@ -173,7 +173,7 @@ INSTRUCTION *createLocalVariable(char *name, DATA_TYPE type) {
 }
 
 
-INSTRUCTION *createInstructionAssign(char *nameDst, char *nameSrc) {
+INSTRUCTION *createInstrAssign(char *nameDst, char *nameSrc) {
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
 
     instruction->type = Instruction_Assign;
@@ -185,7 +185,7 @@ INSTRUCTION *createInstructionAssign(char *nameDst, char *nameSrc) {
 }
 
 
-INSTRUCTION *createInstructionMathOperation(INSTRUCTION_TYPE instType, char *nameDst, char *nameSrc1, char *nameSrc2) {
+INSTRUCTION *createInstrMath(INSTRUCTION_TYPE instType, char *nameDst, char *nameSrc1, char *nameSrc2) {
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
 
     instruction->type = instType;
@@ -198,7 +198,7 @@ INSTRUCTION *createInstructionMathOperation(INSTRUCTION_TYPE instType, char *nam
 }
 
 
-INSTRUCTION *createInstructionExpressionEvaluation(INSTRUCTION_TYPE instType, char *nameDst, char *nameSrc1, char *nameSrc2) {
+INSTRUCTION *createInstrExprEval(INSTRUCTION_TYPE instType, char *nameDst, char *nameSrc1, char *nameSrc2) {
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
 
     instruction->type = instType;
@@ -210,19 +210,45 @@ INSTRUCTION *createInstructionExpressionEvaluation(INSTRUCTION_TYPE instType, ch
     return instruction;
 }
 
-INSTRUCTION *createInstructionIf(char *nameDst, INSTRUCTION *trueDst, INSTRUCTION *falseDst) {
+
+INSTRUCTION *createInstrIf(char *boolVar, tDLList *trueDstList, tDLList *falseDstList) {
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
 
     instruction->type = Instruction_IF;
-    instruction->address_dst = nameDst;
-    *(INSTRUCTION*)instruction->address_src1 = *trueDst;
-    *(INSTRUCTION*)instruction->address_src2 = *falseDst;
+    instruction->address_dst = boolVar;
+    *(tDLList*)instruction->address_src1 = *trueDstList;
+    *(tDLList*)instruction->address_src2 = *falseDstList;
 
     return instruction;
 }
 
 
-INSTRUCTION *createFirstInstruction() {
+INSTRUCTION *createInstrWhile(char *boolVar, tDLList *exprInstrList, tDLList *cycleList) {
+    INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
+
+    instruction->type = Instruction_WHILE;
+    instruction->address_dst = boolVar;
+    *(tDLList*)instruction->address_src1 = *exprInstrList;
+    *(tDLList*)instruction->address_src2 = *cycleList;
+
+    return instruction;
+}
+
+
+INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList) {
+    INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
+
+    instruction->type = Instruction_CallFunction;
+
+    instruction->address_dst = NULL;
+    instruction->address_src1 = NULL;
+    instruction->address_src2 = NULL;
+
+    return instruction;
+}
+
+
+INSTRUCTION *createFirstInstr() {
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
 
     instruction->type = Instruction_Create_GlobalFrame_And_LocalStack;
@@ -233,7 +259,29 @@ INSTRUCTION *createFirstInstruction() {
     return instruction;
 }
 
-LIST_ELEMENT createInstruction(INSTRUCTION *instruction){
+
+INSTRUCTION *createLastInstr() {
+    INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
+
+    instruction->type = Instruction_End_Interpret;
+    instruction->address_dst = NULL;
+    instruction->address_src1 = NULL;
+    instruction->address_src2 =  NULL;
+
+    return instruction;
+}
+
+
+INSTRUCTION *createInstruction(INSTRUCTION_TYPE instrType) {
+
+}
+
+
+/* ************************************************ USED BY PARSER ****************************************************/
+/* ******************************************* INSTRUCTION CONSTRUCTORS  **********************************************/
+
+
+LIST_ELEMENT createUpcomingInstruction(INSTRUCTION *instruction){
     LIST_ELEMENT listElement;
     listElement.type = LIST_ELEMENT_TYPE_INSTRUCTION;
     listElement.data.instr = instruction;

@@ -10,7 +10,7 @@
 #include "Stack.h"
 
 typedef enum {
-    Instruction_Create_GlobalFrame_And_LocalStack = 10000,  // maybe the first instruction possible. NO PARAMS in DST, SRC1 or SRC2
+    Instruction_Create_GlobalFrame_And_LocalStack = 10000,  // NO PARAMS in DST, SRC1 or SRC2. CALLED ONCE.
     Instruction_Push_Global_Variable = 10001, // 3 params: variable name, variable type, variable value : best in this format
     Instruction_Create_Global_Variable = 10002,
     Instruction_Create_Local_Frame = 10003, // IDEA: do we even need any param?
@@ -18,15 +18,15 @@ typedef enum {
     Instruction_Create_Local_Variable = 10005,
     Instruction_CallFunction = 10006, // == Instruction_PushToStack_LocalFrame
     Instruction_ReturnFunction = 10007, // == Instruction_PopFromStack_LocalFrame
-    Instruction_Jump = 10008,
-    Instruction_Assign = 10009,
-    //----------------------- Math operations
-    Instruction_Addition = 10010, // Params: address_dst = address_src1 + address_src2;
-    Instruction_Subtraction = 10011, // Params: dst=src1-src2;
-    Instruction_Multiply = 10012, // Params: dst=src1*src2;
-    Instruction_Divide = 10013, // Params: dst=src1/src2;
+    //----------------------- Math & assign operations
+    Instruction_Assign = 10008,
+    Instruction_Addition = 10009, // Params: address_dst = address_src1 + address_src2;
+    Instruction_Subtraction = 10010, // Params: dst=src1-src2;
+    Instruction_Multiply = 10011, // Params: dst=src1*src2;
+    Instruction_Divide = 10012, // Params: dst=src1/src2;
     //----------------------- Bool operations, params: dst=name, src1=name, src2=name
-    Instruction_IF = 10014,
+    Instruction_IF = 10013,
+    Instruction_WHILE = 10014,
     Instruction_Bool_Equals = 10015,    // dst = (src1==src2) ? 1 : 0
     Instruction_Bool_EqualsNot = 10016, // dst = (src1!=src2) ? 1 : 0
     Instruction_Bool_More = 10017,      // dst = (src1>src2) ? 1 : 0
@@ -44,8 +44,7 @@ typedef enum {
     Instruction_Function_Find = 10028, // 3 params (retvalue-int, 2 params-string,string)
     Instruction_Function_Sort =  10029, // 2 params (retvalue-string, param-string)
     //-----------------------
-//  Instruction_WHILE
-
+    Instruction_End_Interpret = 10030
 } INSTRUCTION_TYPE;
 
 typedef struct sINSTRUCTION{
@@ -126,7 +125,7 @@ INSTRUCTION *createLocalVariable(char *name, DATA_TYPE type);
  * @param nameSrc <- pointer to name variable with value
  * @return
  */
-INSTRUCTION *createInstructionAssign(char *nameDst, char *nameSrc);
+INSTRUCTION *createInstrAssign(char *nameDst, char *nameSrc);
 
 /**
  * INSTRUCTION CONSTRUCTOR: Math Operation
@@ -140,7 +139,7 @@ INSTRUCTION *createInstructionAssign(char *nameDst, char *nameSrc);
  * @param nameSrc2
  * @return
  */
-INSTRUCTION *createInstructionMathOperation( INSTRUCTION_TYPE instType, char *nameDst, char *nameSrc1, char *nameSrc2);
+INSTRUCTION *createInstrMath( INSTRUCTION_TYPE instType, char *nameDst, char *nameSrc1, char *nameSrc2);
 
 /**
  * INSTRUCTION CONSTRUCTOR: Bool expression evaluation
@@ -156,18 +155,40 @@ INSTRUCTION *createInstructionMathOperation( INSTRUCTION_TYPE instType, char *na
  * @param nameSrc2
  * @return
  */
-INSTRUCTION *createInstructionExpressionEvaluation( INSTRUCTION_TYPE instType, char *nameDst, char *nameSrc1, char *nameSrc2 );
+INSTRUCTION *createInstrExprEval( INSTRUCTION_TYPE instType, char *nameDst, char *nameSrc1, char *nameSrc2 );
 
 /**
  * INSTRUCTION CONSTRUCTOR: IF Statement
+ *
+ * This function needs TWO INSTRUCTION LISTS and one TEMP VAR (that will contain evaluated expr)
+ *
  * @param nameDst - Name of TEMPORARY VARIABLE with true/false value
  *                  value 1/true : Interpret jumps to instruction pointed by trueDst
  *                  value 0/false: ~ ~ ~ pointed by falseDst
- * @param trueDst - POINTER TO INSTRUCTION (IN THE SAME LIST)
+ * @param trueDst - POINTER TO NEW LIST OF INSTRUCTIONS
  * @param falseDst - ~the same
  * @return
  */
-INSTRUCTION *createInstructionIf(char *nameDst, INSTRUCTION *trueDst, INSTRUCTION *falseDst);
+INSTRUCTION *createInstrIf(char *boolVar, tDLList *trueDstList, tDLList *falseDstList);
+
+
+/**
+ * INSTRUCTION CONSTRUCTOR: IF Statement
+ *
+ * @param boolVar
+ * @param exprInstrList
+ * @param cycleList
+ * @return
+ */
+INSTRUCTION *createInstrWhile(char *boolVar, tDLList *exprInstrList, tDLList *cycleList);
+
+
+/**
+ *
+ * @param functionInstrList
+ * @return
+ */
+INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList);
 
 /**
  * INSTRUCTION CONSTRUCTOR: Create GlobalFrame and LocalStack
@@ -187,13 +208,13 @@ INSTRUCTION *createFirstInstruction();
  * @return
  */
 LIST_ELEMENT createUpcomingInstruction(INSTRUCTION *instr);
+
+
+/// DEBUG FUNCTIONS, to be deleted
+/// \param x
+/// \param TestInstructionList
 void printInstructionTest(int x, tDLList *TestInstructionList);
 void printListOfInstructions(tDLList *TestInstructionList);
-
-
-LIST_ELEMENT createInstruction(INSTRUCTION *instruction);
-
-
 
 
 

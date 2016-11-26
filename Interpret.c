@@ -12,7 +12,6 @@
 #include "ifj16.h"  // Built-in functions & most libraries
 #include "Stack.h"
 #include "Interpret.h"
-#include "BasicStructures.h"
 
 int Interpret(tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames);
 void InstructionExecute(INSTRUCTION *instr);
@@ -23,7 +22,7 @@ void executeInstructionAssign(VARIABLE *dst, VARIABLE *src);
 // YET TO DO
 void executeInstructionIf(INSTRUCTION *instr);
 
-// TODO: funkcie pre tvorbu a prácu s rámcom
+//..
 
 int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames ){
     if (InstructionList == NULL) return 99;
@@ -44,6 +43,11 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         // Copy the actual instruction from the list
         ListElementCopy(InstructionList, NewPtr);
         Instr = NewPtr->data.instr;
+
+        if (Instr->type == Instruction_End_Interpret) {
+            //TODO: return value, free all resources used by interpret (stack & globalframe)
+            return 0;
+        }
 
         // Instruction to create both global frame & stack of local frames (the stack will be empty!)
         if (Instr->type == Instruction_Create_GlobalFrame_And_LocalStack) {
@@ -88,7 +92,22 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             Interpret((tDLList*)Instr->address_dst, globalFrame, stackOfLocalFrames);
         }
 
+        if (Instr->type == Instruction_ReturnFunction) {
+            printf("Returning from function!");
+            return 0;
+            //TODO end recursion, return 0 here
+        }
+
         // other special instructions: IF & WHILE
+        if (Instr->type == Instruction_IF) {
+            printf("HANDLING IF_INSTRUCTION");
+            return 42;
+        }
+
+        if (Instr->type == Instruction_WHILE) {
+            printf("HANDLING WHILE_INSTRUCTION");
+            return 42;
+        }
 
         //--- Special instructions are captured, now we will execute the rest ---
 
@@ -97,6 +116,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         VARIABLE *src1 = NULL;
         VARIABLE *src2 = NULL;
 
+        // Getting pointer to the top of local frame stack
         tDLList *actualLocalFrame = getActualLocalFrame(stackOfLocalFrames);
         if (actualLocalFrame != NULL) {
             //existing local frame
@@ -115,7 +135,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             case Instruction_Assign:    // expecting DST & SRC variable name
                 ;
                 if ( dst ==NULL || src1 == NULL || src2 != NULL ){
-                    // free?
+                    //TODO: free?
                     return 99;
                 }
 
@@ -132,12 +152,12 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 printf("Calling function for calculating math operation.\n");
                 if ( dst ==NULL || src1 == NULL || src2 == NULL ){
                     //TODO: dst, src1 or src2 not found
+                    //free resources
+                    return 99;
                 }
 
                 // passing 3 pointers to variables in FRAMES!
                 INSTRUCTION *mathInstruction = malloc(sizeof(INSTRUCTION));
-                //TODO: try to think out new way of exiting the code
-
                 mathInstruction->type = Instr->type;
                 // i hope this sorcery is fine
                 *(VARIABLE *)mathInstruction->address_dst = *dst;
@@ -193,6 +213,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
 //...
 
+// to be squished fully
 void InstructionExecute(INSTRUCTION *instr){
 // Always: overiť či sedia typy premenných ktoré idem použiť na danú operáciu, inak bude behová chyba
     // error 7 (behová chyba pri načítaní číselnej hodnoty zo vstupu)
@@ -211,12 +232,6 @@ void InstructionExecute(INSTRUCTION *instr){
 
     //The Giant Switch
     switch ( instr -> type ) {
-
-        case Instruction_CallFunction: /* Tu sa budu diat zazraky s ramcami */ break;
-        case Instruction_ReturnFunction: break;
-        case Instruction_Jump: /* ulozim si na zasobnik pointer na aktualnu instrukciu */ break;
-        case Instruction_Create_Local_Frame: break;
-        case Instruction_Push_Local_Variable: break;
 
         //----------------------------------------------------------------------------------------------------------------
         // BUILD-IN FUNCTIONS
@@ -266,18 +281,6 @@ void InstructionExecute(INSTRUCTION *instr){
             dstVal->stringValue = ifj16_sort( src1Val->stringValue );
             break;
 
-        //----------------------------------------------------------------------------------------------------------------
-        //  BOOL OPERATIONS
-        //----------------------------------------------------------------------------------------------------------------
-        /*    IF-ONLY?
-        case Instruction_Bool_Equals: break;
-        case Instruction_Bool_EqualsNot: break;
-        case Instruction_Bool_More: break;
-        case Instruction_Bool_Less: break;
-        case Instruction_Bool_MoreEqual: break;
-        case Instruction_Bool_LessEqual: break;
-         */
-        //----------------------------------------------------------------------------------------------------------------
         default: ;
     } // end of giant switch
 

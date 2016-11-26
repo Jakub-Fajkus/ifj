@@ -38,7 +38,7 @@ void callInterpret() {
     insertValue.intValue = 99;
     ListInsertLast(TestInstructionList, createUpcomingInstruction(pushGlobalVariable("Main.cele", TYPE_INT, insertValue)));
 
-    ListInsertLast(TestInstructionList, createUpcomingInstruction((createInstructionAssign("Main.dest", "Main.cele"))));
+    ListInsertLast(TestInstructionList, createUpcomingInstruction((createInstrAssign("Main.dest", "Main.cele"))));
     //printf("-------------------------- fuck you guys --------------------");
     //printf("\n----- %s", (char *)TestInstructionList->Last->element.data.instr->address_dst);
     //printf("\n----- %s", (char *)TestInstructionList->Last->element.data.instr->address_src1);
