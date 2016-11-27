@@ -41,7 +41,7 @@ bool ruleDefinition(char *className, DATA_TYPE type, char *name, bool *variableI
 bool rulePropDef(bool *variableInitialized, DATA_TYPE variableType, char *variableName, char *className);
 bool ruleFuncDef();
 bool ruleStListDecl();
-bool ruleStList(tDLList *listOfInstuctions);
+bool ruleStList();
 bool ruleDecl(DATA_TYPE type, char *variableName);
 bool ruleStat();
 bool ruleStatBeginningId(char *functionOrPropertyName);
