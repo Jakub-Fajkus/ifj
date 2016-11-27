@@ -1199,6 +1199,7 @@ LIST_ELEMENT createListElementWithFunctionParamameter(char *name, DATA_TYPE type
 
 void addIfj16Functions() {
 
+    createAndInsertIntVariable(&globalSymbolTable, "ifj16.*", true);
     createAndInsertFunction(&globalSymbolTable, "ifj16.readInt", TYPE_INT, 0, NULL, NULL);
 
     createAndInsertFunction(&globalSymbolTable, "ifj16.readDouble", TYPE_DOUBLE, 0, NULL, NULL);

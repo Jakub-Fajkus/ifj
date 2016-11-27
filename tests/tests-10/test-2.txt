@@ -1,0 +1,11 @@
+// Testovanie ifj16 funkcie substr
+
+class Main
+{
+    static void run()
+    {
+        String input = "aa";
+        String output;
+        output = ifj16.substr(input, -2, 2);
+    }
+}
