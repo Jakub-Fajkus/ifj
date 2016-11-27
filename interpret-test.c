@@ -16,27 +16,22 @@ int callInterpret() {
 
     // Inserting instruction "Create Global Frame & Local Stack of Frames"
     InsertFirst(TestInstructionList, createInstruction(createFirstInstruction()));
+    // Inserting instruction "Prepare to fill upcoming local frame"
+    ListInsertLast(TestInstructionList, createInstruction(createInstrFillLocalFrame()));
+    // Fill upcoming frame with variables
+    ListInsertLast(TestInstructionList, createInstruction(createLocalVariable("a",TYPE_INT)));
+    insertValue.intValue = 3;
+    ListInsertLast(TestInstructionList, createInstruction(pushLocalVariable("#tmp1",TYPE_INT, insertValue)));
+    insertValue.intValue = 5;
+    ListInsertLast(TestInstructionList, createInstruction(pushLocalVariable("#tmp2",TYPE_INT, insertValue)));
 
-    insertValue.doubleValue = 1.0;
-    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("Main.x", TYPE_DOUBLE, insertValue)));
-    insertValue.doubleValue = 0.1;
-    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("Main.dbl", TYPE_DOUBLE, insertValue)));
-    insertValue.doubleValue = 2.0;
-    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("#tmp1", TYPE_DOUBLE, insertValue)));
+    // creating new function list
+    tDLList *functionList = malloc(sizeof(tDLList));
+    ListInit(functionList);
+    ListInsertLast(functionList, createInstruction(createInstrMath(Instruction_Addition, "a","#tmp1","#tmp2")));
 
-    ListInsertLast(TestInstructionList, createInstruction(createGlobalVariable("#bool1", TYPE_INT)));
-
-
-    tDLList *exprList = malloc(sizeof(tDLList));
-    ListInit(exprList);
-    ListInsertLast(exprList, createInstruction(createInstrMath(Instruction_Bool_Less, "#bool1", "Main.x", "#tmp1")));
-
-
-    tDLList *cycleList = malloc(sizeof(tDLList));
-    ListInit(cycleList);
-    ListInsertLast(cycleList, createInstruction(createInstrMath(Instruction_Addition, "Main.x", "Main.x", "Main.dbl")));
-
-    ListInsertLast(TestInstructionList, createInstruction(createInstrWhile("#bool1", exprList, cycleList)));
+    // Creating calling function
+    ListInsertLast(TestInstructionList, createInstruction(createInstrCallFunction(NULL, functionList)));
 
     // Inserting last instruction
     ListInsertLast(TestInstructionList, createInstruction(createLastInstruction()));

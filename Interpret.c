@@ -53,8 +53,8 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         if (Instr->type == Instruction_End_Interpret) {
             //TODO: return value, free all resources used by interpret (stack & globalframe)
 
-            VARIABLE *printer = findFrameVariable(globalFrame, "Main.x");
-            debugPrintf("Final value of cycle variable: |%g|\n", printer->value.doubleValue);
+            VARIABLE *printer = findFrameVariable(stackOfLocalFrames->arr->data.localFrame, "a");
+            debugPrintf("Final value of cycle variable: |%d|\n", printer->value.intValue);
 
             debugPrintf("----- I am ending!\n");
             return 0;
@@ -85,6 +85,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             if (upcomingLocalFrame == NULL) {
                 return 99;
             }
+
             pushToFrame(upcomingLocalFrame, Instr);
             ListSuccessor(InstructionList);
             continue; // Jump to next instruction
@@ -98,7 +99,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             pushFrameToStack(stackOfLocalFrames, upcomingLocalFrame);
             // HERE COMES THE FUCKING RECURSION
 
-            interpretRetVal = Interpret((tDLList*)Instr->address_dst, globalFrame, stackOfLocalFrames);
+            interpretRetVal = Interpret((tDLList*)Instr->address_src1, globalFrame, stackOfLocalFrames);
             if ( interpretRetVal != 0 ) {
                 debugPrintf("Previous instance of interpret has failed.\n");
                 return interpretRetVal;

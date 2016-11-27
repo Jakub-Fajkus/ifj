@@ -175,7 +175,7 @@ INSTRUCTION *createInstrIf(char *boolVar, tDLList *trueDstList, tDLList *falseDs
 /**
  * INSTRUCTION CONSTRUCTOR: Cycle WHILE
  *
- * Warning: involves ONE OR TWO RECURSION CALLS
+ * Warning: involves ONE OR THREE MINIMUM RECURSION CALLS
  *
  * @param boolVar - NAME of global, local or temporary variable that will get value 0/1
  * @param exprInstrList - List of instructions (math&expr), the last assigns 0/1 to "boolVar"
@@ -196,7 +196,7 @@ INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList, char *returnVar
 
 /**
  * INSTRUCTION CONSTRUCTOR: Let interpret know you are going to
- * fill upcoming local frame & call user function soon! (even main.run)
+ * fill upcoming local frame & call user function soon! (even for main.run)
  * @return
  */
 INSTRUCTION *createInstrFillLocalFrame();

@@ -241,8 +241,8 @@ INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList, char *returnVar
 
     instruction->type = Instruction_CallFunction;
 
-    instruction->address_dst = functionInstrList;
-    instruction->address_src1 = returnVariableName;
+    instruction->address_dst = returnVariableName;
+    instruction->address_src1 = functionInstrList;
     instruction->address_src2 = NULL;
 
     return instruction;
