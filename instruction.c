@@ -278,13 +278,25 @@ INSTRUCTION *createInstrWhile(char *boolVar, tDLList *exprInstrList, tDLList *cy
 }
 
 
-INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList, char *returnVariableName) {
+INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList) {
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
 
     instruction->type = Instruction_CallFunction;
 
+    instruction->address_dst = functionInstrList;
+    instruction->address_src1 = NULL;
+    instruction->address_src2 = NULL;
+
+    return instruction;
+}
+
+INSTRUCTION *createInstrReturnFunction(char *returnVariableName) {
+    INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
+
+    instruction->type = Instruction_ReturnFunction;
+
     instruction->address_dst = returnVariableName;
-    instruction->address_src1 = functionInstrList;
+    instruction->address_src1 = NULL;
     instruction->address_src2 = NULL;
 
     return instruction;

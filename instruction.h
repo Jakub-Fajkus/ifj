@@ -197,12 +197,23 @@ INSTRUCTION *createInstrWhile(char *boolVar, tDLList *exprInstrList, tDLList *cy
 
 
 /**
+ * INSTRUCTION CONSTRUCTOR: Call Function
+ *
  * @param functionInstrList  Instructions of the function
+ * @param returnVariableName
+ * @return
+ */
+INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList);
+
+
+/**
+ * INSTRUCTION CONSTRUCTOR: Return from Function
+ *
  * @param returnVariableName Name of the variable to which the return value of this function will be assigned.
  *      If the poinetr equals to NULL, the return value should not be assigned.
  * @return
  */
-INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList, char *returnVariableName);
+INSTRUCTION *createInstrReturnFunction(char *returnVariableName);
 
 
 /**

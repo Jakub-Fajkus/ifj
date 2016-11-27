@@ -141,23 +141,31 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         // THINGS TO KEEP: global frame, stack of local frames
         if (Instr->type == Instruction_CallFunction) {
             debugPrintf("CALLING FUNCTION!!! GET REKT\n");
-            //TODO: Call Function, recursion inside
-            pushFrameToStack(stackOfLocalFrames, upcomingLocalFrame);
-            // HERE COMES THE FUCKING RECURSION
 
-            interpretRetVal = Interpret((tDLList*)Instr->address_src1, globalFrame, stackOfLocalFrames);
+            pushFrameToStack(stackOfLocalFrames, upcomingLocalFrame);
+
+            // HERE COMES THE FUCKING RECURSION
+            interpretRetVal = Interpret((tDLList*)Instr->address_dst, globalFrame, stackOfLocalFrames);
             if ( interpretRetVal != 0 ) {
                 debugPrintf("Previous instance of interpret has failed.\n");
                 return interpretRetVal;
             }
+
             ListSuccessor(InstructionList);
             continue; // Jump to next instruction
         }
 
         if (Instr->type == Instruction_ReturnFunction) {
             debugPrintf("Returning from function!");
-            return 0;
-            //TODO end recursion, return 0 here
+
+            // This instruction gets one parameter - name of return value, in DST
+            // let's find it!
+
+            //but first, let me pop the stack, in order to work with 3 frames... i really wanna find it
+
+
+            ListSuccessor(InstructionList);
+            continue; // Jump to next instruction
         }
 
         // other special instructions: IF & WHILE
