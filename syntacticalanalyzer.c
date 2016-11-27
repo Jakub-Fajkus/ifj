@@ -675,7 +675,7 @@ bool ruleExpSemicolon() {
         char *resultVariableName = NULL;
         DATA_TYPE resultVariableType;
 
-        printf("calling analyzeExpression from ruleExpSemicolon\n");
+        debugPrintf("calling analyzeExpression from ruleExpSemicolon\n");
         if (analyzeExpression(actualInstructionList, &resultVariableName, &resultVariableType)) {
             token = getCachedToken();
             if (token->type == SEMICOLON){
@@ -771,7 +771,7 @@ bool ruleParam(struct SYMBOL_TABLE_FUNCTION_STR *functionToCall, tDLList *parame
     //<PARAM> -> <EXP> <AFTER_FUNCTION_CALL_EXP>
     char* resultVariableName = NULL;
     DATA_TYPE resultVariableType;
-    printf("calling analyzeExpression from ruleParam\n");
+    debugPrintf("calling analyzeExpression from ruleParam\n");
     if (analyzeExpression(actualInstructionList, &resultVariableName, &resultVariableType)) {
         if (ruleAfterFunctionCallExp(functionToCall, parameters)) {
             if(!firstPass) {
@@ -1124,7 +1124,7 @@ void makeFirstPass() {
 }
 
 void makeSecondPass() {
-    printf("\n\n********************************\n********************************\n\nSTARTING WITH THE SECOND PASS!\n\n********************************\n********************************\n");
+    debugPrintf("\n\n********************************\n********************************\n\nSTARTING WITH THE SECOND PASS!\n\n********************************\n********************************\n");
     ListFirst(globalTokens);
     firstPass = false;
 
