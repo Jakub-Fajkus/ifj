@@ -4,6 +4,8 @@
 //
 
 
+#include <limits.h>
+#include <float.h>
 #include "LexicalAnalyzer.h"
 #include "LexicalAnalyzerStructures.h"
 #include "Debug.h"
@@ -299,7 +301,6 @@ void num(TOKEN *token, int c) {
             str = realloc(str, sizeof(char) * (i + 1));
             doubleNum(token, str, i);
             return;
-            break;
         } else if (c == 'e' || c == 'E') {
             str[i] = 'E';
             i++;
@@ -312,10 +313,23 @@ void num(TOKEN *token, int c) {
             token->type = LEX_ERROR;
             return;
         } else if (testValid(c)) {
+            if(strlen(str)> 10){
+                free(str);
+                token->type = LEX_ERROR;
+                return;
+            }
             ungetc(c, fp);
             str[i] = '\0';
             token->type = LITERAL_INTEGER;
-            sscanf(str, "%d", &(token->data.numberInteger.value));
+            long long int lld;
+            sscanf(str, "%lld", &lld);
+            if(lld<=INT_MAX && lld>INT_MIN){
+                token->data.numberInteger.value = (int)lld;
+            }else{
+                free(str);
+                token->type = LEX_ERROR;
+                return;
+            }
             break;
         } else {
             free(str);
@@ -357,8 +371,15 @@ void doubleNum(TOKEN *token, char *str, int i) {
             ungetc(c, fp);
             str[i] = '\0';
             token->type = LITERAL_DOUBLE;
-            sscanf(str, "%lf", &(token->data.numberDouble.value));
-            break;
+            long double le;
+            sscanf(str, "%Le", &le);
+            if(le<=DBL_MAX && le>=DBL_MIN){
+                token->data.numberDouble.value = (double)le;
+            }else{
+                free(str);
+                token->type = LEX_ERROR;
+            }
+            return;
         } else {
             free(str);
             token->type = LEX_ERROR;
@@ -394,8 +415,15 @@ void doubleNumE(TOKEN *token, char *str, int i) {
             ungetc(c, fp);
             str[i] = '\0';
             token->type = LITERAL_DOUBLE;
-            sscanf(str, "%lf", &(token->data.numberDouble.value));
-            break;
+            long double le;
+            sscanf(str, "%Le", &le);
+            if(le<=DBL_MAX && le>=DBL_MIN){
+                token->data.numberDouble.value = (double)le;
+            }else{
+                free(str);
+                token->type = LEX_ERROR;
+            }
+            return;
         } else {
             free(str);
             token->type = LEX_ERROR;
