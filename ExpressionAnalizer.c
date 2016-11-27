@@ -9,6 +9,7 @@
 #include "BasicStructures.h"
 #include "SemanticalAnalyzer.h"
 #include "Debug.h"
+#include "ifj16.h"
 
 unsigned long iterator = 0;
 char *varName = NULL;
@@ -117,17 +118,17 @@ EA_TERMINAL_TYPE getTerminalDataType(TOKEN token) {
             }
             break;
         case OPERATOR_LOGIC:
-            if (strcmp(token.data.operatorLogic.name, "<")) {
+            if (strcmp(token.data.operatorLogic.name, "<") == 0) {
                 return EA_IS_LESS;
-            } else if (strcmp(token.data.operatorLogic.name, ">")) {
+            } else if (strcmp(token.data.operatorLogic.name, ">") == 0) {
                 return EA_IS_MORE;
-            } else if (strcmp(token.data.operatorLogic.name, ">=")) {
+            } else if (strcmp(token.data.operatorLogic.name, ">=") == 0) {
                 return EA_IS_MORE_EQUAL;
-            } else if (strcmp(token.data.operatorLogic.name, "<=")) {
+            } else if (strcmp(token.data.operatorLogic.name, "<=") == 0) {
                 return EA_IS_LESS_EQUAL;
-            } else if (strcmp(token.data.operatorLogic.name, "==")) {
+            } else if (strcmp(token.data.operatorLogic.name, "==") == 0) {
                 return EA_IS_EQUAL;
-            } else if (strcmp(token.data.operatorLogic.name, "!=")) {
+            } else if (strcmp(token.data.operatorLogic.name, "!=") == 0) {
                 return EA_IS_NOT_EQUAL;
             } else {
                 break;
@@ -156,7 +157,7 @@ EA_TERMINAL_TYPE getTerminalDataType(TOKEN token) {
     return EA_UNKNOWN;
 }
 
-int parseExpression(tDLList *threeAddressCode, char *returnValName, DATA_TYPE *returnValType,bool firstPass) {
+int parseExpression(tDLList *threeAddressCode, char **returnValName, DATA_TYPE *returnValType,bool firstPass) {
     debugPrintf("\nDEBUG expression START\n");
     returnType = TYPE_INT;
     bool lookingForTerminal = true;
@@ -243,8 +244,7 @@ int parseExpression(tDLList *threeAddressCode, char *returnValName, DATA_TYPE *r
                             stopNow = false;
                             //TODO
                             if(!firstPass) {
-                                returnValName = (char *) malloc(sizeof(char) * (strlen(varName) + 1));
-                                strcpy(returnValName, varName);
+                                (*returnValName) = stringConcat(varName, "");
                                 (*returnValType) = returnType;
                             }
                             return 0;
@@ -542,8 +542,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                     if (!firstPass) {
                         SYMBOL_TABLE_VARIABLE *symbolTableVariable= semantic_getInitializedVariable(stackElement2.data.notTerminalData.name);
                         stackElement2.data.notTerminalData.type = symbolTableVariable->type;
-                    }
-                    {
+                    } else {
                         stackElement2.data.notTerminalData.type = TYPE_INT;
                     }
 
@@ -595,9 +594,10 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                         stackElement2.data.notTerminalData.type = TYPE_INT;
                         stackElement2.data.notTerminalData.name = "tepName";
                     }
+                    setReturnType(stackElement2.data.notTerminalData.type );
+                    debugPrintf("generate: E->i where i = LIT\n");
                 }
-                setReturnType(stackElement2.data.notTerminalData.type );
-                debugPrintf("generate: E->i where i = LIT\n");
+
                 stackElement2.type = EA_NOT_TERMINAL;
                 stackElement1 = stackElement2;
             } else return 2; //todo check
@@ -620,7 +620,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                     ListInsertLast(threeAddressCode,createInstruction(instruction1));
                     INSTRUCTION *instruction2 =  createInstrExprEval(actionToLogicInstruction(actionType), tempName,
                                                           stackElement1.data.notTerminalData.name,
-                                                          stackElement2.data.notTerminalData.name);
+                                                          stackElement3.data.notTerminalData.name);
                     ListInsertLast(threeAddressCode,createInstruction(instruction2));
                     debugPrintf("generate: E->E_LOGIC_E\n");
                     stackElement1.data.notTerminalData.name = tempName;

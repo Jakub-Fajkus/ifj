@@ -200,7 +200,7 @@ TREE_NODE_DATA *getNodeDataFromTable(SYMBOL_TABLE_NODEPtr *symbolTable, char *na
 
 SYMBOL_TABLE_VARIABLE* getVariable(SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBOL_TABLE_NODEPtr *globalSymbolTable, SYMBOL_TABLE_FUNCTION *calledFunction, char* name)
 {
-    SYMBOL_TABLE_VARIABLE *variable;
+    SYMBOL_TABLE_VARIABLE *variable = NULL;
 
     variable = getVariableFromTable(localSymbolTable, name);
 
@@ -297,8 +297,7 @@ SYMBOL_TABLE_FUNCTION* createFunction(char *name, DATA_TYPE type, unsigned int u
     SYMBOL_TABLE_FUNCTION *function = malloc(sizeof(SYMBOL_TABLE_FUNCTION));
 
     //initialize symbol table
-    function->localSymbolTable = malloc(sizeof(struct SYMBOL_TABLE_NODE));
-    BSTInit(&function->localSymbolTable);
+    function->localSymbolTable = NULL;
 
     function->type = type;
     function->name = name;
@@ -340,8 +339,8 @@ SYMBOL_TABLE_FUNCTION* createAndInsertFunction(SYMBOL_TABLE_NODEPtr *symbolTable
     TREE_NODE_DATA *treeData = createFunctionData(function);
     BSTInsert(symbolTable, function->name, *treeData);
 
-    function->localSymbolTable = malloc(sizeof(struct SYMBOL_TABLE_NODE *));
-    initializeSymbolTable(function->localSymbolTable);
+//    function->localSymbolTable = malloc(sizeof(struct SYMBOL_TABLE_NODE *));
+//    initializeSymbolTable(function->localSymbolTable);
 
     return function;
 }

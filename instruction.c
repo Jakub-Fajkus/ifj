@@ -236,13 +236,13 @@ INSTRUCTION *createInstrWhile(char *boolVar, tDLList *exprInstrList, tDLList *cy
 }
 
 
-INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList) {
+INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList, char *returnVariableName) {
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
 
     instruction->type = Instruction_CallFunction;
 
-    instruction->address_dst = NULL;
-    instruction->address_src1 = NULL;
+    instruction->address_dst = functionInstrList;
+    instruction->address_src1 = returnVariableName;
     instruction->address_src2 = NULL;
 
     return instruction;
@@ -290,4 +290,14 @@ LIST_ELEMENT createInstruction(INSTRUCTION *instruction){
     listElement.type = LIST_ELEMENT_TYPE_INSTRUCTION;
     listElement.data.instr = instruction;
     return listElement;
+}
+INSTRUCTION *createCreteLocalFrameInstruction() {
+    INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
+
+    instruction->type = Instruction_Create_Local_Frame;
+    instruction->address_dst = NULL;
+    instruction->address_src1 = NULL;
+    instruction->address_src2 =  NULL;
+
+    return instruction;
 }

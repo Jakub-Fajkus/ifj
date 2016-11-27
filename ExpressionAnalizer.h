@@ -16,6 +16,6 @@
 #include "Stack.h" //include it after EA_TERMINAL_TYPE_ENUM which is needed by Stack.h
 
 //todo: return true if the expression was successfully parsed, false otherwise... use exit only in error situations(99)
-int parseExpression(tDLList *threeAddressCode, char *returnValName,DATA_TYPE *returnValType, bool firstPass);
+int parseExpression(tDLList *threeAddressCode, char **returnValName, DATA_TYPE *returnValType,bool firstPass);
 
 #endif //IFJ_EXPRESSIONANALIZER_H

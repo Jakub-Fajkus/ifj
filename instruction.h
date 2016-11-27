@@ -37,7 +37,7 @@ typedef enum {
     Instruction_Function_readInt = 10021, // 1 param (retvalue, type INT)
     Instruction_Function_readDouble = 10022, // 1 param (retvalue, type DOUBLE)
     Instruction_Function_readString = 10023, // 1 param (retvalue, type STRING)
-    Instruction_Function_Print = 10024, // 1-n params, ANY TYPE
+    Instruction_Function_Print = 10024, // 1 param, ANY TYPE
     Instruction_Function_Length = 10025, // 2 params (retvalue-int, param-string)
     Instruction_Function_Substr = 10026, // 4 params (retvalue-string, 3 params-string,int,int)
     Instruction_Function_Compare = 10027, // 3 params (retvalue-int, 2 params-string, string)
@@ -186,11 +186,12 @@ INSTRUCTION *createInstrWhile(char *boolVar, tDLList *exprInstrList, tDLList *cy
 
 
 /**
- *
- * @param functionInstrList
+ * @param functionInstrList  Instructions of the function
+ * @param returnVariableName Name of the variable to which the return value of this function will be assigned.
+ *      If the poinetr equals to NULL, the return value should not be assigned.
  * @return
  */
-INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList);
+INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList, char *returnVariableName);
 
 
 /**
@@ -217,6 +218,8 @@ INSTRUCTION *createFirstInstruction();
  * @return
  */
 INSTRUCTION *createLastInstruction();
+
+INSTRUCTION *createCreteLocalFrameInstruction();
 
 /**
  * CONSTRUCTOR FOR SINGLE INSTRUCTION AS A LIST ELEMENT

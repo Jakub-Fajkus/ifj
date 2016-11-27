@@ -8,6 +8,7 @@
 #include "SymbolTable.h"
 
 
+#define stringEquals(x,y) (strcmp(x, y) == 0)
 /**
  * Get the next token
  *
@@ -30,7 +31,9 @@ void returnCachedTokens(unsigned int count);
  * @return
  */
 tDLList* getAllTokens(char *fileName);
-
+LIST_ELEMENT wrapInstructionIntoListElement(struct sINSTRUCTION *instr);
+LIST_ELEMENT createListElementWithFunctionParamameter(char *name, DATA_TYPE type);
+int analyzeExpression(tDLList *instructionList, char **resultVariableName, DATA_TYPE *resultVariableType);
 
 bool ruleProg();
 bool ruleClassDefinition(char *className);
@@ -41,25 +44,21 @@ bool ruleStListDecl();
 bool ruleStList();
 bool ruleDecl(DATA_TYPE type, char *variableName);
 bool ruleStat();
-bool ruleStatBeginningId();
-bool ruleFuncCall();
-bool ruleFuncParams();
-bool ruleParam();
+bool ruleStatBeginningId(char *functionOrPropertyName);
+bool ruleFuncCall(char *calledFunctionName, char *assignReturnValueToVariable);
+bool ruleFuncParams(struct SYMBOL_TABLE_FUNCTION_STR *functionToCall, tDLList *parameters);
+bool ruleParam(struct SYMBOL_TABLE_FUNCTION_STR *functionToCall, tDLList *parameters);
 bool ruleFunctionCallEnd();
-bool ruleAfterFunctionCallExp();
+bool ruleAfterFunctionCallExp(struct SYMBOL_TABLE_FUNCTION_STR *functionToCall, tDLList *parameters);
 bool ruleFuncDefParams();
 bool ruleDefParam();
-bool ruleDefParamBeginTi(DATA_TYPE type, char *name);
+bool ruleDefParamBeginTi();
 bool ruleFunctionDefEnd();
 bool ruleTypeInt(DATA_TYPE *type);
 bool ruleTypeDouble(DATA_TYPE *type);
 bool ruleTypeString(DATA_TYPE *type);
-bool ruleTypeVoid(DATA_TYPE *type);
 bool ruleDefinitionStart(char *className);
 bool ruleExpSemicolon();
-bool ruleIdFunctionCall(char *name);
 
-
-
-int analyzeExpression(tDLList *instructionList, char *resultVariableName/*,DATA_TYPE *resultVariableType*/);
+int analyzeExpression(tDLList *instructionList, char **resultVariableName, DATA_TYPE *resultVariableType);
 #endif //IFJ_SYNTACTICANALYZER_H

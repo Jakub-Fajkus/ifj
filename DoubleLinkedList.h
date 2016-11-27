@@ -48,6 +48,7 @@ void ListPredcessor (tDLList *);
 void ListSuccessor (tDLList *);
 void DisposeList (tDLList *);
 int DLActive (tDLList *);
+int DLSize (tDLList *L);
 
 // Maybe useless
 void InsertFirst (tDLList *, struct LIST_ELEMENT);

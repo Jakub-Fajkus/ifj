@@ -391,3 +391,18 @@ int DLActive (tDLList *L) {
 
     return L->Act != NULL;
 }
+
+int DLSize (tDLList *L) {
+    tDLElemPtr backup = L->Act;
+    ListFirst(L);
+    int size = 0;
+
+    while(DLActive(L)) {
+        size++;
+        ListSuccessor(L);
+    }
+
+    L->Act = backup;
+
+    return size;
+}
