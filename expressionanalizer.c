@@ -2,13 +2,13 @@
 // Created by rockuo on 19.11.16.
 //
 
-#include "ExpressionAnalizer.h"
-#include "LexicalAnalyzerStructures.h"
-#include "SymbolTable.h"
-#include "Stack.h"
-#include "BasicStructures.h"
-#include "SemanticalAnalyzer.h"
-#include "Debug.h"
+#include "expressionanalizer.h"
+#include "lexicalanalyzerstructures.h"
+#include "symboltable.h"
+#include "stack.h"
+#include "basicstructures.h"
+#include "semanticalanalyzer.h"
+#include "debug.h"
 #include "ifj16.h"
 
 unsigned long iterator = 0;

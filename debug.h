@@ -5,8 +5,8 @@
 #ifndef IFJ_DEBUG_H
 #define IFJ_DEBUG_H
 
-#include "DoubleLinkedList.h"
-#include "Stack.h"
+#include "doublelinkedlist.h"
+#include "stack.h"
 
 #ifndef NOT_DEBUG
     #define debugPrintf(...) printf(__VA_ARGS__)

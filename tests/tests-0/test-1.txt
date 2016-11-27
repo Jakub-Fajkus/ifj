@@ -17,5 +17,12 @@ class Main
             }
             ifj16.print("Vysledek je: " + vysl + "\n");
         }
+
+        a = funkce1(1);
+    }
+
+    static int funkce1(int n)
+    {
+        return n+2;
     }
 }

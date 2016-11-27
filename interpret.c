@@ -10,10 +10,10 @@
       #include<stdbool.h>
 */
 #include "ifj16.h"  // Built-in functions & most libraries
-#include "Stack.h"
-#include "Interpret.h"
-#include "BasicStructures.h"
-#include "Debug.h"
+#include "stack.h"
+#include "interpret.h"
+#include "basicstructures.h"
+#include "debug.h"
 
 int GLOBAL = 0;
 

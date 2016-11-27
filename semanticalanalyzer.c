@@ -2,11 +2,11 @@
 // Created by Jakub Fajkus on 23.11.16.
 //
 
-#include "SemanticalAnalyzer.h"
-#include "SyntacticalAnalyzer.h"
+#include "semanticalanalyzer.h"
+#include "syntacticalanalyzer.h"
 #include "ifj16.h"
-#include "BasicStructures.h"
-#include "SymbolTable.h"
+#include "basicstructures.h"
+#include "symboltable.h"
 
 struct SYMBOL_TABLE_NODE *globalSymbolTable;
 SYMBOL_TABLE_FUNCTION *actualFunction;

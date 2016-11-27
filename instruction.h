@@ -5,9 +5,9 @@
 #ifndef IFJ_INSTRUCTION_H
 #define IFJ_INSTRUCTION_H
 
-#include "BasicStructures.h"
-#include "DoubleLinkedList.h"
-#include "Stack.h"
+#include "basicstructures.h"
+#include "doublelinkedlist.h"
+#include "stack.h"
 
 typedef enum {
     Instruction_Create_GlobalFrame_And_LocalStack = 10000,  // NO PARAMS in DST, SRC1 or SRC2. CALLED ONCE.
@@ -222,7 +222,7 @@ INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList);
  *      If the poinetr equals to NULL, the return value should not be assigned.
  * @return
  */
-INSTRUCTION *createInstrReturnFunction(char *returnVariableName);
+INSTRUCTION *createInstrReturnFunction(char **returnVariableName);
 
 
 /**

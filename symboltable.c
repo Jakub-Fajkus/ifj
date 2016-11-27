@@ -2,10 +2,10 @@
 // Created by Jakub Fajkus on 14.11.16.
 //
 
-#include "SymbolTable.h"
+#include "symboltable.h"
 #include "ifj16.h"
-#include "Debug.h"
-#include "Stack.h"
+#include "debug.h"
+#include "stack.h"
 
 void BSTInit (SYMBOL_TABLE_NODEPtr *RootPtr) {
     *RootPtr = NULL;

@@ -5,7 +5,7 @@
 #ifndef IFJ_SYNTACTICANALYZER_H
 #define IFJ_SYNTACTICANALYZER_H
 
-#include "SymbolTable.h"
+#include "symboltable.h"
 
 
 #define stringEquals(x,y) (strcmp(x, y) == 0)

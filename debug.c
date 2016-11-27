@@ -1,9 +1,9 @@
 //
 // Created by Jakub Fajkus on 17.11.16.
 //
-#include "Debug.h"
-#include "Stack.h"
-#include "BasicStructures.h"
+#include "debug.h"
+#include "stack.h"
+#include "basicstructures.h"
 
 void printAllTokens(tDLList *list) {
     LIST_ELEMENT *actualElement = malloc(sizeof(LIST_ELEMENT));

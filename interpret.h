@@ -5,10 +5,10 @@
 #ifndef IFJ_INTERPRET_H
 #define IFJ_INTERPRET_H
 
-#include "BasicStructures.h"
-#include "DoubleLinkedList.h"
+#include "basicstructures.h"
+#include "doublelinkedlist.h"
 #include "instruction.h"
-#include "Stack.h"
+#include "stack.h"
 #include <string.h>
 
 /**

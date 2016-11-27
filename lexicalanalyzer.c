@@ -6,9 +6,9 @@
 
 #include <limits.h>
 #include <float.h>
-#include "LexicalAnalyzer.h"
-#include "LexicalAnalyzerStructures.h"
-#include "Debug.h"
+#include "lexicalanalyzer.h"
+#include "lexicalanalyzerstructures.h"
+#include "debug.h"
 
 FILE *fp;
 

@@ -5,15 +5,15 @@
 #ifndef IFJ_EXPRESSIONANALIZER_H
 #define IFJ_EXPRESSIONANALIZER_H
 
-#include "DoubleLinkedList.h"
-#include "SyntacticalAnalyzer.h"
+#include "doublelinkedlist.h"
+#include "syntacticalanalyzer.h"
 #include <stdio.h>
 #include "instruction.h"
 #include <stdbool.h>
-#include "BasicStructures.h"
-#include "SymbolTable.h"
+#include "basicstructures.h"
+#include "symboltable.h"
 
-#include "Stack.h" //include it after EA_TERMINAL_TYPE_ENUM which is needed by Stack.h
+#include "stack.h"
 
 //todo: return true if the expression was successfully parsed, false otherwise... use exit only in error situations(99)
 int parseExpression(tDLList *threeAddressCode, char **returnValName, DATA_TYPE *returnValType,bool firstPass);

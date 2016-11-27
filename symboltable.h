@@ -6,9 +6,9 @@
 #define IFJ_SYMBOLTABLE_H
 
 #include <stdbool.h>
-#include "BasicStructures.h"
-#include "DoubleLinkedList.h"
-#include "Stack.h"
+#include "basicstructures.h"
+#include "doublelinkedlist.h"
+#include "stack.h"
 
 /*
  * global symbol table will contain only variables(without their values) and functions

@@ -3,14 +3,14 @@
 //
 
 #include "ifj16.h"
-#include "SymbolTable.h"
-#include "LexicalAnalyzer.h"
-#include "SyntacticalAnalyzer.h"
-#include "Stack.h"
-#include "LexicalAnalyzerStructures.h"
-#include "Interpret.h"
+#include "symboltable.h"
+#include "lexicalanalyzer.h"
+#include "syntacticalanalyzer.h"
+#include "stack.h"
+#include "lexicalanalyzerstructures.h"
+#include "interpret.h"
 #include "instruction.h"
-#include "Debug.h"
+#include "debug.h"
 //#include "BasicStructures.h"
 //#include "Debug.h"
 

@@ -4,8 +4,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "Stack.h"
-#include "Debug.h"
+#include "stack.h"
+#include "debug.h"
 
 void stackInit ( struct STACK_STR* s) {
     if (s == NULL) {

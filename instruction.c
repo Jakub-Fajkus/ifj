@@ -3,9 +3,9 @@
 //
 
 #include "instruction.h"
-#include "Interpret.h"
-#include "BasicStructures.h"
-#include "Debug.h"
+#include "interpret.h"
+#include "basicstructures.h"
+#include "debug.h"
 
 /* ************************************************ USED BY INTERPRET *************************************************/
 /* ************************************************ DATA CONSTRUCTORS *************************************************/
@@ -302,12 +302,12 @@ INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList) {
     return instruction;
 }
 
-INSTRUCTION *createInstrReturnFunction(char *returnVariableName) {
+INSTRUCTION *createInstrReturnFunction(char **returnVariableName) {
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
 
     instruction->type = Instruction_ReturnFunction;
 
-    instruction->address_dst = returnVariableName;
+    instruction->address_dst = *returnVariableName;
     instruction->address_src1 = NULL;
     instruction->address_src2 = NULL;
 

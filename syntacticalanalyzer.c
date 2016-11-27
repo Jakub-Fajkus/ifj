@@ -1,16 +1,15 @@
 //
 // Created by Jakub Fajkus on 12.11.16.
 //
-#include "SyntacticalAnalyzer.h"
+#include "syntacticalanalyzer.h"
 #include "ifj16.h"
-#include "Debug.h"
-#include "SemanticalAnalyzer.h"
-#include "Interpret.h"
-#include "LexicalAnalyzerStructures.h"
-#include "BasicStructures.h"
-#include "SymbolTable.h"
+#include "debug.h"
+#include "semanticalanalyzer.h"
+#include "lexicalanalyzerstructures.h"
+#include "basicstructures.h"
+#include "symboltable.h"
 #include <stdbool.h>
-#include "Debug.h"
+#include "debug.h"
 
 tDLList *globalTokens;
 
@@ -651,8 +650,10 @@ bool ruleStat(){
         } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "return")) {
 //            char* resultVariableName;
             if (ruleExpSemicolon()) {
-
-//                ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrReturnFunction(returnToVariableName)));
+                STACK_ELEMENT *stackElement = (STACK_ELEMENT*)malloc(sizeof(STACK_ELEMENT));
+                stackTop(returnToVariables,stackElement);
+                stackPop(returnToVariables);
+                ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrReturnFunction(&(stackElement->data.functionReturnName))));
                 return true;
             }
         }
@@ -992,16 +993,28 @@ bool ruleStatBeginningId(char *functionOrPropertyName) {
             //function call
             if (-1 == code) {
                 if(ruleId(&functionName)) {
+//                  push return variable name to stack
+                    STACK_ELEMENT stackElement;
+                    stackElement.type =FUNCTION_RETURN_NAME;
+                    char *functionReturnName = (char*)malloc(sizeof(char)*(strlen(functionOrPropertyName)+1));
+                    strcpy(functionReturnName,functionOrPropertyName);
+                    stackElement.data.functionReturnName = functionReturnName;
+                    stackPush(returnToVariables,stackElement);
 
                     if (ruleFuncCall(functionName, functionOrPropertyName)) {
                         if(!firstPass) {
                             initializeVariable(functionOrPropertyName);
+
                             //add functionOrPropertyName
 //                            ListInsertLast(actualFunction->instructions, wrapInstructionIntoListElement(createInstrAssign(functionOrPropertyName, resultVariableName)));
                         }
 
                         return true;
+                    }else{
+                        //pop if function Not called
+                        stackPop(returnToVariables);
                     }
+
                 }
                 //
             } else if (code == 1) {
@@ -1101,12 +1114,11 @@ void makeFirstPass() {
     printf("end of printing\n");
     //test
 
+
+
     //just "testing"
     printf("print list of main instructions\n");
-    printInstructions(mainInstructionList);
-
-
-
+//    printListOfInstructions(mainInstructionList);
 
 
 }

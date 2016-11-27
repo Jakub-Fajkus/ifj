@@ -11,7 +11,7 @@
 #include<stdarg.h>
 #include<stdbool.h>
 
-#include "LexicalAnalyzerStructures.h"
+#include "lexicalanalyzerstructures.h"
 
 void initializeStream(char *);
 

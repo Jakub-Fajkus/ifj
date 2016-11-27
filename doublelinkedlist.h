@@ -5,8 +5,8 @@
 #ifndef IFJ_DOUBLELINKEDLIST_H
 #define IFJ_DOUBLELINKEDLIST_H
 
-#include "BasicStructures.h"
-#include "LexicalAnalyzer.h"
+#include "basicstructures.h"
+#include "lexicalanalyzer.h"
 
 typedef enum LIST_ELEMENT_TYPE {
     LIST_ELEMENT_TYPE_TOKEN = 3000,

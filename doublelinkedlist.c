@@ -4,8 +4,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "DoubleLinkedList.h"
-#include "Debug.h"
+#include "doublelinkedlist.h"
+#include "debug.h"
 
 void DLError() {
 /*

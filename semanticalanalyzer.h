@@ -4,8 +4,8 @@
 
 #ifndef IFJ_SEMANTICALANALYZER_H
 #define IFJ_SEMANTICALANALYZER_H
-#include "SymbolTable.h"
-#include "DoubleLinkedList.h"
+#include "symboltable.h"
+#include "doublelinkedlist.h"
 void semanticCheckForFunctionRun();
 SYMBOL_TABLE_FUNCTION *semantic_getFunction(char * functionName);
 SYMBOL_TABLE_VARIABLE *semantic_getVariable(char * name);
