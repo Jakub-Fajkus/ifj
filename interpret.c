@@ -154,6 +154,22 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
             //but first, let me pop the stack, in order to work with 3 frames... i really wanna find it
 
+            STACK_ELEMENT *element = malloc(sizeof(STACK_ELEMENT));
+            stackTop(stackOfLocalFrames, element);
+            stackPop(stackOfLocalFrames);
+            upcomingLocalFrame = element->data.localFrame;
+
+
+            VARIABLE *returnValue = findFrameVariable(stackOfLocalFrames->arr->data.localFrame, Instr->address_dst);
+            if (returnValue == NULL) {
+                returnValue = findFrameVariable(globalFrame, Instr->address_dst);
+                if (returnValue == NULL) {
+                    returnValue = findFrameVariable(upcomingLocalFrame, Instr->address_dst);
+                }
+            }
+
+            debugPrintf("i am so sorry guys");
+            exit(42);
 
             ListSuccessor(InstructionList);
             continue; // Jump to next instruction
@@ -845,7 +861,46 @@ int executeInstructionAssign(VARIABLE *dst, VARIABLE *src) {
 
 int executeInstructionBuiltInFunction(INSTRUCTION_TYPE instrType, VARIABLE *dst, VARIABLE *src1, VARIABLE *src2) {
 
+    switch (instrType) {
 
+        case Instruction_Function_readInt:
+            ;
+            if (dst == NULL || src1 != NULL || src2 != NULL) return 99;
+            dst->value.intValue = ifj16_readInt();
+            break;
+        case Instruction_Function_readDouble:
+            ;
+            if (dst == NULL || src1 != NULL || src2 != NULL) return 99;
+            dst->value.doubleValue = ifj16_readDouble();
+            break;
+        case Instruction_Function_readString:
+            ;
+            if (dst == NULL || src1 != NULL || src2 != NULL) return 99;
+            dst->value.stringValue = ifj16_readString();
+            break;
+        case Instruction_Function_Print:
+            ;
+            if (dst == NULL || src1 != NULL || src2 != NULL) return 99;
+            break;
+        case Instruction_Function_Length:
+            ;
+            if (dst == NULL || src1 == NULL || src2 != NULL) return 99;
+            break;
+        case Instruction_Function_Compare:
+            ;
+            if (dst == NULL || src1 == NULL || src2 == NULL) return 99;
+            break;
+        case Instruction_Function_Find:
+            ;
+            if (dst == NULL || src1 == NULL || src2 == NULL) return 99;
+            break;
+        case Instruction_Function_Sort:
+            ;
+            if (dst == NULL || src1 == NULL || src2 != NULL) return 99;
+            break;
+
+        default:;
+    }
     return 0;
 }
 
