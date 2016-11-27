@@ -28,10 +28,10 @@ int main(int argc, char *argv[])
         return 99;
     }
     */
-    runSyntacticalAnalysis(argv[1]);
+//    runSyntacticalAnalysis(argv[1]);
 
 
-//    x = callInterpret();    // #justInterpretThings
+    x = callInterpret();    // #justInterpretThings
 
     printf("\n-----KONEC-----");
     return x;

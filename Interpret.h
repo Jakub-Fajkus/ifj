@@ -24,15 +24,14 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
 /* ************************************************ EXECUTE ************************************************/
 
-//TODO: remake the types of functions
-
 /**
- * GENERAL FUNCTION FOR EXECUTION OF ANY INSTRUCITON
- * EXCEPTIONS HAVE THEIR OWN FUNCTIONS
- * @param Instr
- */
-void InstructionExecute(INSTRUCTION *Instr);
-
+* ASSIGN execution
+* ANALOGICAL TO createInstructionAssign()
+* @param dst
+* @param src
+* @return 0 or 6
+*/
+int executeInstructionAssign(VARIABLE *dst, VARIABLE *src);
 
 /**
  * Executes these operations in format: DST = SRC1 %% SRC2, where %% is operator
@@ -48,14 +47,6 @@ void InstructionExecute(INSTRUCTION *Instr);
 int executeInstructionMathOperation(INSTRUCTION_TYPE instrType, VARIABLE *dst, VARIABLE *src1, VARIABLE *src2);
 
 /**
- * ASSIGN execution
- * ANALOGICAL TO createInstructionAssign()
- * @param dst
- * @param src
- */
-void executeInstructionAssign(VARIABLE *dst, VARIABLE *src); // done
-
-/**
  * Evaluation of bool expression
  * Accepted Instruction types:
  *      Instruction_Bool_Equals:    if ( src1 == src2 ) dst=TRUE else dst=FALSE;
@@ -64,14 +55,24 @@ void executeInstructionAssign(VARIABLE *dst, VARIABLE *src); // done
  *      Instruction_Bool_Less,      if ( src1 < src2 ) dst=TRUE else dst=FALSE;
  *      Instruction_Bool_MoreEqual, if ( src1 >= src2 ) dst=TRUE else dst=FALSE;
  *      Instruction_Bool_LessEqual, if ( src1 <= src2 ) dst=TRUE else dst=FALSE;
- * @param instr: accepts type, dst, src1, src2
+ * @param instrType
+ * @param dst - Names of variables
+ * @param src1
+ * @param src
  */
-void executeInstructionExpressionEvaluation(INSTRUCTION *instr);
+int executeInstructionExpressionEvaluation(INSTRUCTION_TYPE instrType, VARIABLE *dst, VARIABLE *src1, VARIABLE *src2);
 
-void executeInstructionIf(INSTRUCTION *instr);
 
 
 //----------------------------------REST
+
+/**
+ * GENERAL FUNCTION FOR EXECUTION OF ANY INSTRUCITON
+ * EXCEPTIONS HAVE THEIR OWN FUNCTIONS
+ * @param Instr
+ */
+void InstructionExecute(INSTRUCTION *Instr);
+
 int callInterpret();
 void exitInterpret(int errNumber);
 void checkMalloc(void *ptr);
