@@ -347,7 +347,6 @@ LIST_ELEMENT createInstruction(INSTRUCTION *instr);
 
 // to be deleted
 void printInstructionTest(int x, tDLList *TestInstructionList);
-void printListOfInstructions(tDLList *TestInstructionList);
 
 
 

@@ -10,6 +10,7 @@
 #include "symboltable.h"
 #include <stdbool.h>
 #include "debug.h"
+#include "interpret.h"
 
 tDLList *globalTokens;
 
@@ -1088,8 +1089,8 @@ void makeFirstPass() {
     makeSecondPass();
     ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createInstrCallFunction(semantic_getFunction("Main.run")->instructions)));
     Interpret(mainInstructionList, NULL, NULL);
-
-    return;
+    debugPrintf("print list of main instructions\n");
+    printInstructions(mainInstructionList);
 
     //test
     struct STACK_STR *symbolTableStacked = BTInorder(globalSymbolTable);
@@ -1100,7 +1101,7 @@ void makeFirstPass() {
         //filter all records for classe itself
         if (actualElement.data.symbolTableNode->data->type == TREE_NODE_FUNCTION) {
             SYMBOL_TABLE_FUNCTION *fun = actualElement.data.symbolTableNode->data->item->function;
-            printf("\n\nprinitng instrucitons of function: %s\n", fun->name);
+            debugPrintf("\n\nprinitng instrucitons of function: %s\n", fun->name);
             ListFirst(fun->instructions);
             while(DLActive(fun->instructions)) {
                 printInstruction(fun->instructions->Act->element.data.instr);
@@ -1111,16 +1112,7 @@ void makeFirstPass() {
         stackPop(symbolTableStacked);
     }
 
-    printf("end of printing\n");
-    //test
-
-
-
-    //just "testing"
-    printf("print list of main instructions\n");
-//    printListOfInstructions(mainInstructionList);
-
-
+    debugPrintf("end of printing\n");
 }
 
 void makeSecondPass() {
@@ -1133,9 +1125,6 @@ void makeSecondPass() {
     if(result == 0) {
         exit(2);
     }
-
-    //call interpret
-    //todo:
 }
 
 /**
@@ -1156,7 +1145,7 @@ int analyzeExpression(tDLList *instructionList, char **resultVariableName, DATA_
         return -1;
     }
     else {
-        printf("exiting with code %d returned from expressionAnalyzer", code);
+        debugPrintf("exiting with code %d returned from expressionAnalyzer", code);
         exit(code);
     }
 }
