@@ -298,12 +298,14 @@ void num(TOKEN *token, int c) {
             i++;
             str = realloc(str, sizeof(char) * (i + 1));
             doubleNum(token, str, i);
+            return;
             break;
         } else if (c == 'e' || c == 'E') {
             str[i] = 'E';
             i++;
             str = realloc(str, sizeof(char) * (i + 1));
             doubleNumE(token, str, i);
+            return;
         } else if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '$' ||
                    c == '_') { // proměnná za číslem (bez oddělovače) je lexikální chyba...asi?
             free(str);
