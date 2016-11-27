@@ -13,6 +13,7 @@
 #include "Stack.h"
 #include "Interpret.h"
 #include "BasicStructures.h"
+#include "Debug.h"
 
 int GLOBAL = 0;
 
@@ -28,7 +29,7 @@ void executeInstructionIf(INSTRUCTION *instr);
 int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames ){
     if (InstructionList == NULL) return 99;
     int interpretRetVal;
-    printf("\n----- Welcome to hell v1.%d\n",GLOBAL++);
+    debugPrintf("\n----- Welcome to hell v1.%d\n",GLOBAL++);
 
     //NewPtr - pointer to list element (allowing work with instructions inside InstructionList)
     LIST_ELEMENT *NewPtr = malloc(sizeof(struct LIST_ELEMENT));   //TODO: how to free and exit?
@@ -53,9 +54,9 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             //TODO: return value, free all resources used by interpret (stack & globalframe)
 
             VARIABLE *printer = findFrameVariable(globalFrame, "Main.x");
-            printf("Final value of cycle variable: |%g|\n", printer->value.doubleValue);
+            debugPrintf("Final value of cycle variable: |%g|\n", printer->value.doubleValue);
 
-            printf("----- I am ending!\n");
+            debugPrintf("----- I am ending!\n");
             return 0;
         }
 
@@ -92,14 +93,14 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         // Pushing upcoming local frame into stack of local frames
         // THINGS TO KEEP: global frame, stack of local frames
         if (Instr->type == Instruction_CallFunction) {
-            printf("CALLING FUNCTION!!! GET REKT\n");
+            debugPrintf("CALLING FUNCTION!!! GET REKT\n");
             //TODO: Call Function, recursion inside
             pushFrameToStack(stackOfLocalFrames, upcomingLocalFrame);
             // HERE COMES THE FUCKING RECURSION
 
             interpretRetVal = Interpret((tDLList*)Instr->address_dst, globalFrame, stackOfLocalFrames);
             if ( interpretRetVal != 0 ) {
-                printf("Previous instance of interpret has failed.\n");
+                debugPrintf("Previous instance of interpret has failed.\n");
                 return interpretRetVal;
             }
             ListSuccessor(InstructionList);
@@ -107,7 +108,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         }
 
         if (Instr->type == Instruction_ReturnFunction) {
-            printf("Returning from function!");
+            debugPrintf("Returning from function!");
             return 0;
             //TODO end recursion, return 0 here
         }
@@ -124,14 +125,14 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             if (booleanValue->value.intValue == 1) {
                 interpretRetVal = Interpret((tDLList*)Instr->address_src1, globalFrame, stackOfLocalFrames);
                 if ( interpretRetVal != 0 ) {
-                    printf("Previous instance of interpret has failed.\n");
+                    debugPrintf("Previous instance of interpret has failed.\n");
                     return interpretRetVal;
                 }
             }
             else if (booleanValue->value.intValue == 0) {
                 interpretRetVal = Interpret((tDLList*)Instr->address_src2, globalFrame, stackOfLocalFrames);
                 if ( interpretRetVal != 0 ) {
-                    printf("Previous instance of interpret has failed.\n");
+                    debugPrintf("Previous instance of interpret has failed.\n");
                     return interpretRetVal;
                 }
             }
@@ -140,12 +141,12 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         }
 
         if (Instr->type == Instruction_WHILE) {
-            printf("HANDLING WHILE_INSTRUCTION");
+            debugPrintf("HANDLING WHILE_INSTRUCTION");
 
             //----- STEP 1: Calling recursion for ExpressionList
             interpretRetVal = Interpret((tDLList*)Instr->address_src1, globalFrame, stackOfLocalFrames);
             if ( interpretRetVal != 0 ) {
-                printf("Previous instance of interpret has failed.\n");
+                debugPrintf("Previous instance of interpret has failed.\n");
                 return interpretRetVal;
             }
 
@@ -165,13 +166,13 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
                 interpretRetVal = Interpret((tDLList*)Instr->address_src2, globalFrame, stackOfLocalFrames);
                 if ( interpretRetVal != 0 ) {
-                    printf("Previous instance of interpret has failed.\n");
+                    debugPrintf("Previous instance of interpret has failed.\n");
                     return interpretRetVal;
                 }
 
                 interpretRetVal = Interpret((tDLList*)Instr->address_src1, globalFrame, stackOfLocalFrames);
                 if ( interpretRetVal != 0 ) {
-                    printf("Previous instance of interpret has failed.\n");
+                    debugPrintf("Previous instance of interpret has failed.\n");
                     return interpretRetVal;
                 }
 
@@ -231,7 +232,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
                 int mathRetValue = executeInstructionMathOperation(Instr->type, dst, src1, src2);
                 if ( mathRetValue != 0 ){
-                    printf("you have fucked this up AS HELL\n");
+                    debugPrintf("you have fucked this up AS HELL\n");
                     return mathRetValue;
                 }
 
@@ -250,7 +251,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
                 int evalRetValue = executeInstructionExpressionEvaluation(Instr->type, dst, src1, src2);
                 if ( evalRetValue != 0 ){
-                    printf("you have fucked this up AS HELL\n");
+                    debugPrintf("you have fucked this up AS HELL\n");
                     return mathRetValue;
                 }
 
@@ -259,7 +260,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
             default:
                 ;
-                printf("TRYING TO HANDLE INSTRUCTION WITHOUT SOLUTION\n");
+                debugPrintf("TRYING TO HANDLE INSTRUCTION WITHOUT SOLUTION\n");
                 //InstructionExecute(Instr);
                 break;
         }
@@ -360,7 +361,7 @@ int executeInstructionMathOperation(INSTRUCTION_TYPE instrType, VARIABLE *dst, V
 
             //tell interpret the execution has failed
             if (dst->type!=TYPE_STRING) {
-                printf("Wrong destination format.\n");
+                debugPrintf("Wrong destination format.\n");
                 return 99;
             }
 
@@ -372,7 +373,7 @@ int executeInstructionMathOperation(INSTRUCTION_TYPE instrType, VARIABLE *dst, V
 
             //tell interpret the execution has failed
             if (dst->type!=TYPE_STRING) {
-                printf("Wrong destination format.\n");
+                debugPrintf("Wrong destination format.\n");
                 return 99;
             }
 

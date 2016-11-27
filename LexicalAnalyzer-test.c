@@ -1,6 +1,7 @@
 #include "LexicalAnalyzer.h"
 #include "Debug.h"
 #include <assert.h>
+#include "Debug.h"
 
 #define keyword(keywordName){ \
     TOKEN *token = getToken();\
@@ -33,7 +34,7 @@
 
 #define stringLiteral(stringValue) { \
     TOKEN *token = getToken(); \
-    printf("STRING_LITERAL: '%s'\n", token->data.literalString.name); \
+    debugPrintf("STRING_LITERAL: '%s'\n", token->data.literalString.name); \
     assert(token->type == LITERAL_STRING); \
     assert(strcmp(token->data.literalString.name, stringValue) == 0);}
 
@@ -113,5 +114,5 @@ void test1(){
     bracket('}')
     ondOfFile()
 
-    printf("**************** END OF test1 ****************\n");
+    debugPrintf("**************** END OF test1 ****************\n");
 }

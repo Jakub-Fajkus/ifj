@@ -5,10 +5,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "Stack.h"
+#include "Debug.h"
 
 void stackInit ( struct STACK_STR* s) {
     if (s == NULL) {
-        printf("stack is null!");
+        debugPrintf("stack is null!");
         exit(99);
     }
 

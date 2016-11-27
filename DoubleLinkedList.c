@@ -5,13 +5,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "DoubleLinkedList.h"
+#include "Debug.h"
 
 void DLError() {
 /*
 ** Vytiskne upozornění na to, že došlo k chybě.
 ** Tato funkce bude volána z některých dále implementovaných operací.
 **/
-    printf ("*ERROR* The program has performed an illegal operation.\n");
+    debugPrintf ("*ERROR* The program has performed an illegal operation.\n");
     exit(99);
 }
 

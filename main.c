@@ -10,6 +10,7 @@
 #include "LexicalAnalyzerStructures.h"
 #include "Interpret.h"
 #include "instruction.h"
+#include "Debug.h"
 //#include "BasicStructures.h"
 //#include "Debug.h"
 
@@ -33,6 +34,6 @@ int main(int argc, char *argv[])
 
 //    x = callInterpret();    // #justInterpretThings
 
-    printf("\n-----KONEC-----");
+    debugPrintf("\n-----KONEC-----");
     return x;
 }

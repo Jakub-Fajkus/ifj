@@ -5,6 +5,7 @@
 #include "instruction.h"
 #include "Interpret.h"
 #include "BasicStructures.h"
+#include "Debug.h"
 
 /* ************************************************ USED BY INTERPRET *************************************************/
 /* ************************************************ DATA CONSTRUCTORS *************************************************/
@@ -57,11 +58,11 @@ void pushToFrame(tDLList *frame, INSTRUCTION *instruction){
 
     /*DEBUG PRINT
     if (instruction->address_src2 == NULL)
-        printf("Successfully inserted this variable: %s, %d\n", listElem->data.variable->name, listElem->data.variable->type);
+        debugPrintf("Successfully inserted this variable: %s, %d\n", listElem->data.variable->name, listElem->data.variable->type);
     else {
-        if (var->type == TYPE_INT) printf("Successfully inserted this variable: %s, %d %d\n", listElem->data.variable->name, listElem->data.variable->type, listElem->data.variable->value.intValue);
-        if (var->type == TYPE_DOUBLE) printf("Successfully inserted this variable: %s, %d %g\n", listElem->data.variable->name, listElem->data.variable->type, listElem->data.variable->value.doubleValue);
-        if (var->type == TYPE_STRING) printf("Successfully inserted this variable: %s, %d %s\n", listElem->data.variable->name, listElem->data.variable->type, listElem->data.variable->value.stringValue);
+        if (var->type == TYPE_INT) debugPrintf("Successfully inserted this variable: %s, %d %d\n", listElem->data.variable->name, listElem->data.variable->type, listElem->data.variable->value.intValue);
+        if (var->type == TYPE_DOUBLE) debugPrintf("Successfully inserted this variable: %s, %d %g\n", listElem->data.variable->name, listElem->data.variable->type, listElem->data.variable->value.doubleValue);
+        if (var->type == TYPE_STRING) debugPrintf("Successfully inserted this variable: %s, %d %s\n", listElem->data.variable->name, listElem->data.variable->type, listElem->data.variable->value.stringValue);
     }
     */
     ListInsertLast(frame, *listElem);
@@ -73,7 +74,7 @@ void pushToFrame(tDLList *frame, INSTRUCTION *instruction){
 /// \return NULL if not found, otherwise pointer to the variable
 VARIABLE *findFrameVariable(tDLList *frame, char *name) {
 
-    //printf("i am seeking for: %s\t", name);
+    //debugPrintf("i am seeking for: %s\t", name);
 
     if ( name == NULL ) return NULL; // error handling
     int compare;
@@ -81,7 +82,7 @@ VARIABLE *findFrameVariable(tDLList *frame, char *name) {
     do { // Search for the variable in the globalFrame
         compare = strcmp(name, frame->Act->element.data.variable->name);
         if ( compare == 0 ) {   // found the right variable
-            //printf("i have found: %s\n", frame->Act->element.data.variable->name);
+            //debugPrintf("i have found: %s\n", frame->Act->element.data.variable->name);
             return frame->Act->element.data.variable;
         }
         ListSuccessor(frame);

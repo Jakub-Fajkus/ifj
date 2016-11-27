@@ -4,6 +4,7 @@
 
 #include "SymbolTable.h"
 #include "ifj16.h"
+#include "Debug.h"
 #include "Stack.h"
 
 void BSTInit (SYMBOL_TABLE_NODEPtr *RootPtr) {
@@ -160,7 +161,7 @@ SYMBOL_TABLE_VARIABLE* getVariableFromTable(SYMBOL_TABLE_NODEPtr *symbolTable, c
     }
 
     if (nodeData->type != TREE_NODE_VARIABLE) {
-        printf("internal error, requested %s is not a variable", name);
+        debugPrintf("internal error, requested %s is not a variable", name);
         exit(99);
     }
 
@@ -176,7 +177,7 @@ SYMBOL_TABLE_FUNCTION* getFunctionFromTable(SYMBOL_TABLE_NODEPtr *symbolTable, c
     }
 
     if (nodeData->type != TREE_NODE_FUNCTION) {
-        printf("internal error, requested %s is not a function", name);
+        debugPrintf("internal error, requested %s is not a function", name);
         exit(99);
     }
 
@@ -276,7 +277,7 @@ SYMBOL_TABLE_VARIABLE* createAndInsertVariable(SYMBOL_TABLE_NODEPtr *symbolTable
 
     SYMBOL_TABLE_VARIABLE *variable = createVariable(name, type, initialized);
     TREE_NODE_DATA *treeData = createVariableData(variable);
-    printf("inserting variable %s", variable->name);
+    debugPrintf("inserting variable %s", variable->name);
     BSTInsert(symbolTable, variable->name, *treeData);
 
     return variable;
@@ -321,7 +322,7 @@ SYMBOL_TABLE_FUNCTION* createAndInsertFunction(SYMBOL_TABLE_NODEPtr *symbolTable
     //if the function already exists
 
     if (NULL != getNodeDataFromTable(symbolTable, name)) {
-        printf("redeclaration of function or variable %s", name);
+        debugPrintf("redeclaration of function or variable %s", name);
         exit(3);
     }
 
@@ -378,7 +379,7 @@ void checkIfVariableIsInitialized(SYMBOL_TABLE_NODEPtr *symbolTable, char *name)
     SYMBOL_TABLE_VARIABLE* foundVariable = getVariableFromTable(symbolTable, name);
 
     if (foundVariable == NULL) {
-        printf("checkIfVariableIsInitialized: variable %s was not found", name);
+        debugPrintf("checkIfVariableIsInitialized: variable %s was not found", name);
         exit(99);
     }
 

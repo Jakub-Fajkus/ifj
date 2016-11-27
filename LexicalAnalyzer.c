@@ -6,6 +6,7 @@
 
 #include "LexicalAnalyzer.h"
 #include "LexicalAnalyzerStructures.h"
+#include "Debug.h"
 
 FILE *fp;
 
@@ -252,7 +253,6 @@ void string1(TOKEN *token) {
                 }
                 i++;
             }
-            printf("\n----%s-----\n", newStr);
             token->type = LITERAL_STRING;
             token->data.literalString.name = newStr;
             break;

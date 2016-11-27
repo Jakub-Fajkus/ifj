@@ -8,6 +8,12 @@
 #include "DoubleLinkedList.h"
 #include "Stack.h"
 
+#ifndef NOT_DEBUG
+    #define debugPrintf(...) printf(__VA_ARGS__)
+#else
+    #define debugPrintf(...)
+#endif
+
 void printAllTokens(tDLList *list);
 void printToken(TOKEN *token);
 void printEnumValue(int value);

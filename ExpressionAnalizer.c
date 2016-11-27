@@ -8,6 +8,7 @@
 #include "Stack.h"
 #include "BasicStructures.h"
 #include "SemanticalAnalyzer.h"
+#include "Debug.h"
 
 unsigned long iterator = 0;
 char *varName = NULL;
@@ -156,7 +157,7 @@ EA_TERMINAL_TYPE getTerminalDataType(TOKEN token) {
 }
 
 int parseExpression(tDLList *threeAddressCode, char *returnValName, DATA_TYPE *returnValType,bool firstPass) {
-    printf("\nDEBUG expression START\n");
+    debugPrintf("\nDEBUG expression START\n");
     returnType = TYPE_INT;
     bool lookingForTerminal = true;
     STACK_ELEMENT stackElement;
@@ -237,7 +238,7 @@ int parseExpression(tDLList *threeAddressCode, char *returnValName, DATA_TYPE *r
                             return 2;//tODO check error
                         case 'S':
                             returnCachedTokens(1);
-                            printf("\nDEBUG expression END\n");
+                            debugPrintf("\nDEBUG expression END\n");
                             //reset globals
                             stopNow = false;
                             //TODO
@@ -268,7 +269,7 @@ int parseExpression(tDLList *threeAddressCode, char *returnValName, DATA_TYPE *r
                             returnCachedTokens(2);
                             return -1;
                         default:
-                            printf("DEBUG END ");
+                            debugPrintf("DEBUG END ");
                             exit(99);
                     }
                     break;
@@ -412,7 +413,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                 } else {
                     stackElement1.data.notTerminalData.name = "tempName";
                 }
-                printf("generate: E->E+E\n");
+                debugPrintf("generate: E->E+E\n");
                 stackElement1.data.notTerminalData.type = outputType;
                 stackElement1.type = EA_NOT_TERMINAL;
             } else return 2;
@@ -444,7 +445,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                 } else {
                     stackElement1.data.notTerminalData.name = "tempName";
                 }
-                printf("generate: E->E-E\n");
+                debugPrintf("generate: E->E-E\n");
                 stackElement1.data.notTerminalData.type = outputType;
                 stackElement1.type = EA_NOT_TERMINAL;
             } else return 2; //todo check
@@ -476,7 +477,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                 } else {
                     stackElement1.data.notTerminalData.name = "tempName";
                 }
-                printf("generate: E->E*E\n");
+                debugPrintf("generate: E->E*E\n");
 
                 stackElement1.data.notTerminalData.type = outputType;
                 stackElement1.type = EA_NOT_TERMINAL;
@@ -513,7 +514,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                 } else {
                     stackElement1.data.notTerminalData.name = "tempName";
                 }
-                printf("generate: E->E/E\n");
+                debugPrintf("generate: E->E/E\n");
                 stackElement1.data.notTerminalData.type = outputType;
                 stackElement1.type = EA_NOT_TERMINAL;
             } else return 2; //todo check
@@ -524,7 +525,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                 stackElement2.type == EA_NOT_TERMINAL &&
                 stackElement3.data.terminalData.type == EA_RIGHT_BR &&
                 stackElement3.type == EA_TERMINAL) {
-                printf("generate: E->(E)\n");
+                debugPrintf("generate: E->(E)\n");
                 stackElement1 = stackElement2;
             } else return 2; //todo check
 
@@ -546,7 +547,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                         stackElement2.data.notTerminalData.type = TYPE_INT;
                     }
 
-                    printf("generate: E->i where i = ID\n");
+                    debugPrintf("generate: E->i where i = ID\n");
 
                     setReturnType(stackElement2.data.notTerminalData.type);
                 } else if (stackElement1.data.terminalData.token.type == IDENTIFIER_FULL) {
@@ -574,7 +575,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                         stackElement2.data.notTerminalData.name = "tepName";
                     }
                     setReturnType(stackElement2.data.notTerminalData.type );
-                    printf("generate: E->i where i = ID_FULL\n");
+                    debugPrintf("generate: E->i where i = ID_FULL\n");
                 } else {
                     if (!firstPass) {
                         concatenateString();
@@ -596,7 +597,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                     }
                 }
                 setReturnType(stackElement2.data.notTerminalData.type );
-                printf("generate: E->i where i = LIT\n");
+                debugPrintf("generate: E->i where i = LIT\n");
                 stackElement2.type = EA_NOT_TERMINAL;
                 stackElement1 = stackElement2;
             } else return 2; //todo check
@@ -621,7 +622,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                                                           stackElement1.data.notTerminalData.name,
                                                           stackElement2.data.notTerminalData.name);
                     ListInsertLast(threeAddressCode,createInstruction(instruction2));
-                    printf("generate: E->E_LOGIC_E\n");
+                    debugPrintf("generate: E->E_LOGIC_E\n");
                     stackElement1.data.notTerminalData.name = tempName;
                 } else {
                     stackElement1.data.notTerminalData.name = "tempName";

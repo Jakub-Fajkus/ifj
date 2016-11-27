@@ -9,6 +9,7 @@
 #include "BasicStructures.h"
 #include "SymbolTable.h"
 #include <stdbool.h>
+#include "Debug.h"
 
 #define stringEquals(x,y) (strcmp(x, y) == 0)
 
@@ -96,7 +97,7 @@ bool ruleId(char **name) {
 
     if (token->type == IDENTIFIER) {
         *name = token->data.identifier.name;
-        printf("id: %s\n", *name);
+        debugPrintf("id: %s\n", *name);
         return true;
     }
 
@@ -106,7 +107,7 @@ bool ruleId(char **name) {
         free(classWithDot);
 
         *name = fullName;
-        printf("id: %s\n", *name);
+        debugPrintf("id: %s\n", *name);
         return true;
     } else {
         returnCachedTokens(1);
@@ -274,7 +275,7 @@ bool rulePropDef(bool *variableInitialized, DATA_TYPE variableType, char *variab
 
         char* resultVariableName;
 
-        printf("calling analyzeExpression from rulePropDef\n");
+        debugPrintf("calling analyzeExpression from rulePropDef\n");
         if (analyzeExpression(mainInstructionList, resultVariableName)) {
             token = getCachedToken();
             if (token->type == SEMICOLON) {
@@ -433,7 +434,7 @@ bool ruleDecl(DATA_TYPE type, char *variableName){
 //        ListInit(dummyInstructionLIst);
         char* resultVariableName;
 
-        printf("calling analyzeExpression from ruleDecl\n");
+        debugPrintf("calling analyzeExpression from ruleDecl\n");
         if (analyzeExpression(actualFunction->instructions, resultVariableName)) { //todo
             token = getCachedToken();
 
@@ -481,7 +482,7 @@ bool ruleStat(){
             token = getCachedToken();
             if (token->type == BRACKET && token->data.bracket.name == '(') {
                 char* resultVariableName;
-                printf("calling analyzeExpression from ruleStat <STAT> -> while ( <EXP> ) { <ST_LIST> }\n");
+                debugPrintf("calling analyzeExpression from ruleStat <STAT> -> while ( <EXP> ) { <ST_LIST> }\n");
                 if (analyzeExpression(dummyInstructionLIst, resultVariableName)) {
                     token = getCachedToken();
                     if (token->type == BRACKET && token->data.bracket.name == ')') {
@@ -503,7 +504,7 @@ bool ruleStat(){
             token = getCachedToken();
             if (token->type == BRACKET && token->data.bracket.name == '(') {
                 char* resultVariableName;
-                printf("calling analyzeExpression from ruleStat <STAT> -> if ( <EXP> ) { <ST_LIST> } else { <ST_LIST> }\n");
+                debugPrintf("calling analyzeExpression from ruleStat <STAT> -> if ( <EXP> ) { <ST_LIST> } else { <ST_LIST> }\n");
                 if (analyzeExpression(dummyInstructionLIst, resultVariableName)) {
                     token = getCachedToken();
                     if (token->type == BRACKET && token->data.bracket.name == ')') {
@@ -556,7 +557,7 @@ bool ruleExpSemicolon() {
         ListInit(dummyInstructionLIst);
         char *resultVariableName;
 
-        printf("calling analyzeExpression from ruleExpSemicolon\n");
+        debugPrintf("calling analyzeExpression from ruleExpSemicolon\n");
         if (analyzeExpression(dummyInstructionLIst, resultVariableName)) {
             token = getCachedToken();
             if (token->type == SEMICOLON){
@@ -599,7 +600,7 @@ bool ruleParam(){
 
     //<PARAM> -> <EXP> <AFTER_FUNCTION_CALL_EXP>
     char* resultVariableName;
-    printf("calling analyzeExpression from ruleParam\n");
+    debugPrintf("calling analyzeExpression from ruleParam\n");
     if (analyzeExpression(dummyInstructionLIst, resultVariableName)) {
         if (ruleAfterFunctionCallExp()) {
             return true;
@@ -796,7 +797,7 @@ bool ruleStatBeginningId() {
 
         if(token->type == OPERATOR_ASSIGN) {
             char *name;
-            printf("calling analyzeExpression from ruleStatBeginningId\n");
+            debugPrintf("calling analyzeExpression from ruleStatBeginningId\n");
             int code = analyzeExpression(dummyInstructionLIst, resultVariableName);
             if(-1 == code) {
                 if(ruleId(&name)) {
