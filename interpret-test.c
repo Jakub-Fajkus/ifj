@@ -31,7 +31,7 @@ int callInterpret() {
     ListInsertLast(functionList, createInstruction(createInstrMath(Instruction_Addition, "a","#tmp1","#tmp2")));
 
     // Creating calling function
-    ListInsertLast(TestInstructionList, createInstruction(createInstrCallFunction(NULL, functionList)));
+//    ListInsertLast(TestInstructionList, createInstruction(createInstrCallFunction(NULL, functionList)));
 
     // Inserting last instruction
     ListInsertLast(TestInstructionList, createInstruction(createLastInstruction()));

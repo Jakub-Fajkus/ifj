@@ -17,6 +17,8 @@ struct SYMBOL_TABLE_NODE *globalSymbolTable;
 struct SYMBOL_TABLE_FUNCTION_STR *actualFunction;
 struct tDLListStruct *mainInstructionList;
 struct tDLListStruct *actualInstructionList;
+struct STACK_STR *returnToVariables;
+
 
 bool firstPass = true;
 
@@ -648,6 +650,8 @@ bool ruleStat(){
         } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "return")) {
 //            char* resultVariableName;
             if (ruleExpSemicolon()) {
+
+//                ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrReturnFunction(returnToVariableName)));
                 return true;
             }
         }
@@ -710,30 +714,27 @@ bool ruleFuncCall(char *calledFunctionName, char *assignReturnValueToVariable){
 
                 //you have a list of PARAM *
                 if(isFunctionFromIfj16(calledFunctionName)) {
-                    //todo: check return types of the funciton - neeed to add parameter to this function and to the createInstructionsToCallIfj16Function
+                    //todo: check return types of the funciton - need to add parameter to this function and to the createInstructionsToCallIfj16Function
                     createInstructionsToCallIfj16Function(calledFunctionName, actualInstructionList, parameters, assignReturnValueToVariable);
-//                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrCallFunction(functionToCall->instructions, assignReturnValueToVariable)));
                 } else {
                     //todo: generate instructions to push local variables
                     ListFirst(parameters);
                     ListFirst(functionToCall->parameters);
 
+                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrFillLocalFrame()));
+
+                    //create local variables for arguments
                     while(DLActive(parameters) ) {
                         FUNCTION_PARAMETER *param = functionToCall->parameters->Act->element.data.parameter;
                         ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createLocalVariable(param->name, param->type)));
+                        ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrCopyToUpcomingFrame(functionToCall->parameters->Act->element.data.parameter->name, param->name)));
 
                         //move to the next parameter
                         ListSuccessor(parameters);
                         ListSuccessor(functionToCall->parameters);
                     }
-                    /*todo:
-                     * Instruction_Create_Local_Frame
-                       X krat (Instruction_Push_Local_Variable + Instruction_Assign)
-                       Instruction_CallFunction
-                     */
 
-//                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(cr()));
-                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrCallFunction(functionToCall->instructions, assignReturnValueToVariable)));
+                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrCallFunction(functionToCall->instructions)));
                 }
             }
 
@@ -1058,6 +1059,8 @@ void makeFirstPass() {
     ListFirst(mainInstructionList);
     ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createFirstInstruction()));
 
+    returnToVariables = malloc(sizeof(struct STACK_STR));
+    stackInit(returnToVariables);
     bool result = ruleProg();
 
     //todo: create local stack and call function Main.run
