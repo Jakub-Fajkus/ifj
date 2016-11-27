@@ -25,6 +25,7 @@ void executeInstructionIf(INSTRUCTION *instr);
 
 int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames ){
     if (InstructionList == NULL) return 99;
+    int interpretRetVal;
     printf("-----------------------------------------------------\n");
     printf("\n----- Welcome to hell v1.0\n");
     printf("-----------------------------------------------------\n");
@@ -34,6 +35,11 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
     INSTRUCTION *Instr;
 
     tDLList *upcomingLocalFrame = NULL; // creating the pointer, yet not using it
+    tDLList *actualLocalFrame = NULL;
+    if (stackOfLocalFrames != NULL) {
+        actualLocalFrame = getActualLocalFrame(stackOfLocalFrames);    // maybe gonna be Null
+    }
+
 
     // DON'T EVER FORGET THIS
     ListFirst(InstructionList);
@@ -46,8 +52,8 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         if (Instr->type == Instruction_End_Interpret) {
             //TODO: return value, free all resources used by interpret (stack & globalframe)
 
-            //VARIABLE *printer = findFrameVariable(globalFrame, "vysledok2");
-            //printf("|%g|", printer->value.doubleValue);
+            VARIABLE *printer = findFrameVariable(globalFrame, "Main.dbl");
+            printf("|%g|", printer->value.doubleValue);
 
             printf("-----------------------------------------------------\n");
             printf("----- I am ending!\n");
@@ -88,13 +94,17 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         // THINGS TO KEEP: global frame, stack of local frames
         if (Instr->type == Instruction_CallFunction) {
             printf("CALLING FUNCTION!!! GET REKT\n");
-            //return 99;
             //TODO: Call Function, recursion inside
-            // many things to do
-            // but...
             pushFrameToStack(stackOfLocalFrames, upcomingLocalFrame);
             // HERE COMES THE FUCKING RECURSION
-            Interpret((tDLList*)Instr->address_dst, globalFrame, stackOfLocalFrames);
+
+            interpretRetVal = Interpret((tDLList*)Instr->address_dst, globalFrame, stackOfLocalFrames);
+            if ( interpretRetVal != 0 ) {
+                printf("Previous instance of interpret has failed.\n");
+                return interpretRetVal;
+            }
+            ListSuccessor(InstructionList);
+            continue; // Jump to next instruction
         }
 
         if (Instr->type == Instruction_ReturnFunction) {
@@ -105,8 +115,29 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
         // other special instructions: IF & WHILE
         if (Instr->type == Instruction_IF) {
-            printf("HANDLING IF_INSTRUCTION");
-            return 42;
+
+            VARIABLE *booleanValue;
+            if (actualLocalFrame != NULL)
+                booleanValue = findFrameVariable(actualLocalFrame, Instr->address_dst);
+            else
+                booleanValue = findFrameVariable(globalFrame, Instr->address_dst);
+
+            if (booleanValue->value.intValue == 1) {
+                interpretRetVal = Interpret((tDLList*)Instr->address_src1, globalFrame, stackOfLocalFrames);
+                if ( interpretRetVal != 0 ) {
+                    printf("Previous instance of interpret has failed.\n");
+                    return interpretRetVal;
+                }
+            }
+            else if (booleanValue->value.intValue == 0) {
+                interpretRetVal = Interpret((tDLList*)Instr->address_src2, globalFrame, stackOfLocalFrames);
+                if ( interpretRetVal != 0 ) {
+                    printf("Previous instance of interpret has failed.\n");
+                    return interpretRetVal;
+                }
+            }
+            ListSuccessor(InstructionList);
+            continue; // Jump to next instruction
         }
 
         if (Instr->type == Instruction_WHILE) {
@@ -121,8 +152,6 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         VARIABLE *src1 = NULL;
         VARIABLE *src2 = NULL;
 
-        // Getting pointer to the top of local frame stack
-        tDLList *actualLocalFrame = getActualLocalFrame(stackOfLocalFrames);
         if (actualLocalFrame != NULL) {
             //existing local frame
             dst = findFrameVariable(actualLocalFrame, Instr->address_dst);

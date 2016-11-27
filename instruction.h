@@ -190,6 +190,14 @@ INSTRUCTION *createInstrWhile(char *boolVar, tDLList *exprInstrList, tDLList *cy
  */
 INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList);
 
+
+/**
+ * INSTRUCTION CONSTRUCTOR: Let interpret know you are going to
+ * fill upcoming local frame & call user function soon! (even main.run)
+ * @return
+ */
+INSTRUCTION *createInstrFillLocalFrame();
+
 /**
  * INSTRUCTION CONSTRUCTOR: Create GlobalFrame and LocalStack
  * Due to dumb implementation of the interpret,
@@ -199,10 +207,17 @@ INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList);
  * @return
  */
 INSTRUCTION *createFirstInstruction();
+
+/**
+ * INSTRUCTION CONSTRUCTOR: End Interpret.
+ * Signal that the last instruction tape has been finished.
+ * Performs freeing dynamically allocated space.
+ * @return
+ */
 INSTRUCTION *createLastInstruction();
 
 /**
- * CONSTRUCTOR FOR SINGLE INSTRUCTION
+ * CONSTRUCTOR FOR SINGLE INSTRUCTION AS A LIST ELEMENT
  * RETURN VALUE CAN BE USED FOR INSERTION TO THE
  * @param instr
  * @return

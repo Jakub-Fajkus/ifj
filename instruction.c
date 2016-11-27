@@ -216,8 +216,8 @@ INSTRUCTION *createInstrIf(char *boolVar, tDLList *trueDstList, tDLList *falseDs
 
     instruction->type = Instruction_IF;
     instruction->address_dst = boolVar;
-    *(tDLList*)instruction->address_src1 = *trueDstList;
-    *(tDLList*)instruction->address_src2 = *falseDstList;
+    instruction->address_src1 = trueDstList;
+    instruction->address_src2 = falseDstList;
 
     return instruction;
 }
@@ -243,6 +243,18 @@ INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList) {
     instruction->address_dst = NULL;
     instruction->address_src1 = NULL;
     instruction->address_src2 = NULL;
+
+    return instruction;
+}
+
+
+INSTRUCTION *createInstrFillLocalFrame() {
+    INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
+
+    instruction->type = Instruction_Create_Local_Frame;
+    instruction->address_dst = NULL;
+    instruction->address_src1 = NULL;
+    instruction->address_src2 =  NULL;
 
     return instruction;
 }

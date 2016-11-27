@@ -16,30 +16,23 @@ int callInterpret() {
     // Inserting instruction "Create Global Frame & Local Stack of Frames"
     InsertFirst(TestInstructionList, createInstruction(createFirstInstruction()));
 
-    insertValue.intValue = 42;
-    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("x", TYPE_INT, insertValue)));
+    insertValue.intValue = 4;
+    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("Main.x", TYPE_INT, insertValue)));
+    insertValue.intValue = 0;
+    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("Main.bool", TYPE_INT, insertValue)));
 
-    insertValue.doubleValue = 0.01;
-    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("y", TYPE_DOUBLE, insertValue)));
+    insertValue.doubleValue = 10.5;
+    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("Main.dbl", TYPE_DOUBLE, insertValue)));
 
-    ListInsertLast(TestInstructionList, createInstruction(createGlobalVariable("vysledok", TYPE_INT)));
+    tDLList *TrueIfList = malloc(sizeof(tDLList));
+    ListInit(TrueIfList);
+    ListInsertLast(TrueIfList, createInstruction(createInstrMath(Instruction_Multiply, "Main.dbl", "Main.dbl", "Main.x")));
 
-    ListInsertLast(TestInstructionList, createInstruction(createInstrMath(Instruction_Divide, "vysledok", "x", "y")));
+    tDLList *FalseIfList = malloc(sizeof(tDLList));
+    ListInit(FalseIfList);
+    ListInsertLast(FalseIfList, createInstruction(createInstrMath(Instruction_Subtraction, "Main.dbl", "Main.dbl", "Main.x")));
 
-    ListInsertLast(TestInstructionList, createInstruction(createInstrMath(Instruction_Divide, "vysledok", "vysledok", "x")));
-    ListInsertLast(TestInstructionList, createInstruction(createInstrMath(Instruction_Addition, "vysledok", "vysledok", "y")));
-
-    ListInsertLast(TestInstructionList, createInstruction(createGlobalVariable("vysledok2", TYPE_DOUBLE)));
-
-    insertValue.intValue = 42;
-    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("mulx", TYPE_INT, insertValue)));
-
-    ListInsertLast(TestInstructionList, createInstruction(createInstrMath(Instruction_Multiply, "vysledok2", "vysledok", "mulx")));
-
-    insertValue.doubleValue = 4000.42;
-    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("subx", TYPE_DOUBLE, insertValue)));
-
-    ListInsertLast(TestInstructionList, createInstruction(createInstrMath(Instruction_Subtraction, "vysledok2", "vysledok2", "subx")));
+    ListInsertLast(TestInstructionList, createInstruction(createInstrIf("Main.bool", TrueIfList, FalseIfList)));
 
 
     // Inserting last instruction
