@@ -115,6 +115,8 @@ bool canConvertTypes(DATA_TYPE destination, DATA_TYPE source) {
     if (destination == TYPE_DOUBLE && source == TYPE_INT) {
         return true;
     }
+
+    return false;
 }
 
 bool semantical_checkTypes(DATA_TYPE destination, DATA_TYPE source) {
@@ -197,13 +199,13 @@ void createInstructionsToCallIfj16Function(char *functionName, tDLList *instruct
         tDLList *args = malloc(sizeof(tDLList));
         ListInit(args);
 
-        ListInsertLast(args, createListElementWithFunctionParamameter(givenParameters->Act->element.data.parameter->name, TYPE_VOID));
+        ListInsertLast(args, createListElementWithFunctionParamameter(returnValueToVariable, TYPE_STRING));
         ListSuccessor(givenParameters);
-        ListInsertLast(args, createListElementWithFunctionParamameter(givenParameters->Act->element.data.parameter->name, TYPE_VOID));
+        ListInsertLast(args, createListElementWithFunctionParamameter(givenParameters->Act->element.data.parameter->name, givenParameters->Act->element.data.parameter->type));
         ListSuccessor(givenParameters);
-        ListInsertLast(args, createListElementWithFunctionParamameter(givenParameters->Act->element.data.parameter->name, TYPE_VOID));
+        ListInsertLast(args, createListElementWithFunctionParamameter(givenParameters->Act->element.data.parameter->name, givenParameters->Act->element.data.parameter->type));
         ListSuccessor(givenParameters);
-        ListInsertLast(args, createListElementWithFunctionParamameter(givenParameters->Act->element.data.parameter->name, TYPE_VOID));
+        ListInsertLast(args, createListElementWithFunctionParamameter(givenParameters->Act->element.data.parameter->name, givenParameters->Act->element.data.parameter->type));
 
         instruction->address_dst = args;
         ListInsertLast(instructions, wrapInstructionIntoListElement(instruction));
@@ -224,7 +226,7 @@ void createInstructionsToCallIfj16Function(char *functionName, tDLList *instruct
 
         ListInsertLast(instructions, wrapInstructionIntoListElement(instruction));
     }else if(stringEquals("ifj16.sort", functionName)) {
-        instruction->type = Instruction_Function_Compare;
+        instruction->type = Instruction_Function_Sort;
         instruction->address_dst = returnValueToVariable;
         instruction->address_src1 = givenParameters->First->element.data.parameter->name;
 

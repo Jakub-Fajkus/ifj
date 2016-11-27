@@ -15,6 +15,7 @@ bool semantical_checkFunctionCall(tDLList *declaredParameters, tDLList *usedPara
 void createInstructionsToCallIfj16Function(char *functionName, tDLList *instructions, tDLList *givenParameters, char *returnValueToVariable);
 bool isFunctionFromIfj16(char *name);
 void initializeVariable(char *name);
+bool canConvertTypes(DATA_TYPE destination, DATA_TYPE source);
 /**
  *
  * @param functionName

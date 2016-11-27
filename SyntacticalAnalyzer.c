@@ -16,6 +16,7 @@ tDLList *globalTokens;
 struct SYMBOL_TABLE_NODE *globalSymbolTable;
 struct SYMBOL_TABLE_FUNCTION_STR *actualFunction;
 struct tDLListStruct *mainInstructionList;
+struct tDLListStruct *actualInstructionList;
 
 bool firstPass = true;
 
@@ -261,11 +262,13 @@ bool ruleDefinition(char *className, DATA_TYPE type, char *functionOrPropertyNam
 
         if(firstPass) {
             function = createAndInsertFunction(&globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), type, 0, NULL, NULL);
+
         } else {
             function = semantic_getFunction(stringConcat(classNameWithDot, functionOrPropertyName));
         }
 
         actualFunction = function;
+        actualInstructionList = function->instructions;
         if(ruleFuncDef()) {
             *isFunction = true;
             return true;
@@ -305,10 +308,15 @@ bool rulePropDef(bool *variableInitialized, DATA_TYPE variableType, char *variab
                 *variableInitialized = true;
                 if(firstPass) {
                     createAndInsertVariable(&globalSymbolTable, fullyQualifiedVariableName, variableType, true);
+                    //check type of the result variable with variable declaration
+                    if(canConvertTypes(variableType, resultVariableType)) {
+                        debugPrintf("can not convert types");
+                        exit(4);
+                    }
 
                     ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createInstrAssign(fullyQualifiedVariableName, resultVariableName)));
                 }
-                //todo: check type of the result variable with variable declaration
+
                 return true;
             } else {
                 //the rule application was unsuccessful, so return the token list to the state in which it was before this function call
@@ -420,7 +428,7 @@ bool ruleStListDecl(){
     return false;
 }
 
-bool ruleStList(tDLList *listOfInstuctions){
+bool ruleStList(){
 
     //insert actual instruction into listOfInstructions?
     //fail there cant..
@@ -429,7 +437,7 @@ bool ruleStList(tDLList *listOfInstuctions){
 
     //<ST_LIST> -> <STAT> <ST_LIST>
     if (ruleStat()) {
-        if (ruleStList(listOfInstuctions)) {
+        if (ruleStList()) {
             return true;
         }
 
@@ -437,7 +445,7 @@ bool ruleStList(tDLList *listOfInstuctions){
         TOKEN *token = getCachedToken();
         //<ST_LIST>-> { <ST_LIST> }
         if (token->type == BRACKET && token->data.bracket.name == '{') {
-            if (ruleStList(listOfInstuctions)) {
+            if (ruleStList()) {
                 if (token->type == BRACKET && token->data.bracket.name == '}') {
                     return true;
                 }
@@ -470,7 +478,7 @@ bool ruleDecl(DATA_TYPE declaredType, char *variableName){
             createAndInsertVariable(&actualFunction->localSymbolTable, variableName, declaredType, false);
             //no need to check types
         } else {
-            ListInsertLast(actualFunction->instructions, wrapInstructionIntoListElement(createLocalVariable(variableName, declaredType)));
+            ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createLocalVariable(variableName, declaredType)));
         }
 
         return true;
@@ -482,7 +490,7 @@ bool ruleDecl(DATA_TYPE declaredType, char *variableName){
         DATA_TYPE resultVariableType;
         debugPrintf("calling analyzeExpression from ruleDecl\n");
         //no function call allowed! thank god...
-        if (analyzeExpression(actualFunction->instructions, &resultVariableName, &resultVariableType)) {
+        if (analyzeExpression(actualInstructionList, &resultVariableName, &resultVariableType)) {
             //the resultVariableName contains the variable name which contains the result of the expression
             token = getCachedToken();
 
@@ -493,7 +501,7 @@ bool ruleDecl(DATA_TYPE declaredType, char *variableName){
                     createAndInsertVariable(&actualFunction->localSymbolTable, variableName, declaredType, true);
                 } else {
                     //create instruction to assign the temporal variable created by expAnalyzer to the local variable which was defined right now
-                    ListInsertLast(actualFunction->instructions, wrapInstructionIntoListElement(createInstrAssign(variableName, resultVariableName)));
+                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrAssign(variableName, resultVariableName)));
                     //todo: check type of the result variable with variable declaration resultVariableType == declaredType or is convertible to type
                 }
 
@@ -520,10 +528,10 @@ bool ruleStat(){
     tDLElemPtr activeElementRuleApplication = globalTokens->Act;
     char *functionOrVariableName = NULL;
 
-    tDLList *listOfInsTrue = malloc(sizeof(tDLList));
-    tDLList *listOfInsFalse = malloc(sizeof(tDLList));
-    ListInit(listOfInsTrue);
-    ListInit(listOfInsFalse);
+//    tDLList *listOfInsTrue = malloc(sizeof(tDLList));
+//    tDLList *listOfInsFalse = malloc(sizeof(tDLList));
+//    ListInit(listOfInsTrue);
+//    ListInit(listOfInsFalse);
 
 
     //<STAT> -> <ID><STAT_BEGINNING_ID>;
@@ -537,80 +545,101 @@ bool ruleStat(){
 
         //<STAT> -> while ( <EXP> ) { <ST_LIST> }
         if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "while")) {
+            tDLList *actualInstructionListBackup = actualInstructionList;
+            tDLList *whileBodyList = malloc(sizeof(tDLList));
+            ListInit(whileBodyList);
+            tDLList *whileConditionList = malloc(sizeof(tDLList));
+            ListInit(whileConditionList);
+
             token = getCachedToken();
             if (token->type == BRACKET && token->data.bracket.name == '(') {
                 char* resultVariableName;
                 DATA_TYPE resultVariableType;
+                actualInstructionList = whileConditionList;
                 debugPrintf("calling analyzeExpression from ruleStat <STAT> -> while ( <EXP> ) { <ST_LIST> }\n");
-                if (analyzeExpression(actualFunction->instructions, &resultVariableName, &resultVariableType)) {
+                if (analyzeExpression(actualInstructionList, &resultVariableName, &resultVariableType)) {
                     token = getCachedToken();
-
+                    actualInstructionList = actualInstructionListBackup;
                     if (token->type == BRACKET && token->data.bracket.name == ')') {
                         token = getCachedToken();
                         if (token->type == BRACKET && token->data.bracket.name == '{'){
-
-                            if (ruleStList(listOfInsTrue)) {
+                            actualInstructionList = whileBodyList;
+                            if (ruleStList()) {
                                 token = getCachedToken();
                                 if (token->type == BRACKET && token->data.bracket.name == '}') {
 
-                                   /* if(!firstPass){
-                                        ListInsertLast(actualFunction->instructions, wrapInstructionIntoListElement(createInstrWhile(resultVariableName,)));
-                                    }*/
+                                    if(!firstPass){
+                                        ListInsertLast(actualInstructionListBackup, wrapInstructionIntoListElement(createInstrWhile(resultVariableName, whileConditionList, whileBodyList)));
+                                    }
 
+                                    actualInstructionList = actualInstructionListBackup;
                                     return true;
                                 }
                             }
+                            actualInstructionList = actualInstructionListBackup;
                         }
                     }
                 }
+                actualInstructionList = actualInstructionListBackup;
             }
 
         //<STAT> -> if ( <EXP> ) { <ST_LIST> } else { <ST_LIST> }
         } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "if")) {
+            tDLList *actualInstructionListBackup = actualInstructionList;
+            tDLList *trueList = malloc(sizeof(tDLList));
+            ListInit(trueList);
+            tDLList *falseList = malloc(sizeof(tDLList));
+            ListInit(falseList);
+//            INSTRUCTION *whileInstruction = createInstrWhile()
+
             token = getCachedToken();
             if (token->type == BRACKET && token->data.bracket.name == '(') {
                 char* resultVariableName;
                 DATA_TYPE resultVariableType;
                 debugPrintf("calling analyzeExpression from ruleStat <STAT> -> if ( <EXP> ) { <ST_LIST> } else { <ST_LIST> }\n");
-                if (analyzeExpression(actualFunction->instructions, &resultVariableName, &resultVariableType)) {
+                if (analyzeExpression(actualInstructionList, &resultVariableName, &resultVariableType)) {
 
                     //result of expression, temp which would be used in createInsIf
-                   /* if(firstPass){
-                        ListInsertLast(actualFunction->instructions, wrapInstructionIntoListElement(createLocalVariable(resultVariableName, resultVariableType)));
-                    }*/
+                    if(!firstPass){
+                        ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createLocalVariable(resultVariableName, resultVariableType)));
+                        //todo: test resultVariableType with bool
+                    }
 
                     token = getCachedToken();
                     if (token->type == BRACKET && token->data.bracket.name == ')') {
                         token = getCachedToken();
 
                         if (token->type == BRACKET && token->data.bracket.name == '{'){
-
+                            actualInstructionList = trueList;
                             //list of instructions for true
-                            if (ruleStList(listOfInsTrue)) {
-
+                            if (ruleStList()) {
                                 token = getCachedToken();
                                 if (token->type == BRACKET && token->data.bracket.name == '}') {
+                                    actualInstructionList = actualInstructionListBackup;
+
                                     token = getCachedToken();
                                     if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "else")) {
                                         token = getCachedToken();
                                         if (token->type == BRACKET && token->data.bracket.name == '{'){
-
+                                            actualInstructionList = falseList;
                                             //list of instructions for false
-                                            if (ruleStList(listOfInsFalse)) {
+                                            if (ruleStList()) {
                                                 token = getCachedToken();
                                                 if (token->type == BRACKET && token->data.bracket.name == '}') {
-
                                                     if(!firstPass){
-                                                        ListInsertLast(actualFunction->instructions, wrapInstructionIntoListElement(createInstrIf(resultVariableName, listOfInsTrue, listOfInsFalse)));
+                                                        ListInsertLast(actualInstructionListBackup, wrapInstructionIntoListElement(createInstrIf(resultVariableName, trueList, falseList)));
                                                     }
 
+                                                    actualInstructionList = actualInstructionListBackup;
                                                     return true;
                                                 }
                                             }
+                                            actualInstructionList = actualInstructionListBackup;
                                         }
                                     }
                                 }
                             }
+                            actualInstructionList = actualInstructionListBackup;
                         }
                     }
                 }
@@ -641,7 +670,7 @@ bool ruleExpSemicolon() {
         DATA_TYPE resultVariableType;
 
         printf("calling analyzeExpression from ruleExpSemicolon\n");
-        if (analyzeExpression(actualFunction->instructions, &resultVariableName, &resultVariableType)) {
+        if (analyzeExpression(actualInstructionList, &resultVariableName, &resultVariableType)) {
             token = getCachedToken();
             if (token->type == SEMICOLON){
                 return true;
@@ -668,6 +697,8 @@ bool ruleFuncCall(char *calledFunctionName, char *assignReturnValueToVariable){
             //set activity to the first parameter
             functionToCall = semantic_getFunction(calledFunctionName);
             ListFirst(functionToCall->parameters);
+        } else {
+            functionToCall = getFunctionFromTable(&globalSymbolTable, calledFunctionName);
         }
 
         tDLList *parameters = malloc(sizeof(tDLList));
@@ -679,8 +710,9 @@ bool ruleFuncCall(char *calledFunctionName, char *assignReturnValueToVariable){
 
                 //you have a list of PARAM *
                 if(isFunctionFromIfj16(calledFunctionName)) {
-                    //todo: generate instruction to call conrete function
-                    createInstructionsToCallIfj16Function(calledFunctionName, actualFunction->instructions, parameters, assignReturnValueToVariable);
+                    //todo: check return types of the funciton - neeed to add parameter to this function and to the createInstructionsToCallIfj16Function
+                    createInstructionsToCallIfj16Function(calledFunctionName, actualInstructionList, parameters, assignReturnValueToVariable);
+//                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrCallFunction(functionToCall->instructions, assignReturnValueToVariable)));
                 } else {
                     //todo: generate instructions to push local variables
                     ListFirst(parameters);
@@ -688,14 +720,20 @@ bool ruleFuncCall(char *calledFunctionName, char *assignReturnValueToVariable){
 
                     while(DLActive(parameters) ) {
                         FUNCTION_PARAMETER *param = functionToCall->parameters->Act->element.data.parameter;
-                        ListInsertLast(actualFunction->instructions, wrapInstructionIntoListElement(createLocalVariable(param->name, param->type)));
+                        ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createLocalVariable(param->name, param->type)));
 
                         //move to the next parameter
                         ListSuccessor(parameters);
                         ListSuccessor(functionToCall->parameters);
                     }
+                    /*todo:
+                     * Instruction_Create_Local_Frame
+                       X krat (Instruction_Push_Local_Variable + Instruction_Assign)
+                       Instruction_CallFunction
+                     */
 
-                    ListInsertLast(actualFunction->instructions, wrapInstructionIntoListElement(createInstrCallFunction(functionToCall->instructions, assignReturnValueToVariable)));
+//                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(cr()));
+                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrCallFunction(functionToCall->instructions, assignReturnValueToVariable)));
                 }
             }
 
@@ -731,7 +769,7 @@ bool ruleParam(struct SYMBOL_TABLE_FUNCTION_STR *functionToCall, tDLList *parame
     char* resultVariableName = NULL;
     DATA_TYPE resultVariableType;
     printf("calling analyzeExpression from ruleParam\n");
-    if (analyzeExpression(actualFunction->instructions, &resultVariableName, &resultVariableType)) {
+    if (analyzeExpression(actualInstructionList, &resultVariableName, &resultVariableType)) {
         if (ruleAfterFunctionCallExp(functionToCall, parameters)) {
             if(!firstPass) {
                 ListInsertLast(parameters, createListElementWithFunctionParamameter(resultVariableName, resultVariableType));
@@ -797,7 +835,10 @@ bool ruleDefParam(){
     if (ruleTypeInt(&type) || ruleTypeDouble(&type) || ruleTypeString(&type)) {
         if (ruleId(&name)) {
             //insert function parameter
-            DLPostInsert(actualFunction->parameters, *createFunctionParamListElement(type, name));
+            if (firstPass) {
+                ListInsertLast(actualFunction->parameters, *createFunctionParamListElement(type, name));
+                createAndInsertVariable(&actualFunction->localSymbolTable, name, type, true);
+            }
             if (ruleDefParamBeginTi()) {
                 return true;
             }
@@ -869,6 +910,7 @@ bool ruleDefinitionStart(char *className) {
                 function = semantic_getFunction(stringConcat(classNameWithDot, functionOrPropertyName));
             }
             actualFunction = function;
+            actualInstructionList = function->instructions;
             if (ruleFuncDef()) {
                 return true;
             }
@@ -943,8 +985,8 @@ bool ruleStatBeginningId(char *functionOrPropertyName) {
         if(token->type == OPERATOR_ASSIGN) {
             char *functionName = NULL;
             DATA_TYPE resultVariableType;
-            printf("calling analyzeExpression from ruleStatBeginningId\n");
-            int code = analyzeExpression(actualFunction->instructions, &resultVariableName, &resultVariableType);
+            debugPrintf("calling analyzeExpression from ruleStatBeginningId\n");
+            int code = analyzeExpression(actualInstructionList, &resultVariableName, &resultVariableType);
             //function call
             if (-1 == code) {
                 if(ruleId(&functionName)) {
@@ -952,7 +994,7 @@ bool ruleStatBeginningId(char *functionOrPropertyName) {
                         if(!firstPass) {
                             initializeVariable(functionOrPropertyName);
                             //add functionOrPropertyName
-                            ListInsertLast(actualFunction->instructions, wrapInstructionIntoListElement(createInstrAssign(functionOrPropertyName, resultVariableName)));
+//                            ListInsertLast(actualFunction->instructions, wrapInstructionIntoListElement(createInstrAssign(functionOrPropertyName, resultVariableName)));
                         }
 
                         return true;
@@ -965,7 +1007,7 @@ bool ruleStatBeginningId(char *functionOrPropertyName) {
                     semantic_getVariable(functionOrPropertyName);
                     //generate instructions to assign resultVariableName to functionOrPropertyName
                     initializeVariable(functionOrPropertyName);
-                    ListInsertLast(actualFunction->instructions, wrapInstructionIntoListElement(createInstrAssign(functionOrPropertyName, resultVariableName)));
+                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrAssign(functionOrPropertyName, resultVariableName)));
                 }
                 return true;
             }

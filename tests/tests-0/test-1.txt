@@ -3,7 +3,6 @@ class Main
     static void run()
     {
         int a;
-        double b = 5e3.4;
         ifj16.print("Zadejte cislo pro vypocet faktorialu: ");
         a = ifj16.readInt();
         int vysl;
