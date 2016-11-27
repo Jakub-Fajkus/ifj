@@ -52,7 +52,7 @@ void BSTInsert (SYMBOL_TABLE_NODEPtr* RootPtr, char* K, TREE_NODE_DATA Content)	
         printf("redeclaration of %s", K);
         exit(3);
 
-    } else if (K < (*RootPtr)->key) {
+    } else if (strcmp(K, (*RootPtr)->key) == -1) {
         //the has lower value than the root
         BSTInsert(&(*RootPtr)->lPtr, K, Content);
     } else {

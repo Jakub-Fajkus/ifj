@@ -991,6 +991,7 @@ bool ruleStatBeginningId(char *functionOrPropertyName) {
             //function call
             if (-1 == code) {
                 if(ruleId(&functionName)) {
+
                     if (ruleFuncCall(functionName, functionOrPropertyName)) {
                         if(!firstPass) {
                             initializeVariable(functionOrPropertyName);
