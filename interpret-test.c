@@ -5,7 +5,7 @@
 #include "Interpret.h"
 #include "BasicStructures.h"
 
-void callInterpret() {
+int callInterpret() {
 
     printf("----- -----   Interpret test  ----- ----- ----- ----- -----\n");
 
@@ -16,44 +16,37 @@ void callInterpret() {
     // Inserting instruction "Create Global Frame & Local Stack of Frames"
     InsertFirst(TestInstructionList, createInstruction(createFirstInstruction()));
 
-    ListInsertLast(TestInstructionList, createInstruction(createGlobalVariable("Main.str", TYPE_STRING)));
-    insertValue.doubleValue = 4.2;
-    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("Main.dbl", TYPE_DOUBLE, insertValue)));
-    insertValue.intValue = 10;
-    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("Main.whl", TYPE_INT, insertValue)));
-    ListInsertLast(TestInstructionList, createInstruction(createGlobalVariable("Main.abc", TYPE_INT)));
-    insertValue.intValue = 2017;
-    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("#tmp1", TYPE_INT, insertValue)));
-    insertValue.stringValue = "haha ";
-    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("#tmp2", TYPE_STRING, insertValue)));
-    insertValue.stringValue = ".";
-    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("#tmp3", TYPE_STRING, insertValue)));
+    insertValue.intValue = 42;
+    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("x", TYPE_INT, insertValue)));
 
-    ListInsertLast(TestInstructionList, createInstruction(createInstrAssign("Main.abc","#tmp1")));
-    ListInsertLast(TestInstructionList, createInstruction(createInstrMath(Instruction_Addition, "Main.dbl", "Main.dbl", "Main.whl")));
-    ListInsertLast(TestInstructionList, createInstruction(createInstrMath(Instruction_Addition, "Main.str", "#tmp2", "Main.dbl")));
-    ListInsertLast(TestInstructionList, createInstruction(createInstrMath(Instruction_Addition, "Main.str", "Main.str", "#tmp3")));
-    ListInsertLast(TestInstructionList, createInstruction(createInstrMath(Instruction_Addition, "Main.str", "Main.str", "Main.abc")));
+    insertValue.doubleValue = 0.01;
+    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("y", TYPE_DOUBLE, insertValue)));
+
+    ListInsertLast(TestInstructionList, createInstruction(createGlobalVariable("vysledok", TYPE_INT)));
+
+    ListInsertLast(TestInstructionList, createInstruction(createInstrMath(Instruction_Divide, "vysledok", "x", "y")));
+
+    ListInsertLast(TestInstructionList, createInstruction(createInstrMath(Instruction_Divide, "vysledok", "vysledok", "x")));
+    ListInsertLast(TestInstructionList, createInstruction(createInstrMath(Instruction_Addition, "vysledok", "vysledok", "y")));
+
+    ListInsertLast(TestInstructionList, createInstruction(createGlobalVariable("vysledok2", TYPE_DOUBLE)));
+
+    insertValue.intValue = 42;
+    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("mulx", TYPE_INT, insertValue)));
+
+    ListInsertLast(TestInstructionList, createInstruction(createInstrMath(Instruction_Multiply, "vysledok2", "vysledok", "mulx")));
+
+    insertValue.doubleValue = 4000.42;
+    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("subx", TYPE_DOUBLE, insertValue)));
+
+    ListInsertLast(TestInstructionList, createInstruction(createInstrMath(Instruction_Subtraction, "vysledok2", "vysledok2", "subx")));
+
+
+    // Inserting last instruction
+    ListInsertLast(TestInstructionList, createInstruction(createLastInstruction()));
 
 
 
-
-    // Inserting instruction "Create Global Variable Without Value"
-    //ListInsertLast(TestInstructionList, createInstruction(createGlobalVariable("Main.x", TYPE_DOUBLE)));
-
-    // Inserting instruction "Create Global Variable with value"
-    //insertValue.doubleValue = 4.2;
-    //ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("Main.a", TYPE_DOUBLE, insertValue)));
-
-    //insertValue.doubleValue = 0.5;
-    //ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("Main.dest", TYPE_DOUBLE, insertValue)));
-
-    //insertValue.intValue = 99;
-    //ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("Main.cele", TYPE_INT, insertValue)));
-
-    // Inserting instruction Assign
-    //ListInsertLast(TestInstructionList, createInstruction((createInstrAssign("Main.dest", "Main.cele"))));
-    //ListInsertLast(TestInstructionList, createInstrMath(Instruction_Addition, ))
 
 
     printf("\n----- Print All Instructions.\n");
@@ -61,8 +54,7 @@ void callInterpret() {
 
     //------ HERE COMES THE HELL
     printf("----- Drzte si kabaty, volame interpret!!!\n");
-    Interpret(TestInstructionList, NULL, NULL);
-
+    return Interpret(TestInstructionList, NULL, NULL);
 }
 
 

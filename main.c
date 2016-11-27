@@ -17,6 +17,7 @@ void simulateSymbolTable();
 
 int main(int argc, char *argv[])
 {
+    int x = 0;
     // uncomment what you need
 
 
@@ -30,8 +31,8 @@ int main(int argc, char *argv[])
     runSyntacticalAnalysis(argv[1]);
 
 
-//    callInterpret();    // #justInterpretThings
+//    x = callInterpret();    // #justInterpretThings
 
     printf("\n-----KONEC-----");
-    return 0;
+    return x;
 }

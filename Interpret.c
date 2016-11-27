@@ -45,6 +45,12 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
         if (Instr->type == Instruction_End_Interpret) {
             //TODO: return value, free all resources used by interpret (stack & globalframe)
+
+            //VARIABLE *printer = findFrameVariable(globalFrame, "vysledok2");
+            //printf("|%g|", printer->value.doubleValue);
+
+            printf("-----------------------------------------------------\n");
+            printf("----- I am ending!\n");
             return 0;
         }
 
@@ -198,9 +204,6 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         if (InstructionList->Last->element.data.instr == Instr) break;
         ListSuccessor(InstructionList);
     } // end of the big cycle
-
-    printf("-----------------------------------------------------\n");
-    printf("----- I am ending!\n");
 
     return 0; // I had no idea what have I done
 }

@@ -21,15 +21,6 @@
  */
 int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames );
 
-/// TO BE REPLACED WITH ANOTHER SOLUTION
-/// \param errNumber - exit number
-void exitInterpret(int errNumber);
-
-/// TO BE REPLACED WITH ANOTHER SOLUTION
-/// \param ptr - any type of pointer if it is NULL
-void checkMalloc(void *ptr);
-
-void callInterpret();
 
 /* ************************************************ EXECUTE ************************************************/
 
@@ -79,5 +70,10 @@ void executeInstructionExpressionEvaluation(INSTRUCTION *instr);
 
 void executeInstructionIf(INSTRUCTION *instr);
 
+
+//----------------------------------REST
+int callInterpret();
+void exitInterpret(int errNumber);
+void checkMalloc(void *ptr);
 
 #endif //IFJ_INTERPRET_H
