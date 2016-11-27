@@ -501,10 +501,10 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                     char *tempName = (char *) malloc(sizeof(char) * 30);
                     strcpy(tempName, varName);
 
-                    INSTRUCTION *instruction1 = createLocalVariable(tempName, outputType);
+                    INSTRUCTION *instruction1 = createActualLocalVariable(tempName, outputType);
                     ListInsertLast(threeAddressCode,createInstruction(instruction1));
 
-                    INSTRUCTION *instruction2 = createLocalVariable(tempName, outputType);
+                    INSTRUCTION *instruction2 = createActualLocalVariable(tempName, outputType);
                     createInstrMath(Instruction_Multiply, tempName,
                                     stackElement1.data.notTerminalData.name,
                                     stackElement3.data.notTerminalData.name);
@@ -583,7 +583,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                         VARIABLE_VALUE *varVal = (VARIABLE_VALUE*)malloc(sizeof(VARIABLE_VALUE));
                         DATA_TYPE *varType = (DATA_TYPE*)malloc(sizeof(DATA_TYPE));
                         tokenTypeToVarTypeAndValue(stackElement1.data.terminalData.token, varType,varVal);
-                        INSTRUCTION *instruction1 = pushLocalVariable(tempName,*varType,*varVal);
+                        INSTRUCTION *instruction1 = pushActualLocalVariable(tempName,*varType,*varVal);
                         ListInsertLast(threeAddressCode,createInstruction(instruction1));
 
                         stackElement2.data.notTerminalData.type = *varType;
@@ -616,7 +616,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                     concatenateString();
                     char *tempName = (char *) malloc(sizeof(char) * 30);
                     strcpy(tempName, varName);
-                    INSTRUCTION *instruction1 = createLocalVariable(tempName, TYPE_INT);
+                    INSTRUCTION *instruction1 = createActualLocalVariable(tempName, TYPE_INT);
                     ListInsertLast(threeAddressCode,createInstruction(instruction1));
                     INSTRUCTION *instruction2 =  createInstrExprEval(actionToLogicInstruction(actionType), tempName,
                                                           stackElement1.data.notTerminalData.name,
