@@ -67,7 +67,6 @@ TOKEN *getToken() {
     if(token->type == LEX_ERROR){
         Error1();
     }
-
     return token;
 }
 
@@ -218,7 +217,6 @@ void string1(TOKEN *token) {
                     break;
                 }
                 c = str[i];
-                i++;
 
                 if (!noEscape) {
                     noEscape = true;
@@ -226,17 +224,22 @@ void string1(TOKEN *token) {
                         newStr[j] = (char) c;
                     } else if (c == 'n'){
                         newStr[j] = '\n';
+                        j++;
                     } else if (c == 't'){
                         newStr[j] = '\t';
+                        j++;
                     } else if (c == '"'){
                         newStr[j] = '"';
+                        j++;
                     } else {
                         int c2 = str[i+1], c3 = str[i+2];
                         if(c >= '0' && c<='3' && c2>= '0' && c2 <= '7' && c3 >= '0' && c3 <= '7' ){
-                            // TODO
-                            newStr[j] = (char)c;//provizorni
+                            newStr[j] = (char)((c-'0')*8*8 + (c2-'0')*8 + (c3-'0'));
+                            i+=2;
+                            j++;
                         } else{
-                            exit(1); //todo asi
+                            newStr[j] = (char) c;
+                            j++;
                         }
                     }
                 } else {
@@ -247,8 +250,9 @@ void string1(TOKEN *token) {
                         j++;
                     }
                 }
-
+                i++;
             }
+            printf("\n----%s-----\n", newStr);
             token->type = LITERAL_STRING;
             token->data.literalString.name = newStr;
             break;
