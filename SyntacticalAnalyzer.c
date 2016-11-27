@@ -400,7 +400,7 @@ bool ruleStListDecl(){
         TOKEN *token = getCachedToken();
         //<ST_LIST_DECL> -> { <ST_LIST> }
         if (token->type == BRACKET && token->data.bracket.name == '{') {
-            if (ruleStList()) {
+            if (ruleStList(NULL)) {
                 if (token->type == BRACKET && token->data.bracket.name == '}') {
                     return true;
                 }
@@ -420,10 +420,16 @@ bool ruleStListDecl(){
     return false;
 }
 
-bool ruleStList(){
+bool ruleStList(tDLList *listOfInstuctions){
+
+    //insert actual instruction into listOfInstructions?
+    //fail there cant..
+    //zarazku?
+
+
     //<ST_LIST> -> <STAT> <ST_LIST>
     if (ruleStat()) {
-        if (ruleStList()) {
+        if (ruleStList(listOfInstuctions)) {
             return true;
         }
 
@@ -431,7 +437,7 @@ bool ruleStList(){
         TOKEN *token = getCachedToken();
         //<ST_LIST>-> { <ST_LIST> }
         if (token->type == BRACKET && token->data.bracket.name == '{') {
-            if (ruleStList()) {
+            if (ruleStList(listOfInstuctions)) {
                 if (token->type == BRACKET && token->data.bracket.name == '}') {
                     return true;
                 }
@@ -514,6 +520,12 @@ bool ruleStat(){
     tDLElemPtr activeElementRuleApplication = globalTokens->Act;
     char *functionOrVariableName = NULL;
 
+    tDLList *listOfInsTrue = malloc(sizeof(tDLList));
+    tDLList *listOfInsFalse = malloc(sizeof(tDLList));
+    ListInit(listOfInsTrue);
+    ListInit(listOfInsFalse);
+
+
     //<STAT> -> <ID><STAT_BEGINNING_ID>;
     if (ruleId(&functionOrVariableName) && ruleStatBeginningId(functionOrVariableName)) {
         TOKEN *token = getCachedToken();
@@ -529,15 +541,22 @@ bool ruleStat(){
             if (token->type == BRACKET && token->data.bracket.name == '(') {
                 char* resultVariableName;
                 DATA_TYPE resultVariableType;
-                printf("calling analyzeExpression from ruleStat <STAT> -> while ( <EXP> ) { <ST_LIST> }\n");
+                debugPrintf("calling analyzeExpression from ruleStat <STAT> -> while ( <EXP> ) { <ST_LIST> }\n");
                 if (analyzeExpression(actualFunction->instructions, &resultVariableName, &resultVariableType)) {
                     token = getCachedToken();
+
                     if (token->type == BRACKET && token->data.bracket.name == ')') {
                         token = getCachedToken();
                         if (token->type == BRACKET && token->data.bracket.name == '{'){
-                            if (ruleStList()) {
+
+                            if (ruleStList(listOfInsTrue)) {
                                 token = getCachedToken();
                                 if (token->type == BRACKET && token->data.bracket.name == '}') {
+
+                                   /* if(!firstPass){
+                                        ListInsertLast(actualFunction->instructions, wrapInstructionIntoListElement(createInstrWhile(resultVariableName,)));
+                                    }*/
+
                                     return true;
                                 }
                             }
@@ -552,22 +571,39 @@ bool ruleStat(){
             if (token->type == BRACKET && token->data.bracket.name == '(') {
                 char* resultVariableName;
                 DATA_TYPE resultVariableType;
-                printf("calling analyzeExpression from ruleStat <STAT> -> if ( <EXP> ) { <ST_LIST> } else { <ST_LIST> }\n");
+                debugPrintf("calling analyzeExpression from ruleStat <STAT> -> if ( <EXP> ) { <ST_LIST> } else { <ST_LIST> }\n");
                 if (analyzeExpression(actualFunction->instructions, &resultVariableName, &resultVariableType)) {
+
+                    //result of expression, temp which would be used in createInsIf
+                   /* if(firstPass){
+                        ListInsertLast(actualFunction->instructions, wrapInstructionIntoListElement(createLocalVariable(resultVariableName, resultVariableType)));
+                    }*/
+
                     token = getCachedToken();
                     if (token->type == BRACKET && token->data.bracket.name == ')') {
                         token = getCachedToken();
+
                         if (token->type == BRACKET && token->data.bracket.name == '{'){
-                            if (ruleStList()) {
+
+                            //list of instructions for true
+                            if (ruleStList(listOfInsTrue)) {
+
                                 token = getCachedToken();
                                 if (token->type == BRACKET && token->data.bracket.name == '}') {
                                     token = getCachedToken();
                                     if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "else")) {
                                         token = getCachedToken();
                                         if (token->type == BRACKET && token->data.bracket.name == '{'){
-                                            if (ruleStList()) {
+
+                                            //list of instructions for false
+                                            if (ruleStList(listOfInsFalse)) {
                                                 token = getCachedToken();
                                                 if (token->type == BRACKET && token->data.bracket.name == '}') {
+
+                                                    if(!firstPass){
+                                                        ListInsertLast(actualFunction->instructions, wrapInstructionIntoListElement(createInstrIf(resultVariableName, listOfInsTrue, listOfInsFalse)));
+                                                    }
+
                                                     return true;
                                                 }
                                             }
