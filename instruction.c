@@ -111,6 +111,10 @@ tDLList *getActualLocalFrame(struct STACK_STR *stackOfLocalFrames) {
 /* ******************************************* INSTRUCTION CONSTRUCTORS  **********************************************/
 
 
+
+/* ************************************************** CREATE **********************************************************/
+/* ******************************************* Variable constructors **************************************************/
+
 INSTRUCTION *pushGlobalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value) {
     // malloc?
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
@@ -204,6 +208,10 @@ INSTRUCTION *createActualLocalVariable(char *name, DATA_TYPE type) {
 }
 
 
+/* ************************************************** CREATE **********************************************************/
+/* ******************************************* Operations constructors ************************************************/
+
+
 INSTRUCTION *createInstrCopyToUpcomingFrame (char *upcomingFrameVar, char *actualFrameVar){
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
 
@@ -278,6 +286,10 @@ INSTRUCTION *createInstrWhile(char *boolVar, tDLList *exprInstrList, tDLList *cy
 }
 
 
+/* ************************************************** CREATE **********************************************************/
+/* **************************************** User Function constructors ************************************************/
+
+
 INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList) {
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
 
@@ -315,6 +327,10 @@ INSTRUCTION *createInstrFillLocalFrame() {
 }
 
 
+/* ************************************************** CREATE **********************************************************/
+/* ******************************************* Special instructions ***************************************************/
+
+
 INSTRUCTION *createFirstInstruction() {
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
 
@@ -337,6 +353,90 @@ INSTRUCTION *createLastInstruction() {
 
     return instruction;
 }
+
+
+/* ************************************************** CREATE **********************************************************/
+/* ********************************************* Built in functions ***************************************************/
+
+INSTRUCTION *createInstructionRead(INSTRUCTION_TYPE instrType, char *nameDst) {
+    INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
+
+    instruction->type = instrType;
+
+    instruction->address_dst = nameDst;
+    instruction->address_src1 = NULL;
+    instruction->address_src2 =  NULL;
+
+    return instruction;
+}
+
+
+INSTRUCTION *createInstrPrint(char *nameDst) {
+    INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
+
+    instruction->type = Instruction_Function_Print;
+
+    instruction->address_dst = nameDst;
+    instruction->address_src1 = NULL;
+    instruction->address_src2 =  NULL;
+
+    return instruction;
+}
+
+
+INSTRUCTION *createInstrBFLength(char *retValue, char *param) {
+    INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
+
+    instruction->type = Instruction_Function_Length;
+
+    instruction->address_dst = retValue;
+    instruction->address_src1 = param;
+    instruction->address_src2 =  NULL;
+
+    return instruction;
+}
+
+
+INSTRUCTION *createInstrBFCompare(char *retValue, char *param1, char *param2) {
+    INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
+
+    instruction->type = Instruction_Function_Compare;
+
+    instruction->address_dst = retValue;
+    instruction->address_src1 = param1;
+    instruction->address_src2 =  param2;
+
+    return instruction;
+}
+
+
+INSTRUCTION *createInstrBFFind(char *retValue, char *param1, char *param2) {
+    INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
+
+    instruction->type = Instruction_Function_Find;
+
+    instruction->address_dst = retValue;
+    instruction->address_src1 = param1;
+    instruction->address_src2 =  param2;
+
+    return instruction;
+}
+
+
+INSTRUCTION *createInstrBFSort(char *retValue, char *param) {
+    INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
+
+    instruction->type = Instruction_Function_Sort;
+
+    instruction->address_dst = retValue;
+    instruction->address_src1 = param;
+    instruction->address_src2 =  NULL;
+
+    return instruction;
+}
+
+
+/* ********************************************************************************************************************/
 
 
 LIST_ELEMENT createInstruction(INSTRUCTION *instruction){

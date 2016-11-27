@@ -64,6 +64,18 @@ int executeInstructionExpressionEvaluation(INSTRUCTION_TYPE instrType, VARIABLE 
 
 
 
+
+/**
+ * Execution of Built-in functions
+ * @param instrType
+ * @param dst
+ * @param src1
+ * @param src2
+ * @return
+ */
+int executeInstructionBuiltInFunction(INSTRUCTION_TYPE instrType, VARIABLE *dst, VARIABLE *src1, VARIABLE *src2);
+
+
 //----------------------------------REST
 
 /**

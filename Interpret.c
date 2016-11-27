@@ -17,15 +17,6 @@
 
 int GLOBAL = 0;
 
-int Interpret(tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames);
-
-
-
-// YET TO DO
-void executeInstructionIf(INSTRUCTION *instr);
-
-//..
-
 //TODO: solve execution of insertVar into ActualLocalFrame, and the new CopyToUpcomingFrame instruction
 
 int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames ){
@@ -300,17 +291,28 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             case Instruction_Bool_MoreEqual:
             case Instruction_Bool_LessEqual:
 
-                if ( dst ==NULL || src1 == NULL || src2 == NULL ){
-                    //TODO: dst, src1 or src2 not found
-                }
-
+                if ( dst ==NULL || src1 == NULL || src2 == NULL ) return 99;
                 int evalRetValue = executeInstructionExpressionEvaluation(Instr->type, dst, src1, src2);
                 if ( evalRetValue != 0 ){
                     debugPrintf("you have fucked this up AS HELL\n");
                     return mathRetValue;
                 }
+                break;
 
+            case Instruction_Function_readInt:
+            case Instruction_Function_readDouble:
+            case Instruction_Function_readString:
+            case Instruction_Function_Print:
+            case Instruction_Function_Length:
+            case Instruction_Function_Compare:
+            case Instruction_Function_Find:
+            case Instruction_Function_Sort:
                 ;
+                int funRetValue = executeInstructionBuiltInFunction(Instr->type, dst, src1, src2);
+                if (funRetValue != 0){
+                    debugPrintf("you have fucked this up AS HELL\n");
+                    return mathRetValue;
+                }
                 break;
 
             default:
@@ -327,81 +329,6 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
     return 0; // I had no idea what have I done
 }
-
-//...
-
-// to be squished fully
-void InstructionExecute(INSTRUCTION *instr){
-// Always: overiť či sedia typy premenných ktoré idem použiť na danú operáciu, inak bude behová chyba
-    // error 7 (behová chyba pri načítaní číselnej hodnoty zo vstupu)
-    // error 8 (behová chyba pri práci s neinicializovanou premennou)
-    // error 9 (behová chyba delenia nulou)
-    // error 10 (ostatné behové chyby) <- zlá premenná... možno sem?
-
-    // code shortening
-    VARIABLE *dstAddr = ((VARIABLE*)instr->address_dst);
-    VARIABLE *srcAddr1 = ((VARIABLE*)instr->address_src1);
-    VARIABLE *srcAddr2 = ((VARIABLE*)instr->address_src2);
-
-    VARIABLE_VALUE *dstVal = &dstAddr->value;
-    VARIABLE_VALUE *src1Val = &srcAddr1->value;
-    VARIABLE_VALUE *src2Val = &srcAddr2->value;
-
-    //The Giant Switch
-    switch ( instr -> type ) {
-
-        //----------------------------------------------------------------------------------------------------------------
-        // BUILD-IN FUNCTIONS
-        //----------------------------------------------------------------------------------------------------------------
-        case Instruction_Function_readInt:
-            // int ifj16_readInt();
-            dstVal->intValue = ifj16_readInt();
-            break;
-
-        case Instruction_Function_readDouble:
-            // double ifj16_readDouble();
-            dstVal->doubleValue = ifj16_readDouble();
-            break;
-
-        case Instruction_Function_readString:
-            // char *ifj16_readString();
-            dstVal->stringValue = ifj16_readString();
-            break;
-
-        case Instruction_Function_Print:
-            // void ifj16_print(char *s);
-            //TODO: lots of things to figure out
-            break;
-
-        case Instruction_Function_Length:
-            // int ifj16_length(char *);
-            dstVal->intValue = ifj16_length( src1Val->stringValue );
-            break;
-
-        case Instruction_Function_Substr:
-            // char *ifj16_substr(char *, int, int);
-            // asi mame kurva problem
-            break;
-
-        case Instruction_Function_Compare:
-            // int ifj16_compare(char *, char *);
-            dstVal->intValue = ifj16_compare( src1Val->stringValue , src2Val->stringValue );
-            break;
-
-        case Instruction_Function_Find:
-            // int ifj16_find(char *, char *);
-            dstVal->intValue = ifj16_find( src1Val->stringValue , src2Val->stringValue );
-            break;
-
-        case Instruction_Function_Sort:
-            // char *ifj16_sort(char *s);
-            dstVal->stringValue = ifj16_sort( src1Val->stringValue );
-            break;
-
-        default: ;
-    } // end of giant switch
-
-} // end of InstructionExecute
 
 //...
 
@@ -912,8 +839,90 @@ int executeInstructionAssign(VARIABLE *dst, VARIABLE *src) {
     return 0;
 }   // end of Assign instruction
 
+
 //...
 
+
+int executeInstructionBuiltInFunction(INSTRUCTION_TYPE instrType, VARIABLE *dst, VARIABLE *src1, VARIABLE *src2) {
+
+
+    return 0;
+}
+
+//...
+
+// to be squished fully
+void InstructionExecute(INSTRUCTION *instr){
+// Always: overiť či sedia typy premenných ktoré idem použiť na danú operáciu, inak bude behová chyba
+    // error 7 (behová chyba pri načítaní číselnej hodnoty zo vstupu)
+    // error 8 (behová chyba pri práci s neinicializovanou premennou)
+    // error 9 (behová chyba delenia nulou)
+    // error 10 (ostatné behové chyby) <- zlá premenná... možno sem?
+
+    // code shortening
+    VARIABLE *dstAddr = ((VARIABLE*)instr->address_dst);
+    VARIABLE *srcAddr1 = ((VARIABLE*)instr->address_src1);
+    VARIABLE *srcAddr2 = ((VARIABLE*)instr->address_src2);
+
+    VARIABLE_VALUE *dstVal = &dstAddr->value;
+    VARIABLE_VALUE *src1Val = &srcAddr1->value;
+    VARIABLE_VALUE *src2Val = &srcAddr2->value;
+
+    //The Giant Switch
+    switch ( instr -> type ) {
+
+        //----------------------------------------------------------------------------------------------------------------
+        // BUILD-IN FUNCTIONS
+        //----------------------------------------------------------------------------------------------------------------
+        case Instruction_Function_readInt:
+            // int ifj16_readInt();
+            dstVal->intValue = ifj16_readInt();
+            break;
+
+        case Instruction_Function_readDouble:
+            // double ifj16_readDouble();
+            dstVal->doubleValue = ifj16_readDouble();
+            break;
+
+        case Instruction_Function_readString:
+            // char *ifj16_readString();
+            dstVal->stringValue = ifj16_readString();
+            break;
+
+        case Instruction_Function_Print:
+            // void ifj16_print(char *s);
+            //TODO: lots of things to figure out
+            break;
+
+        case Instruction_Function_Length:
+            // int ifj16_length(char *);
+            dstVal->intValue = ifj16_length( src1Val->stringValue );
+            break;
+
+        case Instruction_Function_Substr:
+            // char *ifj16_substr(char *, int, int);
+            // asi mame kurva problem
+            break;
+
+        case Instruction_Function_Compare:
+            // int ifj16_compare(char *, char *);
+            dstVal->intValue = ifj16_compare( src1Val->stringValue , src2Val->stringValue );
+            break;
+
+        case Instruction_Function_Find:
+            // int ifj16_find(char *, char *);
+            dstVal->intValue = ifj16_find( src1Val->stringValue , src2Val->stringValue );
+            break;
+
+        case Instruction_Function_Sort:
+            // char *ifj16_sort(char *s);
+            dstVal->stringValue = ifj16_sort( src1Val->stringValue );
+            break;
+
+        default: ;
+    } // end of giant switch
+
+} // end of InstructionExecute
 
 //---------------------------------- to be deleted
 

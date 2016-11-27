@@ -86,7 +86,8 @@ VARIABLE *findFrameVariable(tDLList *frame, char *name);
 /// \return Ptr of actual local frame
 tDLList *getActualLocalFrame(struct STACK_STR *stackOfLocalFrames);
 
-/* ************************************************ CREATE *************************************************/
+/* ************************************************** CREATE **********************************************************/
+/* ******************************************* Variable constructors **************************************************/
 
 /**
  * INSTRUCTION CONSTRUCTOR: Create GLOBAL variable WITH OR WITHOUT value
@@ -121,6 +122,11 @@ INSTRUCTION *createLocalVariable(char *name, DATA_TYPE type);
 INSTRUCTION *pushActualLocalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value);
 INSTRUCTION *createActualLocalVariable(char *name, DATA_TYPE type);
 
+
+/* ************************************************** CREATE **********************************************************/
+/* ******************************************* Operations constructors ************************************************/
+
+
 /**
  * INSTRUCTION CONSTRUCTOR: COPY value from global/actual-local frame
  * into variable in upcoming local frame
@@ -129,6 +135,7 @@ INSTRUCTION *createActualLocalVariable(char *name, DATA_TYPE type);
  * @return
  */
 INSTRUCTION *createInstrCopyToUpcomingFrame (char *upcoming, char *actual);
+
 
 /**
  * INSTRUCTION CONSTRUCTOR: Assign
@@ -195,6 +202,8 @@ INSTRUCTION *createInstrIf(char *boolVar, tDLList *trueDstList, tDLList *falseDs
  */
 INSTRUCTION *createInstrWhile(char *boolVar, tDLList *exprInstrList, tDLList *cycleList);
 
+/* ************************************************** CREATE **********************************************************/
+/* **************************************** User Function constructors ************************************************/
 
 /**
  * INSTRUCTION CONSTRUCTOR: Call Function
@@ -223,6 +232,10 @@ INSTRUCTION *createInstrReturnFunction(char *returnVariableName);
  */
 INSTRUCTION *createInstrFillLocalFrame();
 
+
+/* ************************************************** CREATE **********************************************************/
+/* ******************************************* Special instructions ***************************************************/
+
 /**
  * INSTRUCTION CONSTRUCTOR: Create GlobalFrame and LocalStack
  * Due to dumb implementation of the interpret,
@@ -242,6 +255,74 @@ INSTRUCTION *createFirstInstruction();
 INSTRUCTION *createLastInstruction();
 
 
+
+/* ************************************************** CREATE **********************************************************/
+/* ********************************************* Built in functions ***************************************************/
+
+/**
+ * INSTRUCTION CONSTRUCTOR: Built in instruction Read[type]
+ *
+ * @param instrType
+ *
+ *      Instruction_Function_readInt
+ *      Instruction_Function_readDouble
+ *      Instruction_Function_readString
+ *
+ * @return
+ */
+INSTRUCTION *createInstructionRead(INSTRUCTION_TYPE instrType, char *nameDst);
+
+
+/**
+ * INSTRUCTION CONSTRUCTOR: Built in instruction Print
+ *
+ * @param nameDst - name of variable, prints it's value
+ * @return
+ */
+INSTRUCTION *createInstrPrint(char *nameDst);
+
+
+/**
+ * INSTRUCTION CONSTRUCTOR: Built in instruction int Length(char*);
+ * @param retValue - int
+ * @param param    - string
+ * @return
+ */
+INSTRUCTION *createInstrBFLength(char *retValue, char *param);
+
+
+/**
+ * INSTRUCTION CONSTRUCTOR: Built in instruction int Compare(char*, char*);
+ * @param retValue  - int
+ * @param param1    - string
+ * @param param2    - string
+ * @return
+ */
+INSTRUCTION *createInstrBFCompare(char *retValue, char *param1, char *param2);
+
+/**
+ * INSTRUCTION CONSTRUCTOR: Built in instruction int Find(char*, char*);
+ * @param retValue  - int
+ * @param param1    - string
+ * @param param2    - string
+ * @return
+ */
+INSTRUCTION *createInstrBFFind(char *retValue, char *param1, char *param2);
+
+
+/**
+ * INSTRUCTION CONSTRUCTOR: Built in instruction int Length(char*);
+ * @param retValue  - string
+ * @param param     - string
+ * @return
+ */
+INSTRUCTION *createInstrBFSort(char *retValue, char *param);
+
+// still to do
+// Instruction_Function_Substr
+
+// ------------------------------------------------------ wrapper, seems like unused...
+
 /**
  * CONSTRUCTOR FOR SINGLE INSTRUCTION AS A LIST ELEMENT
  * RETURN VALUE CAN BE USED FOR INSERTION TO THE
@@ -249,6 +330,19 @@ INSTRUCTION *createLastInstruction();
  * @return
  */
 LIST_ELEMENT createInstruction(INSTRUCTION *instr);
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // to be deleted
