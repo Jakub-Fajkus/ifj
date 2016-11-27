@@ -168,6 +168,10 @@ void printInstruction(INSTRUCTION *instruction) {
         case Instruction_Function_Find:                     printf("Instruction_Function_Find: %s %s returnTo %s\n", (char*)instruction->address_dst, (char*)instruction->address_dst, (char*)instruction->address_src1); break;
         case Instruction_End_Interpret:                     printf("Instruction_End_Interpret\n"); break;
 
+        case Instruction_Push_Actual_Local_Variable: printf("Instruction_Push_Actual_Local_Variable:name %s\n", (char*)instruction->address_dst);break;
+        case Instruction_Create_Actual_Local_Variable: printf("Instruction_Create_Actual_Local_Variable: %s\n", (char*)instruction->address_dst);break;
+        case Instruction_Copy_To_Upcoming_Frame: printf("Instruction_Copy_To_Upcoming_Frame: %s <= %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1);break;
+
         default: printf("UNKNOWN INSTRUCTION");
     }
 }
