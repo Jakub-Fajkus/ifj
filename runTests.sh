@@ -10,7 +10,7 @@ for FILE in $FILES; do
 
     printf "\n**************** RUNNING INTERPRET FOR $FILE ****************\n"
     printf "executing: ./bin/Debug/ifj %s \n" "$FILE"
-    ./cmake-build-debug/ifj $FILE;
+    ./bin/Debug/ifj $FILE;
     RETURNED_CODE=$?
     if [ $RETURNED_CODE = $EXPECTED_RETURN_CODE ]; then
         printf "\e[34mexpected %d, got %d -> test OK\e[m" "$EXPECTED_RETURN_CODE" "$RETURNED_CODE"
