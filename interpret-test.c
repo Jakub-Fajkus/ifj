@@ -16,24 +16,26 @@ int callInterpret() {
     // Inserting instruction "Create Global Frame & Local Stack of Frames"
     InsertFirst(TestInstructionList, createInstruction(createFirstInstruction()));
 
-    insertValue.intValue = 4;
-    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("Main.x", TYPE_INT, insertValue)));
-    insertValue.intValue = 0;
-    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("Main.bool", TYPE_INT, insertValue)));
-
-    insertValue.doubleValue = 10.5;
+    insertValue.doubleValue = 1.0;
+    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("Main.x", TYPE_DOUBLE, insertValue)));
+    insertValue.doubleValue = 0.1;
     ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("Main.dbl", TYPE_DOUBLE, insertValue)));
+    insertValue.doubleValue = 2.0;
+    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("#tmp1", TYPE_DOUBLE, insertValue)));
 
-    tDLList *TrueIfList = malloc(sizeof(tDLList));
-    ListInit(TrueIfList);
-    ListInsertLast(TrueIfList, createInstruction(createInstrMath(Instruction_Multiply, "Main.dbl", "Main.dbl", "Main.x")));
+    ListInsertLast(TestInstructionList, createInstruction(createGlobalVariable("#bool1", TYPE_INT)));
 
-    tDLList *FalseIfList = malloc(sizeof(tDLList));
-    ListInit(FalseIfList);
-    ListInsertLast(FalseIfList, createInstruction(createInstrMath(Instruction_Subtraction, "Main.dbl", "Main.dbl", "Main.x")));
 
-    ListInsertLast(TestInstructionList, createInstruction(createInstrIf("Main.bool", TrueIfList, FalseIfList)));
+    tDLList *exprList = malloc(sizeof(tDLList));
+    ListInit(exprList);
+    ListInsertLast(exprList, createInstruction(createInstrMath(Instruction_Bool_Less, "#bool1", "Main.x", "#tmp1")));
 
+
+    tDLList *cycleList = malloc(sizeof(tDLList));
+    ListInit(cycleList);
+    ListInsertLast(cycleList, createInstruction(createInstrMath(Instruction_Addition, "Main.x", "Main.x", "Main.dbl")));
+
+    ListInsertLast(TestInstructionList, createInstruction(createInstrWhile("#bool1", exprList, cycleList)));
 
     // Inserting last instruction
     ListInsertLast(TestInstructionList, createInstruction(createLastInstruction()));

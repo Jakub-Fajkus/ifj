@@ -14,6 +14,8 @@
 #include "Interpret.h"
 #include "BasicStructures.h"
 
+int GLOBAL = 0;
+
 int Interpret(tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames);
 
 
@@ -26,9 +28,7 @@ void executeInstructionIf(INSTRUCTION *instr);
 int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames ){
     if (InstructionList == NULL) return 99;
     int interpretRetVal;
-    printf("-----------------------------------------------------\n");
-    printf("\n----- Welcome to hell v1.0\n");
-    printf("-----------------------------------------------------\n");
+    printf("\n----- Welcome to hell v1.%d\n",GLOBAL++);
 
     //NewPtr - pointer to list element (allowing work with instructions inside InstructionList)
     LIST_ELEMENT *NewPtr = malloc(sizeof(struct LIST_ELEMENT));   //TODO: how to free and exit?
@@ -52,10 +52,9 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         if (Instr->type == Instruction_End_Interpret) {
             //TODO: return value, free all resources used by interpret (stack & globalframe)
 
-            VARIABLE *printer = findFrameVariable(globalFrame, "Main.dbl");
-            printf("|%g|", printer->value.doubleValue);
+            VARIABLE *printer = findFrameVariable(globalFrame, "Main.x");
+            printf("Final value of cycle variable: |%g|\n", printer->value.doubleValue);
 
-            printf("-----------------------------------------------------\n");
             printf("----- I am ending!\n");
             return 0;
         }
@@ -142,7 +141,50 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
         if (Instr->type == Instruction_WHILE) {
             printf("HANDLING WHILE_INSTRUCTION");
-            return 42;
+
+            //----- STEP 1: Calling recursion for ExpressionList
+            interpretRetVal = Interpret((tDLList*)Instr->address_src1, globalFrame, stackOfLocalFrames);
+            if ( interpretRetVal != 0 ) {
+                printf("Previous instance of interpret has failed.\n");
+                return interpretRetVal;
+            }
+
+            //----- STEP 2: Getting value from bool Value (calculated by previous list)
+            VARIABLE *booleanValue;
+            if (actualLocalFrame != NULL)
+                booleanValue = findFrameVariable(actualLocalFrame, Instr->address_dst);
+            else {
+                booleanValue = findFrameVariable(globalFrame, Instr->address_dst);
+            }
+            if (booleanValue == NULL) {
+                //TODO: FATAL EXCEPTION: VARIABLE NOT FOUND
+            }
+
+            //----- STEP 3: This Monster
+            while (booleanValue->value.intValue == 1) {
+
+                interpretRetVal = Interpret((tDLList*)Instr->address_src2, globalFrame, stackOfLocalFrames);
+                if ( interpretRetVal != 0 ) {
+                    printf("Previous instance of interpret has failed.\n");
+                    return interpretRetVal;
+                }
+
+                interpretRetVal = Interpret((tDLList*)Instr->address_src1, globalFrame, stackOfLocalFrames);
+                if ( interpretRetVal != 0 ) {
+                    printf("Previous instance of interpret has failed.\n");
+                    return interpretRetVal;
+                }
+
+                if (actualLocalFrame != NULL)
+                    booleanValue = findFrameVariable(actualLocalFrame, Instr->address_dst);
+                else
+                    booleanValue = findFrameVariable(globalFrame, Instr->address_dst);
+
+            }
+
+            //----- STEP 4: Cycle is done
+            ListSuccessor(InstructionList);
+            continue; // Jump to next instruction
         }
 
         //--- Special instructions are captured, now we will execute the rest ---
@@ -201,7 +243,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             case Instruction_Bool_Less:
             case Instruction_Bool_MoreEqual:
             case Instruction_Bool_LessEqual:
-                printf("Calling function for evaluation bool expression.\n");
+
                 if ( dst ==NULL || src1 == NULL || src2 == NULL ){
                     //TODO: dst, src1 or src2 not found
                 }

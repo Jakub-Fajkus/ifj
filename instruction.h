@@ -173,11 +173,13 @@ INSTRUCTION *createInstrIf(char *boolVar, tDLList *trueDstList, tDLList *falseDs
 
 
 /**
- * INSTRUCTION CONSTRUCTOR: IF Statement
+ * INSTRUCTION CONSTRUCTOR: Cycle WHILE
  *
- * @param boolVar
- * @param exprInstrList
- * @param cycleList
+ * Warning: involves ONE OR TWO RECURSION CALLS
+ *
+ * @param boolVar - NAME of global, local or temporary variable that will get value 0/1
+ * @param exprInstrList - List of instructions (math&expr), the last assigns 0/1 to "boolVar"
+ * @param cycleList - executes or not depending on value of boolVar
  * @return
  */
 INSTRUCTION *createInstrWhile(char *boolVar, tDLList *exprInstrList, tDLList *cycleList);

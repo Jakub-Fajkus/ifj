@@ -228,8 +228,8 @@ INSTRUCTION *createInstrWhile(char *boolVar, tDLList *exprInstrList, tDLList *cy
 
     instruction->type = Instruction_WHILE;
     instruction->address_dst = boolVar;
-    *(tDLList*)instruction->address_src1 = *exprInstrList;
-    *(tDLList*)instruction->address_src2 = *cycleList;
+    instruction->address_src1 = exprInstrList;
+    instruction->address_src2 = cycleList;
 
     return instruction;
 }
