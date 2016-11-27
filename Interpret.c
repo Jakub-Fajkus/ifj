@@ -92,6 +92,51 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             continue; // Jump to next instruction
         }
 
+        // Inserting variable into ACTUAL local frame (the frame is on top of stack)
+        if (Instr->type == Instruction_Push_Actual_Local_Variable || Instr->type == Instruction_Create_Actual_Local_Variable ) {
+            if (actualLocalFrame == NULL) {
+                return 99;
+            }
+
+            pushToFrame(actualLocalFrame, Instr);
+            ListSuccessor(InstructionList);
+            continue; // Jump to next instruction
+        }
+
+        // Used in sequence before getting CallFunction
+        // Finds variable of desired name in two frames: actual local & global.
+        // Finds the other variable in upcoming frame, expecting it has no value
+        // - and finally the content is copied "upcoming <- found"
+        // Special version of Assignment
+        if (Instr->type == Instruction_Copy_To_Upcoming_Frame) {
+
+            // expecting: dst = (char *) name of variable inside upcoming frame
+            // expecting: src1 =(char *) name of variable inside actual local frame
+
+            VARIABLE *upcomingFrameVariable = NULL;
+            VARIABLE *seekVariable = NULL;
+
+            upcomingFrameVariable = findFrameVariable(upcomingLocalFrame, Instr->address_dst);
+            seekVariable = findFrameVariable(actualLocalFrame, Instr->address_src1);
+            if(seekVariable == NULL) seekVariable = findFrameVariable(globalFrame, Instr->address_src1);
+            if(seekVariable == NULL) return 99;
+
+
+            switch (upcomingFrameVariable->type) {
+
+                case TYPE_INT: upcomingFrameVariable->value.intValue = seekVariable->value.intValue;
+                case TYPE_DOUBLE: upcomingFrameVariable->value.doubleValue = seekVariable->value.doubleValue;
+                case TYPE_STRING:   ;
+                    char *temp = malloc(sizeof(char) * (int)strlen(seekVariable->value.stringValue) + 1 );
+                    strcpy(temp, seekVariable->value.stringValue);
+                    upcomingFrameVariable->value.stringValue = temp;
+                    break;
+                default:;
+            }
+            ListSuccessor(InstructionList);
+            continue; // Jump to next instruction
+        }
+
         // Pushing upcoming local frame into stack of local frames
         // THINGS TO KEEP: global frame, stack of local frames
         if (Instr->type == Instruction_CallFunction) {
