@@ -174,6 +174,48 @@ INSTRUCTION *createLocalVariable(char *name, DATA_TYPE type) {
 }
 
 
+INSTRUCTION *pushActualLocalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value){
+    INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
+
+    instruction->type = Instruction_Push_Actual_Local_Variable;
+    instruction->address_dst = name;
+
+    instruction->address_src1 = malloc(sizeof(DATA_TYPE));
+    *(int*)instruction->address_src1 = type;
+
+    instruction->address_src2 = malloc(sizeof(VARIABLE_VALUE));
+    *(VARIABLE_VALUE*)instruction->address_src2 = value;
+
+    return instruction;
+}
+
+
+INSTRUCTION *createActualLocalVariable(char *name, DATA_TYPE type) {
+    INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
+
+    instruction->type = Instruction_Create_Actual_Local_Variable;
+    instruction->address_dst = name;
+
+    instruction->address_src1 = malloc(sizeof(DATA_TYPE));
+    *(int*)instruction->address_src1 = type;
+
+    instruction->address_src2 = NULL;
+    return instruction;
+}
+
+
+INSTRUCTION *createInstrCopyToUpcomingFrame (char *upcomingFrameVar, char *actualFrameVar){
+    INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
+
+    instruction->type = Instruction_Copy_To_Upcoming_Frame;
+    instruction->address_dst = upcomingFrameVar;
+    instruction->address_src1 = actualFrameVar;
+    instruction->address_src2 = NULL;
+
+    return instruction;
+}
+
+
 INSTRUCTION *createInstrAssign(char *nameDst, char *nameSrc) {
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
 
@@ -290,14 +332,4 @@ LIST_ELEMENT createInstruction(INSTRUCTION *instruction){
     listElement.type = LIST_ELEMENT_TYPE_INSTRUCTION;
     listElement.data.instr = instruction;
     return listElement;
-}
-INSTRUCTION *createCreteLocalFrameInstruction() {
-    INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
-
-    instruction->type = Instruction_Create_Local_Frame;
-    instruction->address_dst = NULL;
-    instruction->address_src1 = NULL;
-    instruction->address_src2 =  NULL;
-
-    return instruction;
 }
