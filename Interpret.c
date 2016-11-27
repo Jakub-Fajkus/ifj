@@ -26,21 +26,22 @@ void executeInstructionIf(INSTRUCTION *instr);
 
 //..
 
+//TODO: solve execution of insertVar into ActualLocalFrame, and the new CopyToUpcomingFrame instruction
+
 int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames ){
     if (InstructionList == NULL) return 99;
     int interpretRetVal;
     debugPrintf("\n----- Welcome to hell v1.%d\n",GLOBAL++);
 
     //NewPtr - pointer to list element (allowing work with instructions inside InstructionList)
-    LIST_ELEMENT *NewPtr = malloc(sizeof(struct LIST_ELEMENT));   //TODO: how to free and exit?
+    LIST_ELEMENT *NewPtr = malloc(sizeof(struct LIST_ELEMENT));
     INSTRUCTION *Instr;
 
     tDLList *upcomingLocalFrame = NULL; // creating the pointer, yet not using it
     tDLList *actualLocalFrame = NULL;
     if (stackOfLocalFrames != NULL) {
-        actualLocalFrame = getActualLocalFrame(stackOfLocalFrames);    // maybe gonna be Null
+        actualLocalFrame = getActualLocalFrame(stackOfLocalFrames);    // can be Null
     }
-
 
     // DON'T EVER FORGET THIS
     ListFirst(InstructionList);

@@ -44,7 +44,10 @@ typedef enum {
     Instruction_Function_Find = 10028, // 3 params (retvalue-int, 2 params-string,string)
     Instruction_Function_Sort =  10029, // 2 params (retvalue-string, param-string)
     //-----------------------
-    Instruction_End_Interpret = 10030
+    Instruction_End_Interpret = 10030,
+    Instruction_Push_Actual_Local_Variable = 10031,
+    Instruction_Create_Actual_Local_Variable = 10032,
+    Instruction_Copy_To_Upcoming_Frame = 10034
 } INSTRUCTION_TYPE;
 
 typedef struct sINSTRUCTION{
@@ -86,38 +89,46 @@ tDLList *getActualLocalFrame(struct STACK_STR *stackOfLocalFrames);
 /* ************************************************ CREATE *************************************************/
 
 /**
- * INSTRUCTION CONSTRUCTOR: Create GLOBAL variable WITH value
+ * INSTRUCTION CONSTRUCTOR: Create GLOBAL variable WITH OR WITHOUT value
  * @param name
  * @param type
  * @param value
  * @return
  */
 INSTRUCTION *pushGlobalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value);
-
-/**
- * INSTRUCTION CONSTRUCTOR: Create GLOBAL variable WITHOUT value
- * @param name
- * @param type
- * @return
- */
 INSTRUCTION *createGlobalVariable(char *name, DATA_TYPE type);
 
 /**
- * INSTRUCTION CONSTRUCTOR: Create LOCAL variable WITH value
+ * INSTRUCTION CONSTRUCTOR: Create LOCAL variable WITH or WITHOUT value
+ * WARNING: inserts into UPCOMING FRAME
  * @param name
  * @param type
  * @param value
  * @return
  */
 INSTRUCTION *pushLocalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value);
+INSTRUCTION *createLocalVariable(char *name, DATA_TYPE type);
+
 
 /**
- * INSTRUCTION CONSTRUCTOR: Create LOCAL variable WITHOUT value
+ * INSTRUCTION CONSTRUCTOR: Create LOCAL variable WITH or WITHOUT value
+ * WARNING: inserts into ACTUAL FRAME - e.g. frame on the top of stack
  * @param name
  * @param type
+ * @param value
  * @return
  */
-INSTRUCTION *createLocalVariable(char *name, DATA_TYPE type);
+INSTRUCTION *pushActualLocalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value);
+INSTRUCTION *createActualLocalVariable(char *name, DATA_TYPE type);
+
+/**
+ * INSTRUCTION CONSTRUCTOR: COPY value from global/actual-local frame
+ * into variable in upcoming local frame
+ * @param upcoming
+ * @param actual
+ * @return
+ */
+INSTRUCTION *createInstrCopyToUpcomingFrame (char *upcoming, char *actual);
 
 /**
  * INSTRUCTION CONSTRUCTOR: Assign
@@ -219,7 +230,6 @@ INSTRUCTION *createFirstInstruction();
  */
 INSTRUCTION *createLastInstruction();
 
-INSTRUCTION *createCreteLocalFrameInstruction();
 
 /**
  * CONSTRUCTOR FOR SINGLE INSTRUCTION AS A LIST ELEMENT
@@ -230,9 +240,7 @@ INSTRUCTION *createCreteLocalFrameInstruction();
 LIST_ELEMENT createInstruction(INSTRUCTION *instr);
 
 
-/// DEBUG FUNCTIONS, to be deleted
-/// \param x
-/// \param TestInstructionList
+// to be deleted
 void printInstructionTest(int x, tDLList *TestInstructionList);
 void printListOfInstructions(tDLList *TestInstructionList);
 
