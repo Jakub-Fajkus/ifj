@@ -18,12 +18,12 @@ void callInterpret() {
 
     ListInsertLast(TestInstructionList, createInstruction(createGlobalVariable("Main.str", TYPE_STRING)));
     insertValue.doubleValue = 4.2;
-    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("Main.dbl", TYPE_STRING, insertValue)));
+    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("Main.dbl", TYPE_DOUBLE, insertValue)));
     insertValue.intValue = 10;
     ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("Main.whl", TYPE_INT, insertValue)));
-    ListInsertLast(TestInstructionList, createInstruction(createGlobalVariable("Main.abc", TYPE_DOUBLE)));
-    insertValue.doubleValue = 2017;
-    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("#tmp1", TYPE_DOUBLE, insertValue)));
+    ListInsertLast(TestInstructionList, createInstruction(createGlobalVariable("Main.abc", TYPE_INT)));
+    insertValue.intValue = 2017;
+    ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("#tmp1", TYPE_INT, insertValue)));
     insertValue.stringValue = "haha ";
     ListInsertLast(TestInstructionList, createInstruction(pushGlobalVariable("#tmp2", TYPE_STRING, insertValue)));
     insertValue.stringValue = ".";

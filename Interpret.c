@@ -15,10 +15,8 @@
 #include "BasicStructures.h"
 
 int Interpret(tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames);
-void InstructionExecute(INSTRUCTION *instr);
-int executeInstructionMathOperation(INSTRUCTION *instr);
-void executeInstructionExpressionEvaluation(INSTRUCTION *instr);
-void executeInstructionAssign(VARIABLE *dst, VARIABLE *src);
+
+
 
 // YET TO DO
 void executeInstructionIf(INSTRUCTION *instr);
@@ -140,9 +138,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                     return 99;
                 }
 
-                printf("i am executing instruction ASSIGN with variables: %s & %s\n", dst->name, src1->name);
                 executeInstructionAssign(dst, src1);
-
                 break;
 
             case Instruction_Addition:
@@ -150,27 +146,17 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             case Instruction_Multiply:
             case Instruction_Divide:
                 ;
-                printf("Calling function for calculating math operation.\n");
                 if ( dst ==NULL || src1 == NULL || src2 == NULL ){
                     //TODO: dst, src1 or src2 not found
                     //free resources
                     return 99;
                 }
 
-                printf("exiting math operation.\n");
-                exit(42);
-
-                // passing 3 pointers to variables in FRAMES!
-                INSTRUCTION *mathInstruction = malloc(sizeof(INSTRUCTION));
-                mathInstruction->type = Instr->type;
-                // i hope this sorcery is fine
-                *(VARIABLE *)mathInstruction->address_dst = *dst;
-                *(VARIABLE *)mathInstruction->address_src1 = *src1;
-                *(VARIABLE *)mathInstruction->address_src2 = *src2;
-
-                executeInstructionMathOperation(mathInstruction);
-
-                *dst = *(VARIABLE *)mathInstruction->address_dst;
+                int mathRetValue = executeInstructionMathOperation(Instr->type, dst, src1, src2);
+                if ( mathRetValue != 0 ){
+                    printf("you have fucked this up AS HELL\n");
+                    return mathRetValue;
+                }
 
                 break;
 
@@ -212,6 +198,10 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         if (InstructionList->Last->element.data.instr == Instr) break;
         ListSuccessor(InstructionList);
     } // end of the big cycle
+
+    printf("-----------------------------------------------------\n");
+    printf("----- I am ending!\n");
+
     return 0; // I had no idea what have I done
 }
 
@@ -292,115 +282,101 @@ void InstructionExecute(INSTRUCTION *instr){
 
 //...
 
-int executeInstructionMathOperation(INSTRUCTION *instr) {
+int executeInstructionMathOperation(INSTRUCTION_TYPE instrType, VARIABLE *dst, VARIABLE *src1, VARIABLE *src2) {
 
-    // code shortening: access to data value
-    VARIABLE_VALUE *dstVal = &((VARIABLE*)instr->address_dst)->value;
-    VARIABLE_VALUE *src1Val = &((VARIABLE*)instr->address_src1)->value;
-    VARIABLE_VALUE *src2Val = &((VARIABLE*)instr->address_src2)->value;
-    // code shortening: access to data type
-    DATA_TYPE dstType = ((VARIABLE*)instr->address_dst)->type;
-    DATA_TYPE src1Type = ((VARIABLE*)instr->address_src1)->type;
-    DATA_TYPE src2Type = ((VARIABLE*)instr->address_src2)->type;
-
-    switch ( instr->type ) {
+    switch ( instrType ) {
 
     case Instruction_Addition:
         ;
-
-        if (src1Type==TYPE_STRING && src2Type==TYPE_STRING) {
+        if (src1->type==TYPE_STRING && src2->type==TYPE_STRING) {
             // Concatenate strings, withtout casting
 
             //tell interpret the execution has failed
-            if (dstType!=TYPE_STRING) return 99;
+            if (dst->type!=TYPE_STRING) {
+                printf("Wrong destination format.\n");
+                return 99;
+            }
 
-            dstVal->stringValue = malloc( strlen(src1Val->stringValue)+strlen(src1Val->stringValue)+1 );
-            checkMalloc(dstVal->stringValue);
-            strcpy(dstVal->stringValue, src1Val->stringValue);
-            strcat(dstVal->stringValue, src2Val->stringValue);
-
+            dst->value.stringValue = stringConcat(src1->value.stringValue, src2->value.stringValue);
             return 0; // end instruction
         }
-        if ((src1Type==TYPE_STRING && src2Type!=TYPE_STRING) || (src1Type!=TYPE_STRING && src2Type==TYPE_STRING)) {
+        if ((src1->type==TYPE_STRING && src2->type!=TYPE_STRING) || (src1->type!=TYPE_STRING && src2->type==TYPE_STRING)) {
             // Concatenate strings, with casting
 
             //tell interpret the execution has failed
-            if (dstType!=TYPE_STRING) return 99;
+            if (dst->type!=TYPE_STRING) {
+                printf("Wrong destination format.\n");
+                return 99;
+            }
 
             char tempString[100];
             char *typeCastSrc = NULL;
 
-            if ( src1Type!=TYPE_STRING ){
+            if ( src1->type!=TYPE_STRING ){
                 // Switch data type of src1 to string
-                if ( src1Type==TYPE_INT ) {
-                    sprintf(tempString,"%d", src1Val->intValue);
+                if ( src1->type==TYPE_INT ) {
+                    sprintf(tempString,"%d", src1->value.intValue);
                     int len = (int)strlen(tempString);
                     typeCastSrc = malloc( sizeof(char)*len+1 );
                     strcpy(typeCastSrc, tempString);
                 }
-                else if ( src1Type==TYPE_DOUBLE ) {
-                    sprintf(tempString,"%g", src1Val->doubleValue);
-                    int len = (int)strlen(tempString);
-                    typeCastSrc = malloc( sizeof(char)*len+1 );
+                else if ( src1->type==TYPE_DOUBLE ) {
+                    sprintf(tempString,"%g", src1->value.doubleValue);
+                    int len = (int)strlen(tempString) +1;
+                    typeCastSrc = malloc( sizeof(char)*len );
                     strcpy(typeCastSrc, tempString);
                 }
             }   //end of "type casting" of SRC1 into 'typeCastSrc'
 
-            if ( src2Type!=TYPE_STRING ) {
+            if ( src2->type!=TYPE_STRING ) {
                 // Switch data type of src2 to string
-                if ( src2Type==TYPE_INT ) {
-                    sprintf(tempString,"%d", src2Val->intValue);
-                    int len = (int)strlen(tempString);
-                    typeCastSrc = malloc( sizeof(char)*len+1 );
+                if ( src2->type==TYPE_INT ) {
+                    sprintf(tempString,"%d", src2->value.intValue);
+                    int len = (int)strlen(tempString) +1;
+                    typeCastSrc = malloc( sizeof(char)*len );
                     strcpy(typeCastSrc, tempString);
                 }
-                else if ( src2Type==TYPE_DOUBLE ) {
-                    sprintf(tempString,"%g", src2Val->doubleValue);
-                    int len = (int)strlen(tempString);
-                    typeCastSrc = malloc( sizeof(char)*len+1 );
+                else if ( src2->type==TYPE_DOUBLE ) {
+                    sprintf(tempString,"%g", src2->value.doubleValue);
+                    int len = (int)strlen(tempString) +1;
+                    typeCastSrc = malloc( sizeof(char)*len );
                     strcpy(typeCastSrc, tempString);
                 }
             }   //end of "type casting" of SRC2 into 'typeCastSrc'
 
-            //TODO: check if this is valid
-            free(dstVal->stringValue);  //free the previous string correctly
-
             // Performing concatenation
-            if ( src1Type!=TYPE_STRING ) {
-                dstVal->stringValue = malloc( sizeof(char)*(strlen(typeCastSrc)+strlen(src2Val->stringValue)+1) );
-                strcpy(dstVal->stringValue, typeCastSrc);
-                strcat(dstVal->stringValue, src2Val->stringValue);
-            }
-            else {
-                dstVal->stringValue = malloc( sizeof(char)*(strlen(src1Val->stringValue)+strlen(typeCastSrc)+1) );
-                strcpy(dstVal->stringValue, src1Val->stringValue);
-                strcat(dstVal->stringValue, typeCastSrc);
-            }
+            if ( src1->type!=TYPE_STRING )
+                dst->value.stringValue = stringConcat(typeCastSrc, src2->value.stringValue);
+            else
+                dst->value.stringValue = stringConcat(src1->value.stringValue, typeCastSrc);
 
             return 0; // end instruction
         }
-        switch ( src1Type ) {   // both are Double or Ints
+        switch ( src1->type ) {   // both are Double or Ints
 
             case TYPE_INT:  // SRC1 is int
                 ; // SRC2 is int
-                if (src2Type==TYPE_INT) dstVal->intValue = src1Val->intValue + src2Val->intValue;
+                if (src2->type==TYPE_INT) dst->value.intValue = src1->value.intValue + src2->value.intValue;
                 else {  // SRC2 is double
-                    if (dstType==TYPE_INT){ // DST is int
-                        dstType = TYPE_DOUBLE;
-                        dstVal->doubleValue = (double)dstVal->intValue;
+                    if (dst->type==TYPE_INT){ // DST is int
+                        dst->type = TYPE_DOUBLE;
+                        dst->value.doubleValue = (double)dst->value.intValue;
                     }
-                    dstVal->doubleValue = (double)src1Val->intValue + src2Val->doubleValue;
+                    dst->value.doubleValue = (double)src1->value.intValue + src2->value.doubleValue;
                 }
             return 0; // end instruction
 
             case TYPE_DOUBLE:
                 ;
-                if (dstType==TYPE_INT) {
-                    dstType = TYPE_DOUBLE;  // remember the type cast
-                    dstVal->doubleValue = (double)dstVal->intValue;
+                if (dst->type==TYPE_INT) {
+                    dst->type = TYPE_DOUBLE;  // remember the type cast
+                    dst->value.doubleValue = (double)dst->value.intValue;
                 }
-                if (src2Type==TYPE_DOUBLE) dstVal->doubleValue = src1Val->doubleValue + src2Val->doubleValue;
-                else dstVal->doubleValue = src1Val->doubleValue + (double)src2Val->intValue;
+                if (src2->type==TYPE_DOUBLE)
+                    dst->value.doubleValue = src1->value.doubleValue + src2->value.doubleValue;
+                else
+                    dst->value.doubleValue = src1->value.doubleValue + (double)src2->value.intValue;
+
             return 0; // end instruction
 
             default: ;
@@ -409,31 +385,30 @@ int executeInstructionMathOperation(INSTRUCTION *instr) {
 
     case Instruction_Subtraction:
         ;
-        if (src1Type == TYPE_STRING || src2Type == TYPE_STRING) exitInterpret(10);
-        switch ( src1Type ) {   // both are Double or Ints
+        if (src1->type == TYPE_STRING || src2->type == TYPE_STRING)
+            return 10; // cannot subtract strings
+        switch ( src1->type ) {   // both are Double or Ints
 
             case TYPE_INT:  // SRC1 is int
                 ; // SRC2 is int
-                if (src2Type==TYPE_INT) dstVal->intValue = src1Val->intValue - src2Val->intValue;
+                if (src2->type==TYPE_INT) dst->value.intValue = src1->value.intValue - src2->value.intValue;
                 else {  // SRC2 is double
-                    if (dstType==TYPE_INT){ // DST is int
-                        dstType = TYPE_DOUBLE;  // remember the type cast
-                        dstVal->doubleValue = (double)dstVal->intValue;
+                    if (dst->type==TYPE_INT){ // DST is int
+                        dst->type = TYPE_DOUBLE;  // remember the type cast
+                        dst->value.doubleValue = (double)dst->value.intValue;
                     }
-                    dstVal->doubleValue = (double)src1Val->intValue - src2Val->doubleValue;
+                    dst->value.doubleValue = (double)src1->value.intValue - src2->value.doubleValue;
                 }
-                if (dstVal->intValue < 0) return 10;
             return 0; // end instruction
 
             case TYPE_DOUBLE:
                 ;
-                if (dstType==TYPE_INT) {
-                    dstType = TYPE_DOUBLE;  // remember the type cast
-                    dstVal->doubleValue = (double)dstVal->intValue;
+                if (dst->type==TYPE_INT) {
+                    dst->type = TYPE_DOUBLE;  // remember the type cast
+                    dst->value.doubleValue = (double)dst->value.intValue;
                 }
-                if (src2Type==TYPE_DOUBLE) dstVal->doubleValue = src1Val->doubleValue - src2Val->doubleValue;
-                else dstVal->doubleValue = src1Val->doubleValue - (double)src2Val->intValue;
-                if (dstVal->doubleValue < 0) return 10;
+                if (src2->type==TYPE_DOUBLE) dst->value.doubleValue = src1->value.doubleValue - src2->value.doubleValue;
+                else dst->value.doubleValue = src1->value.doubleValue - (double)src2->value.intValue;
             return 0; // end instruction
 
             default: ;
@@ -442,29 +417,30 @@ int executeInstructionMathOperation(INSTRUCTION *instr) {
 
     case Instruction_Multiply:
         ;
-        if (src1Type == TYPE_STRING || src2Type == TYPE_STRING) exitInterpret(10);
-        switch ( src1Type ) {   // both are Double or Ints
+        if ( src1->type == TYPE_STRING || src2->type == TYPE_STRING)
+            return 10;  // cannot multiply strings
+        switch ( src1->type ) {   // both are Double or Ints
 
             case TYPE_INT:  // SRC1 is int
                 ; // SRC2 is int
-                if (src2Type==TYPE_INT) dstVal->intValue = src1Val->intValue * src2Val->intValue;
+                if (src2->type==TYPE_INT) dst->value.intValue = src1->value.intValue * src2->value.intValue;
                 else {  // SRC2 is double
-                    if (dstType==TYPE_INT){ // DST is int
-                        dstType = TYPE_DOUBLE;
-                        dstVal->doubleValue = (double)dstVal->intValue;
+                    if (dst->type==TYPE_INT){ // DST is int
+                        dst->type = TYPE_DOUBLE;
+                        dst->value.doubleValue = (double)dst->value.intValue;
                     }
-                    dstVal->doubleValue = (double)src1Val->intValue * src2Val->doubleValue;
+                    dst->value.doubleValue = (double)src1->value.intValue * src2->value.doubleValue;
                 }
             return 0; // end instruction
 
             case TYPE_DOUBLE:
                 ;
-                if (dstType==TYPE_INT) {
-                    dstType = TYPE_DOUBLE;
-                    dstVal->doubleValue = (double)dstVal->intValue;
+                if (dst->type==TYPE_INT) {
+                    dst->type = TYPE_DOUBLE;
+                    dst->value.doubleValue = (double)dst->value.intValue;
                 }
-                if (src2Type==TYPE_DOUBLE) dstVal->doubleValue = src1Val->doubleValue * src2Val->doubleValue;
-                else dstVal->doubleValue = src1Val->doubleValue * (double)src2Val->intValue;
+                if (src2->type==TYPE_DOUBLE) dst->value.doubleValue = src1->value.doubleValue * src2->value.doubleValue;
+                else dst->value.doubleValue = src1->value.doubleValue * (double)src2->value.intValue;
             return 0; // end instruction
 
             default: ;
@@ -473,38 +449,40 @@ int executeInstructionMathOperation(INSTRUCTION *instr) {
 
     case Instruction_Divide:
         ;
-        if (src1Type == TYPE_STRING || src2Type == TYPE_STRING) exitInterpret(10);
-        switch ( src1Type ) {   // both are Double or Ints
+        if ( src1->type == TYPE_STRING || src2->type == TYPE_STRING )
+            return 10; // cannot divide strings
+
+        switch ( src1->type ) {   // both are Double or Ints
 
             case TYPE_INT:  // SRC1 is int
                 ; // SRC2 is int
-                if (src2Type==TYPE_INT) {
-                    if (src2Val->intValue==0) return 9; // dividing by zero
-                    dstVal->intValue = src1Val->intValue / src2Val->intValue;
+                if ( src2->type == TYPE_INT ) {
+                    if ( src2->value.intValue == 0 ) return 9; // dividing by zero
+                    dst->value.intValue = src1->value.intValue / src2->value.intValue;
                 }
                 else {  // SRC2 is double
-                    if (dstType==TYPE_INT){ // DST is int
-                        dstType = TYPE_DOUBLE;
-                        dstVal->doubleValue = (double)dstVal->intValue;
+                    if ( dst->type == TYPE_INT ){ // DST is int
+                        dst->type = TYPE_DOUBLE;
+                        dst->value.doubleValue = (double)dst->value.intValue;
                     }
-                    if (src2Val->doubleValue==0.0) return 9; // dividing by zero
-                    dstVal->doubleValue = (double)src1Val->intValue / src2Val->doubleValue;
+                    if ( src2->value.doubleValue == 0.0) return 9; // dividing by zero
+                    dst->value.doubleValue = (double)src1->value.intValue / src2->value.doubleValue;
                 }
             return 0; // end instruction
 
             case TYPE_DOUBLE:
                 ;
-                if (dstType==TYPE_INT) {
-                    dstType = TYPE_DOUBLE;
-                    dstVal->doubleValue = (double)dstVal->intValue;
+                if ( dst->type == TYPE_INT ) {
+                    dst->type = TYPE_DOUBLE;
+                    dst->value.doubleValue = (double)dst->value.intValue;
                 }
-                if (src2Type==TYPE_DOUBLE) {
-                    if (src2Val->doubleValue==0.0) return 9; // dividing by zero
-                    dstVal->doubleValue = src1Val->doubleValue / src2Val->doubleValue;
+                if ( src2->type == TYPE_DOUBLE ) {
+                    if ( src2->value.doubleValue == 0.0 ) return 9; // dividing by zero
+                    dst->value.doubleValue = src1->value.doubleValue / src2->value.doubleValue;
                 }
                 else {
-                    if (src2Val->intValue==0) return 9; // dividing by zero
-                    dstVal->doubleValue = src1Val->doubleValue / (double)src2Val->intValue;
+                    if ( src2->value.intValue == 0 ) return 9; // dividing by zero
+                    dst->value.doubleValue = src1->value.doubleValue / (double)src2->value.intValue;
                 }
             return 0; // end instruction
 

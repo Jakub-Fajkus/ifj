@@ -44,12 +44,17 @@ void InstructionExecute(INSTRUCTION *Instr);
 
 
 /**
+ * Executes these operations in format: DST = SRC1 %% SRC2, where %% is operator
  * ADD (math & concatenation), SUB, MUL, DIV
  * ANALOGICAL TO createInstructionMathOperation()
- * @param instr
- * @return  99 - intern error, 10- other runtime error, 9- division by zero, 0- OK
+ *
+ * @param instrType
+ * @param dst - ptr to value
+ * @param src1 - ptr to value
+ * @param src2 - ptr to value
+ * @return 99 - intern error, 10- other runtime error, 9- division by zero, 0- OK
  */
-int executeInstructionMathOperation(INSTRUCTION *instr);
+int executeInstructionMathOperation(INSTRUCTION_TYPE instrType, VARIABLE *dst, VARIABLE *src1, VARIABLE *src2);
 
 /**
  * ASSIGN execution
