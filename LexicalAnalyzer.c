@@ -204,6 +204,12 @@ void string1(TOKEN *token) {
 
     while (true) {
         c = getc(fp);
+        if(c == '\n'){
+            free(str);
+            token->type = LEX_ERROR;
+            return;
+        }
+
         if (c == '"' && noEscape) {
             if(strlen(str)==0){
                 token->type = LITERAL_STRING;
