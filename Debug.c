@@ -120,7 +120,7 @@ void printInstruction(INSTRUCTION *instruction) {
         case Instruction_Create_GlobalFrame_And_LocalStack: printf("Instruction_Create_GlobalFrame_And_LocalStack\n"); break;
         case Instruction_Push_Global_Variable:              printf("Instruction_Push_Global_Variable: %s\n", (char*)instruction->address_dst); break;
         case Instruction_Create_Global_Variable:            printf("Instruction_Create_Global_Variable: %s\n", (char*)instruction->address_dst); break;
-        case Instruction_Create_Local_Frame:                printf("Instruction_Create_Local_Frame: %s\n", (char*)instruction->address_dst); break;
+        case Instruction_Create_Local_Frame:                printf("Instruction_Create_Local_Frame: \n"); break;
         case Instruction_Push_Local_Variable:               printf("Instruction_Push_Local_Variable: %s\n", (char*)instruction->address_dst); break;
         case Instruction_Create_Local_Variable:             printf("Instruction_Create_Local_Variable: %s\n", (char*)instruction->address_dst); break;
         case Instruction_CallFunction:                      printf("Instruction_CallFunction: returnTo: %s\n", (char*)instruction->address_src1); break;
@@ -167,7 +167,6 @@ void printInstruction(INSTRUCTION *instruction) {
         case Instruction_Function_Compare:                  printf("Instruction_Function_Compare: %s %s returnTo %s\n", (char*)instruction->address_dst, (char*)instruction->address_dst, (char*)instruction->address_src1); break;
         case Instruction_Function_Find:                     printf("Instruction_Function_Find: %s %s returnTo %s\n", (char*)instruction->address_dst, (char*)instruction->address_dst, (char*)instruction->address_src1); break;
         case Instruction_End_Interpret:                     printf("Instruction_End_Interpret\n"); break;
-
         case Instruction_Push_Actual_Local_Variable: printf("Instruction_Push_Actual_Local_Variable:name %s\n", (char*)instruction->address_dst);break;
         case Instruction_Create_Actual_Local_Variable: printf("Instruction_Create_Actual_Local_Variable: %s\n", (char*)instruction->address_dst);break;
         case Instruction_Copy_To_Upcoming_Frame: printf("Instruction_Copy_To_Upcoming_Frame: %s <= %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1);break;

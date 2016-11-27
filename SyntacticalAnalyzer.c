@@ -5,6 +5,7 @@
 #include "ifj16.h"
 #include "Debug.h"
 #include "SemanticalAnalyzer.h"
+#include "Interpret.h"
 #include "LexicalAnalyzerStructures.h"
 #include "BasicStructures.h"
 #include "SymbolTable.h"
@@ -1072,6 +1073,10 @@ void makeFirstPass() {
 
     semanticCheckForFunctionRun();
     makeSecondPass();
+    ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createInstrCallFunction(semantic_getFunction("Main.run")->instructions)));
+    Interpret(mainInstructionList, NULL, NULL);
+
+    return;
 
     //test
     struct STACK_STR *symbolTableStacked = BTInorder(globalSymbolTable);
@@ -1096,11 +1101,12 @@ void makeFirstPass() {
     printf("end of printing\n");
     //test
 
-
-
     //just "testing"
     printf("print list of main instructions\n");
-    printListOfInstructions(mainInstructionList);
+    printInstructions(mainInstructionList);
+
+
+
 
 
 }
