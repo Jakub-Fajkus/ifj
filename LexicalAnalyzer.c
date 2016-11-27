@@ -120,9 +120,11 @@ void exclamationMark(TOKEN *token) {
 
 void equating(TOKEN *token) {
     int c = getc(fp);
-    if (c == '=' || c == '<' || c == '>') {
-        char *str = "=.";
-        str[1] = (char) c;
+    if (c == '=') {
+        char *str = (char*)malloc(sizeof(char)*3);
+        str[0]='=';
+        str[1]='=';
+        str[2]='\0';
         token->type = OPERATOR_LOGIC;
         token->data.operatorLogic.name = str;
     } else if (testValid(c)) {
