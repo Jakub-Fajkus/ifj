@@ -407,7 +407,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
 
                     INSTRUCTION *instruction2 = createInstrMath(Instruction_Addition, tempName,
                                                    stackElement1.data.notTerminalData.name,
-                                                   stackElement2.data.notTerminalData.name);
+                                                   stackElement3.data.notTerminalData.name);
                     ListInsertLast(threeAddressCode,createInstruction(instruction2));
                     stackElement1.data.notTerminalData.name = tempName;
                 } else {
@@ -439,7 +439,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
 
                     INSTRUCTION *instruction2 = createInstrMath(Instruction_Subtraction, tempName,
                                                    stackElement1.data.notTerminalData.name,
-                                                   stackElement2.data.notTerminalData.name);
+                                                   stackElement3.data.notTerminalData.name);
                     ListInsertLast(threeAddressCode,createInstruction(instruction2));
                     stackElement1.data.notTerminalData.name = tempName;
                 } else {
@@ -470,7 +470,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
 
                     INSTRUCTION *instruction2 = createInstrMath(Instruction_Multiply, tempName,
                                                    stackElement1.data.notTerminalData.name,
-                                                   stackElement2.data.notTerminalData.name);
+                                                   stackElement3.data.notTerminalData.name);
                     ListInsertLast(threeAddressCode,createInstruction(instruction2));
 
                     stackElement1.data.notTerminalData.name = tempName;
@@ -507,7 +507,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                     INSTRUCTION *instruction2 = createLocalVariable(tempName, outputType);
                     createInstrMath(Instruction_Multiply, tempName,
                                     stackElement1.data.notTerminalData.name,
-                                    stackElement2.data.notTerminalData.name);
+                                    stackElement3.data.notTerminalData.name);
                     ListInsertLast(threeAddressCode,createInstruction(instruction2));
 
                     stackElement1.data.notTerminalData.name = tempName;

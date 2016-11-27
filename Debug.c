@@ -124,7 +124,7 @@ void printInstruction(INSTRUCTION *instruction) {
         case Instruction_Create_Local_Variable:             printf("Instruction_Create_Local_Variable: %s\n", (char*)instruction->address_dst); break;
         case Instruction_CallFunction:                      printf("Instruction_CallFunction\n"); break;
         case Instruction_ReturnFunction:                    printf("Instruction_ReturnFunction\n"); break;
-        case Instruction_Assign:                            printf("Instruction_Assign: %s = XXX\n", (char*)instruction->address_dst, (char*)instruction->address_src1); break;
+        case Instruction_Assign:                            printf("Instruction_Assign: %s = %s\n", (char*)instruction->address_dst, (char*)instruction->address_src1); break;
         case Instruction_Addition:                          printf("Instruction_Addition %s = %s + %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;
         case Instruction_Subtraction:                       printf("Instruction_Subtraction %s = %s - %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;
         case Instruction_Multiply:                          printf("Instruction_Multiply %s = %s * %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;
