@@ -375,7 +375,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         switch (Instr->type) {
             case Instruction_Assign:    // expecting DST & SRC variable name
                 ;
-                if ( dst ==NULL || src1 == NULL || src2 != NULL ){
+                if (!(dst != NULL && src1 != NULL && src2 == NULL)){
                     //TODO: free?
                     return 99;
                 }
