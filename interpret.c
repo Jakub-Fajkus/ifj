@@ -67,13 +67,15 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         }
 
         // Inserting variable into global frame (with or without value)
-        if (Instr->type == Instruction_Create_Global_Variable || Instr->type == Instruction_Push_Global_Variable) { debugPrintf("Instruction_Insert_Global_Variable\n");
+        if (Instr->type == Instruction_Create_Global_Variable || Instr->type == Instruction_Push_Global_Variable) {
+            debugPrintf("Instruction_Insert_Global_Variable: |%s|\n", (char *)Instr->address_dst);
             pushToFrame(globalFrame, Instr);
             ListSuccessor(InstructionList);
             continue; // Jump to next instruction
         }
         // Inserting variable into UPCOMING local frame (the frame is not in stack)
-        if (Instr->type == Instruction_Create_Local_Variable || Instr->type == Instruction_Push_Local_Variable) { debugPrintf("Instruction_Insert_Local_Variable-UpcomingFrame\n");
+        if (Instr->type == Instruction_Create_Local_Variable || Instr->type == Instruction_Push_Local_Variable) {
+            debugPrintf("Instruction_Insert_Local_Variable-UpcomingFrame: |%s|\n", (char *)Instr->address_dst);
             if (upcomingLocalFrame == NULL) {
                 upcomingLocalFrame = createFrame();
             }
@@ -84,7 +86,8 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         }
 
         // Inserting variable into ACTUAL local frame (the frame is on top of stack)
-        if (Instr->type == Instruction_Push_Actual_Local_Variable || Instr->type == Instruction_Create_Actual_Local_Variable ) { debugPrintf("Instruction_Insert_Local_Variable-ActualFrame\n");
+        if (Instr->type == Instruction_Push_Actual_Local_Variable || Instr->type == Instruction_Create_Actual_Local_Variable ) {
+            debugPrintf("Instruction_Insert_Local_Variable-ActualFrame: |%s|\n", (char *)Instr->address_dst);
             if (actualLocalFrame == NULL) {
                 return 99;
             }
@@ -99,7 +102,8 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         // Finds the other variable in upcoming frame, expecting it has no value
         // - and finally the content is copied "upcoming <- found"
         // Special version of Assignment
-        if (Instr->type == Instruction_Copy_To_Upcoming_Frame) { debugPrintf("Instruction_Copy_To_Upcoming_Frame\n");
+        if (Instr->type == Instruction_Copy_To_Upcoming_Frame) {
+            debugPrintf("Instruction_Copy_To_Upcoming_Frame: DST=|%s|, SRC=|%s|\n", (char *)Instr->address_dst, (char *)Instr->address_src1);
 
             // expecting: dst = (char *) name of variable inside upcoming frame
             // expecting: src1 =(char *) name of variable inside actual local frame
@@ -138,7 +142,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             // HERE COMES THE FUCKING RECURSION
             interpretRetVal = Interpret( (tDLList *)Instr->address_dst, globalFrame, stackOfLocalFrames, Instr->address_src1 );
             if ( interpretRetVal != 0 ) {
-                debugPrintf("Previous instance of interpret has failed. #CallFunction\n");
+                debugPrintf("Previous instance of interpret has failed. #CallFunctionError\n");
                 return interpretRetVal;
             }
 
@@ -205,7 +209,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             continue; // Jump to next instruction
         }
 
-        // other special instructions: IF & WHILE
+        // DST = BOOL, SRC1 = TRUE, SRC2 = FALSE
         if (Instr->type == Instruction_IF) {    debugPrintf("Instruction_IF\n");
 
             VARIABLE *booleanValue;
@@ -232,8 +236,8 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             continue; // Jump to next instruction
         }
 
+        // DST = BOOL, SRC1 = EXPR, SRC2 = CYCLE
         if (Instr->type == Instruction_WHILE) { debugPrintf("Instruction_WHILE\n");
-            debugPrintf("HANDLING WHILE_INSTRUCTION");
 
             //----- STEP 1: Calling recursion for ExpressionList
             interpretRetVal = Interpret( (tDLList *)Instr->address_src1, globalFrame, stackOfLocalFrames, NULL );
@@ -249,22 +253,21 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             else {
                 booleanValue = findFrameVariable(globalFrame, Instr->address_dst);
             }
-            if (booleanValue == NULL) {
-                //TODO: FATAL EXCEPTION: VARIABLE NOT FOUND
-            }
 
             //----- STEP 3: This Monster
             while (booleanValue->value.intValue == 1) {
 
+                // Execute Cycle tape
                 interpretRetVal = Interpret( (tDLList *)Instr->address_src2, globalFrame, stackOfLocalFrames, NULL );
                 if ( interpretRetVal != 0 ) {
-                    debugPrintf("Previous instance of interpret has failed. #WhileEvalErr_n\n");
+                    debugPrintf("Previous instance of interpret has failed. #WhileCycleErr\n");
                     return interpretRetVal;
                 }
 
+                // Set new values
                 interpretRetVal = Interpret( (tDLList *)Instr->address_src1, globalFrame, stackOfLocalFrames, NULL );
                 if ( interpretRetVal != 0 ) {
-                    debugPrintf("Previous instance of interpret has failed. #WhileCycleErr\n");
+                    debugPrintf("Previous instance of interpret has failed. #WhileEvalErr_n\n");
                     return interpretRetVal;
                 }
 
@@ -272,7 +275,6 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                     booleanValue = findFrameVariable(actualLocalFrame, Instr->address_dst);
                 else
                     booleanValue = findFrameVariable(globalFrame, Instr->address_dst);
-
             }
 
             //----- STEP 4: Cycle is done
@@ -293,6 +295,10 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             dst = findFrameVariable(actualLocalFrame, Instr->address_dst);
             src1 = findFrameVariable(actualLocalFrame, Instr->address_src1);
             src2 = findFrameVariable(actualLocalFrame, Instr->address_src2);
+
+            if (dst == NULL) dst = findFrameVariable(globalFrame, Instr->address_dst);
+            if (src1 == NULL) src1 = findFrameVariable(globalFrame, Instr->address_src1);
+            if (src2 == NULL) src2 = findFrameVariable(globalFrame, Instr->address_src2);
         }
         else {
             // Not found in local frame
@@ -328,7 +334,6 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                     debugPrintf("Math operation failed.\n");
                     return mathRetValue;
                 }
-
                 break;
 
             case Instruction_Bool_Equals:
