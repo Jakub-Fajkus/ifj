@@ -212,12 +212,18 @@ void createInstructionsToCallIfj16Function(char *functionName, tDLList *instruct
         }
 
         instruction->type = Instruction_Function_Print;
+        if(givenParameters->First->element.data.parameter->type != TYPE_STRING) {
+            exit(4);
+        }
         instruction->address_dst = givenParameters->First->element.data.parameter->name;
 
         ListInsertLast(instructions, wrapInstructionIntoListElement(instruction));
     }else if(stringEquals("ifj16.length", functionName)) {
         instruction->type = Instruction_Function_Length;
         instruction->address_dst = returnValueToVariable;
+        if(givenParameters->First->element.data.parameter->type != TYPE_STRING) {
+            exit(4);
+        }
         instruction->address_src1 = givenParameters->First->element.data.parameter->name;
 
         ListInsertLast(instructions, wrapInstructionIntoListElement(instruction));
@@ -230,10 +236,21 @@ void createInstructionsToCallIfj16Function(char *functionName, tDLList *instruct
 
         ListInsertLast(args, createListElementWithFunctionParamameter(returnValueToVariable, TYPE_STRING));
         ListSuccessor(givenParameters);
+        if(givenParameters->Act->element.data.parameter->type != TYPE_STRING) {
+            exit(4);
+        }
         ListInsertLast(args, createListElementWithFunctionParamameter(givenParameters->Act->element.data.parameter->name, givenParameters->Act->element.data.parameter->type));
         ListSuccessor(givenParameters);
+
+        if(givenParameters->Act->element.data.parameter->type != TYPE_INT) {
+            exit(4);
+        }
         ListInsertLast(args, createListElementWithFunctionParamameter(givenParameters->Act->element.data.parameter->name, givenParameters->Act->element.data.parameter->type));
         ListSuccessor(givenParameters);
+
+        if(givenParameters->Act->element.data.parameter->type != TYPE_INT) {
+            exit(4);
+        }
         ListInsertLast(args, createListElementWithFunctionParamameter(givenParameters->Act->element.data.parameter->name, givenParameters->Act->element.data.parameter->type));
 
         instruction->address_dst = args;
@@ -242,7 +259,15 @@ void createInstructionsToCallIfj16Function(char *functionName, tDLList *instruct
     }else if(stringEquals("ifj16.compare", functionName)) {
         instruction->type = Instruction_Function_Compare;
         instruction->address_dst = returnValueToVariable;
+
+        if(givenParameters->First->element.data.parameter->type != TYPE_STRING) {
+            exit(4);
+        }
         instruction->address_src1 = givenParameters->First->element.data.parameter->name;
+
+        if(givenParameters->First->rptr->element.data.parameter->type != TYPE_STRING) {
+            exit(4);
+        }
         instruction->address_src2 = givenParameters->First->rptr->element.data.parameter->name;
 
         ListInsertLast(instructions, wrapInstructionIntoListElement(instruction));
@@ -250,13 +275,22 @@ void createInstructionsToCallIfj16Function(char *functionName, tDLList *instruct
 
         instruction->type = Instruction_Function_Find;
         instruction->address_dst = returnValueToVariable;
+        if(givenParameters->First->element.data.parameter->type != TYPE_STRING) {
+            exit(4);
+        }
         instruction->address_src1 = givenParameters->First->element.data.parameter->name;
+        if(givenParameters->First->rptr->element.data.parameter->type != TYPE_STRING) {
+            exit(4);
+        }
         instruction->address_src2 = givenParameters->First->rptr->element.data.parameter->name;
 
         ListInsertLast(instructions, wrapInstructionIntoListElement(instruction));
     }else if(stringEquals("ifj16.sort", functionName)) {
         instruction->type = Instruction_Function_Sort;
         instruction->address_dst = returnValueToVariable;
+        if(givenParameters->First->element.data.parameter->type != TYPE_STRING) {
+            exit(4);
+        }
         instruction->address_src1 = givenParameters->First->element.data.parameter->name;
 
         ListInsertLast(instructions, wrapInstructionIntoListElement(instruction));
