@@ -317,7 +317,7 @@ TREE_NODE_DATA* createFunctionData(SYMBOL_TABLE_FUNCTION *function) {
     return treeData;
 }
 
-SYMBOL_TABLE_FUNCTION* createAndInsertFunction(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, unsigned int usages, tDLList *parameters, tDLList *instructions, int hasReturn) {
+SYMBOL_TABLE_FUNCTION* createAndInsertFunction(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, unsigned int usages, tDLList *parameters, tDLList *instructions, bool hasReturn) {
     //if the function already exists
 
     if (NULL != getNodeDataFromTable(symbolTable, name)) {
