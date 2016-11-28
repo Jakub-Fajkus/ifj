@@ -107,7 +107,7 @@ void checkFunctionParametersType(char *functionName, tDLList *parameters){
     }
 }
 
-void semantical_ControlFunctionReturnsExist(SYMBOL_TABLE_NODEPtr *symbolTable) {
+void semantical_ExistAndCorrectTypeOfReturns(SYMBOL_TABLE_NODEPtr *symbolTable) {
 
     struct SYMBOL_TABLE_NODE *actualEL = NULL;
 
@@ -126,9 +126,8 @@ void semantical_ControlFunctionReturnsExist(SYMBOL_TABLE_NODEPtr *symbolTable) {
         actualEL = elem->data.symbolTableNode;
 
         if (actualEL != NULL && actualEL->data->type == TREE_NODE_FUNCTION && actualEL->data->item->function->type != TYPE_VOID) {
-            printf("kurva pico vole");
             if(actualEL->data->item->function->hasReturn == 0){
-                printf("Missing return of non-void function");
+                printf("Incompatible type of return value or missing return of non-void function");
                 exit(8);
             }
         }

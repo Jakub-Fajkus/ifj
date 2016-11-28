@@ -13,7 +13,7 @@ SYMBOL_TABLE_VARIABLE *semantic_getInitializedVariable(char * name);
 bool semantical_checkTypes(DATA_TYPE destination, DATA_TYPE source);
 bool semantical_checkFunctionCall(tDLList *declaredParameters, tDLList *usedParameters);
 void createInstructionsToCallIfj16Function(char *functionName, tDLList *instructions, tDLList *givenParameters, char *returnValueToVariable);
-void semantical_ControlFunctionReturnsExist(SYMBOL_TABLE_NODEPtr *symbolTable);
+void semantical_ExistAndCorrectTypeOfReturns(SYMBOL_TABLE_NODEPtr *symbolTable);
 bool isFunctionFromIfj16(char *name);
 void initializeVariable(char *name);
 bool canConvertTypes(DATA_TYPE destination, DATA_TYPE source);
