@@ -601,7 +601,7 @@ bool ruleStat(){
 
                     //result of expression, temp which would be used in createInsIf
                     if(!firstPass){
-                        ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createLocalVariable(resultVariableName, resultVariableType)));
+                        ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createActualLocalVariable(resultVariableName, resultVariableType)));
                         //todo: test resultVariableType with bool
                     }
 
@@ -1068,7 +1068,7 @@ void runSyntacticalAnalysis(char *fileName) {
 
     Interpret(mainInstructionList, NULL, NULL, NULL);
 
-//    printAll();
+    printAll();
 }
 
 
