@@ -281,47 +281,59 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             continue; // Jump to next instruction
         }
 
-        debugPrintf("OTHER: ");
         //--- Special instructions are captured, now we will execute the rest ---
 
         // EXECUTING OTHER INSTRUCTIONS, REPOINTING REQUIRED
-        VARIABLE *dst = NULL;
-        VARIABLE *src1 = NULL;
-        VARIABLE *src2 = NULL;
+        VARIABLE *dst = NULL;   VARIABLE *src1 = NULL;  VARIABLE *src2 = NULL;
+        char *tempDstName = NULL, *tempSrc1Name = NULL, *tempSrc2Name = NULL;
 
+        //  taking out the name of variable. needed to use while searching in global frame!!!
+        if (Instr->address_dst != NULL) {
+            tempDstName = malloc(sizeof(char)*strlen((char *)Instr->address_dst)+1);
+            tempDstName[0] = '\0';
+            strcpy(tempDstName, (char *)Instr->address_dst);
+        }
+        if (Instr->address_src1 != NULL) {
+            tempSrc1Name = malloc(sizeof(char)*strlen((char *)Instr->address_src1)+1);
+            tempSrc1Name[0] = '\0';
+            strcpy(tempSrc1Name, (char *)Instr->address_src1);
+        }
+        if (Instr->address_src2 != NULL) {
+            tempSrc2Name = malloc(sizeof(char)*strlen((char *)Instr->address_src2)+1);
+            tempSrc2Name[0] = '\0';
+            strcpy(tempSrc2Name, (char *)Instr->address_src2);
+        }
 
+        //char* getClassNameWithDotFromFullIdentifier(char *fullIdentifier)
 
-        if ( actualLocalFrame!= NULL ) {
+        if ( actualLocalFrame!= NULL ) {    // first seeking in top-of-stack
 
-            if ( actualLocalFrame->First != NULL ) {    //existing non-empty local frame
+            if ( actualLocalFrame->First != NULL ) {   //  existing non-empty local frame
                 dst = findFrameVariable(actualLocalFrame, Instr->address_dst);
                 src1 = findFrameVariable(actualLocalFrame, Instr->address_src1);
                 src2 = findFrameVariable(actualLocalFrame, Instr->address_src2);
-
             }
-
-            // TODO: check if this is required
-            char *tempDstName = NULL, *tempSrc1Name = NULL, *tempSrc2Name = NULL;
-
-            if (Instr->address_dst != NULL) {
-                tempDstName = malloc(sizeof(char)*strlen((char *)Instr->address_dst)+1);
-                tempDstName[0] = '\0';
-                strcpy(tempDstName, (char *)Instr->address_dst);
-            }
-            if (Instr->address_src1 != NULL) {
-                tempSrc1Name = malloc(sizeof(char)*strlen((char *)Instr->address_src1)+1);
-                tempSrc1Name[0] = '\0';
-                strcpy(tempSrc1Name, (char *)Instr->address_src1);
-            }
-            if (Instr->address_src2 != NULL) {
-                tempSrc2Name = malloc(sizeof(char)*strlen((char *)Instr->address_src2)+1);
-                tempSrc2Name[0] = '\0';
-                strcpy(tempSrc2Name, (char *)Instr->address_src2);
-            }
+            // Now there is a possibility that dsr, src1 or src2 are NULL = not found
 
             // SEARCHING IN GLOBAL FRAME: PASS ONE MORE INFORMATION - NAME OF CLASS
             //if the varaible was not found and the pointer in the instruction is not null
             //without this check you would ty to find a variable even if you dont want to
+
+            if ( dst == NULL && tempDstName != NULL ) {
+                Instr->address_dst = stringConcat(getClassNameWithDotFromFullIdentifier(returnValue), tempDstName);
+                dst = findFrameVariable(globalFrame, Instr->address_dst);
+            }
+            if ( src1 == NULL && tempSrc1Name != NULL ) {
+                Instr->address_src1 = stringConcat(getClassNameWithDotFromFullIdentifier(returnValue), tempSrc1Name);
+                src1 = findFrameVariable(globalFrame, Instr->address_src1);
+            }
+            if ( src2 == NULL && tempSrc2Name != NULL ) {
+                Instr->address_src2 = stringConcat(getClassNameWithDotFromFullIdentifier(returnValue), tempSrc2Name);
+                src2 = findFrameVariable(globalFrame, Instr->address_src2);
+            }
+
+
+            /*
             if (dst == NULL && Instr->address_dst != NULL) {
                 if ( strcmp(returnValue, "Main.run") == 0 ) {
                     if (tempDstName != NULL)
@@ -329,6 +341,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 }
                 dst = findFrameVariable(globalFrame, Instr->address_dst);
             }
+
             if (src1 == NULL && Instr->address_src1 != NULL) {
                 if ( strcmp(returnValue, "Main.run") == 0 ) {
                     if (tempSrc1Name != NULL)
@@ -336,6 +349,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 }
                 src1 = findFrameVariable(globalFrame, Instr->address_src1);
             }
+
             if (src2 == NULL && Instr->address_src2 != NULL) {
                 if ( strcmp(returnValue, "Main.run") == 0 ) {
                     if (tempSrc2Name != NULL)
@@ -343,14 +357,32 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 }
                 src2 = findFrameVariable(globalFrame, Instr->address_src2);
             }
+            */
 
         }
-        else {  // not existing top-of-stack local frame
-            if (globalFrame->First != NULL) {
+        // first seeking in global frame, because top-of-stack doesn't exist
+        else {
+            if (globalFrame->First != NULL) {   //
                 // SEARCHING IN GLOBAL FRAME: PASS ONE MORE INFORMATION - NAME OF CLASS
+
+                if ( tempDstName != NULL ) {
+                    Instr->address_dst = stringConcat(getClassNameWithDotFromFullIdentifier(returnValue), tempDstName);
+                    dst = findFrameVariable(globalFrame, Instr->address_dst);
+                }
+                if ( tempSrc1Name != NULL ) {
+                    Instr->address_src1 = stringConcat(getClassNameWithDotFromFullIdentifier(returnValue), tempSrc1Name);
+                    src1 = findFrameVariable(globalFrame, Instr->address_src1);
+                }
+                if ( tempSrc2Name != NULL ) {
+                    Instr->address_src2 = stringConcat(getClassNameWithDotFromFullIdentifier(returnValue), tempSrc2Name);
+                    src2 = findFrameVariable(globalFrame, Instr->address_src2);
+                }
+
+                /*
                 dst = findFrameVariable(globalFrame, Instr->address_dst);
                 src1 = findFrameVariable(globalFrame, Instr->address_src1);
                 src2 = findFrameVariable(globalFrame, Instr->address_src2);
+                */
             }
         }
 
