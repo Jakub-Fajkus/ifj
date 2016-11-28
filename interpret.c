@@ -304,8 +304,6 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             strcpy(tempSrc2Name, (char *)Instr->address_src2);
         }
 
-        //char* getClassNameWithDotFromFullIdentifier(char *fullIdentifier)
-
         if ( actualLocalFrame!= NULL ) {    // first seeking in top-of-stack
 
             if ( actualLocalFrame->First != NULL ) {   //  existing non-empty local frame
@@ -332,34 +330,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 src2 = findFrameVariable(globalFrame, Instr->address_src2);
             }
 
-
-            /*
-            if (dst == NULL && Instr->address_dst != NULL) {
-                if ( strcmp(returnValue, "Main.run") == 0 ) {
-                    if (tempDstName != NULL)
-                        Instr->address_dst = stringConcat("Main.", tempDstName);
-                }
-                dst = findFrameVariable(globalFrame, Instr->address_dst);
-            }
-
-            if (src1 == NULL && Instr->address_src1 != NULL) {
-                if ( strcmp(returnValue, "Main.run") == 0 ) {
-                    if (tempSrc1Name != NULL)
-                        Instr->address_src1 = stringConcat("Main.", tempSrc1Name);
-                }
-                src1 = findFrameVariable(globalFrame, Instr->address_src1);
-            }
-
-            if (src2 == NULL && Instr->address_src2 != NULL) {
-                if ( strcmp(returnValue, "Main.run") == 0 ) {
-                    if (tempSrc2Name != NULL)
-                        Instr->address_src2 = stringConcat("Main.", tempSrc2Name);
-                }
-                src2 = findFrameVariable(globalFrame, Instr->address_src2);
-            }
-            */
-
-        }
+        }   // ended searching in 2 frames in a sequence
         // first seeking in global frame, because top-of-stack doesn't exist
         else {
             if (globalFrame->First != NULL) {   //
@@ -378,31 +349,8 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                     src2 = findFrameVariable(globalFrame, Instr->address_src2);
                 }
 
-                /*
-                dst = findFrameVariable(globalFrame, Instr->address_dst);
-                src1 = findFrameVariable(globalFrame, Instr->address_src1);
-                src2 = findFrameVariable(globalFrame, Instr->address_src2);
-                */
             }
-        }
-
-        //debugPrintf("wait a minute. do i have the function name?\n");
-        //if (returnValue != NULL) debugPrintf("YES I DO! : |%s|\n", returnValue);
-
-        //debugPrintf("Look what i found: |%s|", dst->name);
-
-        debugPrintf("\n\n\n");
-
-        /*
-        if ( Instr->type == Instruction_Function_readString ) {
-            debugPrintf("----------------FATAL ERROR-------------------");
-            debugPrintf("\nTo make all things clear, the interpret tries to find a variable named 'a'\n");
-            debugPrintf("Not knowing, that there is such variable. but 'Main.a' - full ID... \n");
-            debugPrintf("TODO: remake the search function? \n");
-            debugPrintf("TODO: remake the frame-filler function? What if only for global frame? (necessity for full ID)\n");
-            exit(42);
-        }
-         */
+        } // end of searching in global frame (local was NULL)
 
         switch (Instr->type) {
             case Instruction_Assign:    // expecting DST & SRC variable name
