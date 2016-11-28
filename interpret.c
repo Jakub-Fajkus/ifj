@@ -320,21 +320,23 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             }
 
             // SEARCHING IN GLOBAL FRAME: PASS ONE MORE INFORMATION - NAME OF CLASS
-            if (dst == NULL) {
+            //if the varaible was not found and the pointer in the instruction is not null
+            //without this check you would ty to find a variable even if you dont want to
+            if (dst == NULL && Instr->address_dst != NULL) {
                 if ( strcmp(returnValue, "Main.run") == 0 ) {
                     if (tempDstName != NULL)
                         Instr->address_dst = stringConcat("Main.", tempDstName);
                 }
                 dst = findFrameVariable(globalFrame, Instr->address_dst);
             }
-            if (src1 == NULL) {
+            if (src1 == NULL && Instr->address_src1 != NULL) {
                 if ( strcmp(returnValue, "Main.run") == 0 ) {
                     if (tempSrc1Name != NULL)
                         Instr->address_src1 = stringConcat("Main.", tempSrc1Name);
                 }
                 src1 = findFrameVariable(globalFrame, Instr->address_src1);
             }
-            if (src2 == NULL) {
+            if (src2 == NULL && Instr->address_src2 != NULL) {
                 if ( strcmp(returnValue, "Main.run") == 0 ) {
                     if (tempSrc2Name != NULL)
                         Instr->address_src2 = stringConcat("Main.", tempSrc2Name);
