@@ -76,4 +76,6 @@ int executeInstructionExpressionEvaluation(INSTRUCTION_TYPE instrType, VARIABLE 
 int executeInstructionBuiltInFunction(INSTRUCTION_TYPE instrType, VARIABLE *dst, VARIABLE *src1, VARIABLE *src2);
 
 
+char* getClassNameWithDotFromFullIdentifier(char *fullIdentifier);
+
 #endif //IFJ_INTERPRET_H

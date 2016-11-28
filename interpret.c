@@ -1022,3 +1022,17 @@ int executeInstructionBuiltInFunction(INSTRUCTION_TYPE instrType, VARIABLE *dst,
     }
     return 0;
 }
+
+char* getClassNameWithDotFromFullIdentifier(char *fullIdentifier) {
+    int find = ifj16_find(fullIdentifier, ".");
+
+    if(find == -1) {
+        //todo change
+        exit(99);
+    }
+
+
+    char* className = ifj16_substr(fullIdentifier, 0, find);
+
+    return stringConcat(className, ".");
+}
