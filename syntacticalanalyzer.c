@@ -934,7 +934,7 @@ bool ruleDefinitionStart(char *className) {
         if (ruleId(&functionOrPropertyName)) {
             bool propertyInitialized = false;
             bool isFunction = false;
-            type = TYPE_STRING;
+            type = TYPE_INT;
             if (ruleDefinition(className, type, functionOrPropertyName, &propertyInitialized, &isFunction)) {
 //                char *classNameWithDot = stringConcat(className, ".");
 //                if(!isFunction) {
@@ -948,7 +948,7 @@ bool ruleDefinitionStart(char *className) {
         if (ruleId(&functionOrPropertyName)) {
             bool propertyInitialized = false;
             bool isFunction = false;
-            type = TYPE_STRING;
+            type = TYPE_DOUBLE;
             if (ruleDefinition(className, type, functionOrPropertyName, &propertyInitialized, &isFunction)) {
 //                char *classNameWithDot = stringConcat(className, ".");
 //                if(!isFunction) {
@@ -1102,7 +1102,7 @@ void makeSecondPass() {
     if(result == 0) {
         exit(2);
     }
-    //semantical_ControlFunctionReturnsExist(&globalSymbolTable);
+    semantical_ControlFunctionReturnsExist(&globalSymbolTable);
 }
 
 /**
