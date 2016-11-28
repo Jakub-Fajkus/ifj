@@ -4,9 +4,9 @@ class Main {
         a = 2;
      }
 
-     static int a = 1;
-
-     static int isprime(int x) {
-        return x;
-     }
+    static int a = 1;
+//
+//     static int isprime(int x) {
+//        return x;
+//     }
 }

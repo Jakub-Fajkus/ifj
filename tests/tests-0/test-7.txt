@@ -5,4 +5,8 @@ class Main{
     static void run(){
         fun2();
     }
+
+    static void fun2() {
+
+    }
 }

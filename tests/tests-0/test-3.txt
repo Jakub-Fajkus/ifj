@@ -2,7 +2,16 @@ class Main {
     static void run() {
         int x = 5;
         int y = 5;
-        
-        ifj16.print(x + y);
+
+        int vysl;
+        vysl = funkce(x);
+
+        ifj16.print("" + x + y + vysl);
     }
+
+
+    static int funkce(int arg1) {
+        return arg1 + 2;
+    }
+
 }

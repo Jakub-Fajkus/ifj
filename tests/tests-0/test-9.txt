@@ -10,7 +10,8 @@ class Main{
     static int c=2;
     static int d=1;
 
-    static int sm = ( a+b /( c*(a) - d ) + b );
+//    static int sm = ( a+b /( c*(a) - d ) + b );
+    static double sm =  a+b /( c ) + b ;
 
     static void run() {
         //nebavi mne to...
