@@ -732,7 +732,7 @@ bool ruleFuncCall(char *calledFunctionName, char *assignReturnValueToVariable){
                     while(DLActive(parameters) ) {
                         FUNCTION_PARAMETER *param = functionToCall->parameters->Act->element.data.parameter;
                         ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createLocalVariable(param->name, param->type)));
-                        ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrCopyToUpcomingFrame(functionToCall->parameters->Act->element.data.parameter->name, param->name)));
+                        ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrCopyToUpcomingFrame(functionToCall->parameters->Act->element.data.parameter->name, parameters->Act->element.data.parameter->name)));
 
                         //move to the next parameter
                         ListSuccessor(parameters);
@@ -769,7 +769,7 @@ bool ruleFuncParams(struct SYMBOL_TABLE_FUNCTION_STR *functionToCall, tDLList *p
 
     return false;
 }
-
+//1,4,14,15
 bool ruleParam(struct SYMBOL_TABLE_FUNCTION_STR *functionToCall, tDLList *parameters){
     tDLElemPtr activeElementRuleApplication = globalTokens->Act;
 
@@ -780,7 +780,9 @@ bool ruleParam(struct SYMBOL_TABLE_FUNCTION_STR *functionToCall, tDLList *parame
     if (analyzeExpression(actualInstructionList, &resultVariableName, &resultVariableType)) {
         if (ruleAfterFunctionCallExp(functionToCall, parameters)) {
             if(!firstPass) {
-                ListInsertLast(parameters, createListElementWithFunctionParamameter(resultVariableName, resultVariableType));
+                char *newResultVariableName = malloc(strlen(resultVariableName) + 1* sizeof(char));
+                strcpy(newResultVariableName, resultVariableName);
+                ListInsertLast(parameters, createListElementWithFunctionParamameter(newResultVariableName, resultVariableType));
             }
             return true;
         }
