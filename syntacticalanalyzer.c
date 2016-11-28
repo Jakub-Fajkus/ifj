@@ -716,7 +716,6 @@ bool ruleFuncCall(char *calledFunctionName, char *assignReturnValueToVariable){
                     //todo: check return types of the funciton - need to add parameter to this function and to the createInstructionsToCallIfj16Function
                     createInstructionsToCallIfj16Function(calledFunctionName, actualInstructionList, parameters, assignReturnValueToVariable);
                 } else {
-                    //todo: generate instructions to push local variables
                     ListFirst(parameters);
                     ListFirst(functionToCall->parameters);
 
@@ -1056,6 +1055,7 @@ void runSyntacticalAnalysis(char *fileName) {
 
     makeFirstPass();
     makeSecondPass();
+    ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createInstrFillLocalFrame()));
     ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createInstrCallFunction(semantic_getFunction("Main.run")->instructions)));
 
     Interpret(mainInstructionList, NULL, NULL);
