@@ -24,17 +24,25 @@ int ifj16_readInt() {
     int c;
     char *string;
     int newInt, i = 1; // only '\0'
+    bool readSomething = false;
+
     string = (char *) malloc(CHAR_SIZE * i);
     while (((c = getchar()) != EOF) && (c != '\n')) {
         if (((c) >= ((int) '0')) && ((c) <= ((int) '9'))) {
             string[i - 1] = (char) c;
             i++;
             string = realloc(string, CHAR_SIZE * i);
+            readSomething = true;
         } else {
             free(string);
             Error7();
         }
     }
+    if(!readSomething) {
+        free(string);
+        Error7();
+    }
+
     string[i - 1] = '\0';
     sscanf(string, "%d", &newInt);
     free(string);
@@ -45,6 +53,8 @@ double ifj16_readDouble() {
     int c;
     char *string;
     double newDouble;
+    bool readSomething = false;
+
     int i = 1, exponentIndex = -1; // only '\0'
     string = (char *) malloc(CHAR_SIZE * i);
     while (((c = getchar()) != EOF) && (c != '\n')) {
@@ -54,6 +64,7 @@ double ifj16_readDouble() {
            ) {
             string[i - 1] = (char) c;
             i++;
+            readSomething = true;
             string = realloc(string, CHAR_SIZE * i);
         } else {
             if ((c == 'e' || c == 'E') && exponentIndex == -1 && i > 1) {
@@ -61,10 +72,12 @@ double ifj16_readDouble() {
 
                 string[i - 1] = (char) c;
                 i++;
+                readSomething = true;
                 string = realloc(string, CHAR_SIZE * i);
             } else if ((c == '+' || c == '-') && exponentIndex == i - 2) {
                 string[i - 1] = (char) c;
                 i++;
+                readSomething = true;
                 string = realloc(string, CHAR_SIZE * i);
             } else {
                 free(string);
@@ -72,6 +85,11 @@ double ifj16_readDouble() {
             }
         }
     }
+    if(!readSomething) {
+        free(string);
+        Error7();
+    }
+
     string[i - 1] = '\0';
     sscanf(string, "%lf", &newDouble);
     free(string);
