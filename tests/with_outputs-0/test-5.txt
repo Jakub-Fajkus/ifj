@@ -6,9 +6,12 @@ class Main{
 
     static void run(){
 
-        int $delka = ifj16.length(Main.neco);
-        String sort = ifj16.sort(Main.neco);
-        int comp = ifj16.compare(sort, sort);
+        int $delka;
+        $delka = ifj16.length(Main.neco);
+        String sort;
+        sort = ifj16.sort(Main.neco);
+        int comp;
+        comp = ifj16.compare(sort, sort);
 
         ifj16.print($delka);
         ifj16.print(sort);
@@ -20,7 +23,7 @@ class Main{
             if(comp){
                 ifj16.print("OK, retezec \"joj\" je vetsi jak \"j\"\n");
                 comp = ifj16.compare("j", "jajajaj");
-                if(comp == -1){
+                if(comp == 1-2){
                     ifj16.print("OK, retezec \"j\" je mensi jak \"jajajaj\"\n");
                 }else{
                     ifj16.print("Chyba v ifj16.comapre");
