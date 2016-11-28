@@ -13,7 +13,7 @@ class Main{
         int comp;
         comp = ifj16.compare(sort, sort);
 
-        ifj16.print($delka);
+        ifj16.print(""+$delka);
         ifj16.print(sort);
 
         if(comp == 0){
