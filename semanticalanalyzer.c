@@ -140,7 +140,8 @@ void semantical_ExistAndCorrectTypeOfReturns(SYMBOL_TABLE_NODEPtr *symbolTable) 
 
 
 bool canConvertTypes(DATA_TYPE destination, DATA_TYPE source) {
-    if (destination == source) {
+
+    if ((destination == TYPE_INT && source == TYPE_INT)||(destination == TYPE_STRING && source == TYPE_STRING) ||(destination == TYPE_DOUBLE && source == TYPE_DOUBLE)){
         return true;
     }
 

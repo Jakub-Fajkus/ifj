@@ -313,12 +313,13 @@ bool rulePropDef(bool *variableInitialized, DATA_TYPE variableType, char *variab
                 if(firstPass) {
                     createAndInsertVariable(&globalSymbolTable, fullyQualifiedVariableName, variableType, true);
                     //check type of the result variable with variable declaration
-                    if(canConvertTypes(variableType, resultVariableType)) {
+                    ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createInstrAssign(fullyQualifiedVariableName, resultVariableName)));
+
+                } else{
+                    if(!canConvertTypes(variableType, resultVariableType)) {
                         debugPrintf("can not convert types");
                         exit(4);
                     }
-
-                    ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createInstrAssign(fullyQualifiedVariableName, resultVariableName)));
                 }
 
                 return true;
