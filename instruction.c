@@ -304,12 +304,12 @@ INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList, char *functionN
     return instruction;
 }
 
-INSTRUCTION *createInstrReturnFunction(char **returnVariableName) {
+INSTRUCTION *createInstrReturnFunction() {
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
 
     instruction->type = Instruction_ReturnFunction;
 
-    instruction->address_dst = *returnVariableName;
+    instruction->address_dst = NULL;
     instruction->address_src1 = NULL;
     instruction->address_src2 = NULL;
 

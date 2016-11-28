@@ -218,11 +218,9 @@ INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList, char *functionN
 /**
  * INSTRUCTION CONSTRUCTOR: Return from Function
  *
- * @param returnVariableName Name of the variable to which the return value of this function will be assigned.
- *      If the poinetr equals to NULL, the return value should not be assigned.
  * @return
  */
-INSTRUCTION *createInstrReturnFunction(char **returnVariableName);
+INSTRUCTION *createInstrReturnFunction();
 
 
 /**
