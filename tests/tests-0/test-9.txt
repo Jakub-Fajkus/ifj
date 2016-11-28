@@ -11,7 +11,7 @@ class Main{
     static int d=1;
 
 //    static int sm = ( a+b /( c*(a) - d ) + b );
-    static double sm =  a+b /( c ) + b ;
+    static double sm =  a + b /( c ) + b ;
 
     static void run() {
         //nebavi mne to...

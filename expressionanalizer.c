@@ -41,7 +41,7 @@ void setReturnType(DATA_TYPE type){
         returnType = type;
         return;
     }else{
-        returnType = TYPE_STRING;
+        returnType = TYPE_DOUBLE;
         return;
     }
 }
@@ -504,8 +504,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                     INSTRUCTION *instruction1 = createActualLocalVariable(tempName, outputType);
                     ListInsertLast(threeAddressCode,createInstruction(instruction1));
 
-                    INSTRUCTION *instruction2 = createActualLocalVariable(tempName, outputType);
-                    createInstrMath(Instruction_Multiply, tempName,
+                    INSTRUCTION *instruction2 = createInstrMath(Instruction_Divide, tempName,
                                     stackElement1.data.notTerminalData.name,
                                     stackElement3.data.notTerminalData.name);
                     ListInsertLast(threeAddressCode,createInstruction(instruction2));
