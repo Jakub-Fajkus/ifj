@@ -180,10 +180,6 @@ void createInstructionsToCallIfj16Function(char *functionName, tDLList *instruct
 
         ListInsertLast(instructions, wrapInstructionIntoListElement(instruction));
     }else if(stringEquals("ifj16.readString", functionName)) {
-        if (returnValueToVariable != NULL) {
-            printf("cannot use return value of void function %s\n", functionName);
-            exit(8);
-        }
         instruction->type = Instruction_Function_readString;
         instruction->address_dst = returnValueToVariable;
 
