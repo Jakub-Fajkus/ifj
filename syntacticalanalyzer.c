@@ -733,7 +733,7 @@ bool ruleFuncCall(char *calledFunctionName, char *assignReturnValueToVariable){
                         ListSuccessor(functionToCall->parameters);
                     }
 
-                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrCallFunction(functionToCall->instructions)));
+                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrCallFunction(functionToCall->instructions, functionToCall->name, functionToCall->type)));
                 }
             }
 
@@ -1057,11 +1057,12 @@ void runSyntacticalAnalysis(char *fileName) {
     makeFirstPass();
     makeSecondPass();
     ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createInstrFillLocalFrame()));
-    ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createInstrCallFunction(semantic_getFunction("Main.run")->instructions)));
+    SYMBOL_TABLE_FUNCTION *fun = semantic_getFunction("Main.run");
+    ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createInstrCallFunction(fun->instructions, fun->name, fun->type)));
 
     Interpret(mainInstructionList, NULL, NULL);
 
-    printAll();
+//    printAll();
 }
 
 
