@@ -16,13 +16,14 @@
 #include "debug.h"
 
 int GLOBAL = 0;
+int instrCounter = 0;
 
 //TODO: solve execution of insertVar into ActualLocalFrame, and the new CopyToUpcomingFrame instruction
 
 int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames ){
     if (InstructionList == NULL) return 99;
     int interpretRetVal;
-    debugPrintf("\n----- Welcome to hell v1.%d\n",GLOBAL++);
+    debugPrintf("\n----- Interpret call No.%d\n",GLOBAL++);
 
     //NewPtr - pointer to list element (allowing work with instructions inside InstructionList)
     LIST_ELEMENT *NewPtr = malloc(sizeof(struct LIST_ELEMENT));
@@ -42,38 +43,37 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         ListElementCopy(InstructionList, NewPtr);
         Instr = NewPtr->data.instr;
 
-        if (Instr->type == Instruction_End_Interpret) {
-            //TODO: return value, free all resources used by interpret (stack & globalframe)
+        debugPrintf("Instruction number %d: ", instrCounter++);
 
-            VARIABLE *printer = findFrameVariable(stackOfLocalFrames->arr->data.localFrame, "a");
-            debugPrintf("Final value of cycle variable: |%d|\n", printer->value.intValue);
+        if (Instr->type == Instruction_End_Interpret) { debugPrintf("Instruction_End_Interpret\n");
+            //TODO: return value, free all resources used by interpret (stack & globalframe)
 
             debugPrintf("----- I am ending!\n");
             return 0;
         }
 
         // Instruction to create both global frame & stack of local frames (the stack will be empty!)
-        if (Instr->type == Instruction_Create_GlobalFrame_And_LocalStack) {
+        if (Instr->type == Instruction_Create_GlobalFrame_And_LocalStack) { debugPrintf("Instruction_Create_GlobalFrame_And_LocalStack\n");
             globalFrame = createFrame();
             stackOfLocalFrames = createFrameStack();
             ListSuccessor(InstructionList);
             continue; // Jump to next instruction
         }
 
-        if (Instr->type == Instruction_Create_Local_Frame) {
+        if (Instr->type == Instruction_Create_Local_Frame) { debugPrintf("Instruction_Create_Local_Frame\n");
             upcomingLocalFrame = createFrame();
             ListSuccessor(InstructionList);
             continue; // Jump to next instruction
         }
 
         // Inserting variable into global frame (with or without value)
-        if (Instr->type == Instruction_Create_Global_Variable || Instr->type == Instruction_Push_Global_Variable) {
+        if (Instr->type == Instruction_Create_Global_Variable || Instr->type == Instruction_Push_Global_Variable) { debugPrintf("Instruction_Insert_Global_Variable\n");
             pushToFrame(globalFrame, Instr);
             ListSuccessor(InstructionList);
             continue; // Jump to next instruction
         }
         // Inserting variable into UPCOMING local frame (the frame is not in stack)
-        if (Instr->type == Instruction_Create_Local_Variable || Instr->type == Instruction_Push_Local_Variable) {
+        if (Instr->type == Instruction_Create_Local_Variable || Instr->type == Instruction_Push_Local_Variable) { debugPrintf("Instruction_Insert_Local_Variable-UpcomingFrame\n");
             if (upcomingLocalFrame == NULL) {
                 return 99;
             }
@@ -84,7 +84,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         }
 
         // Inserting variable into ACTUAL local frame (the frame is on top of stack)
-        if (Instr->type == Instruction_Push_Actual_Local_Variable || Instr->type == Instruction_Create_Actual_Local_Variable ) {
+        if (Instr->type == Instruction_Push_Actual_Local_Variable || Instr->type == Instruction_Create_Actual_Local_Variable ) { debugPrintf("Instruction_Insert_Local_Variable-ActualFrame\n");
             if (actualLocalFrame == NULL) {
                 return 99;
             }
@@ -99,7 +99,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         // Finds the other variable in upcoming frame, expecting it has no value
         // - and finally the content is copied "upcoming <- found"
         // Special version of Assignment
-        if (Instr->type == Instruction_Copy_To_Upcoming_Frame) {
+        if (Instr->type == Instruction_Copy_To_Upcoming_Frame) { debugPrintf("Instruction_Copy_To_Upcoming_Frame\n");
 
             // expecting: dst = (char *) name of variable inside upcoming frame
             // expecting: src1 =(char *) name of variable inside actual local frame
@@ -130,8 +130,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
         // Pushing upcoming local frame into stack of local frames
         // THINGS TO KEEP: global frame, stack of local frames
-        if (Instr->type == Instruction_CallFunction) {
-            debugPrintf("CALLING FUNCTION!!! GET REKT\n");
+        if (Instr->type == Instruction_CallFunction) { debugPrintf("Instruction_CallFunction\n");
 
             pushFrameToStack(stackOfLocalFrames, upcomingLocalFrame);
 
@@ -146,8 +145,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             continue; // Jump to next instruction
         }
 
-        if (Instr->type == Instruction_ReturnFunction) {
-            debugPrintf("Returning from function!");
+        if (Instr->type == Instruction_ReturnFunction) {    debugPrintf("Instruction_ReturnFunction\n");
 
             // This instruction gets one parameter - name of return value, in DST
             // let's find it!
@@ -176,7 +174,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         }
 
         // other special instructions: IF & WHILE
-        if (Instr->type == Instruction_IF) {
+        if (Instr->type == Instruction_IF) {    debugPrintf("Instruction_IF\n");
 
             VARIABLE *booleanValue;
             if (actualLocalFrame != NULL)
@@ -202,7 +200,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             continue; // Jump to next instruction
         }
 
-        if (Instr->type == Instruction_WHILE) {
+        if (Instr->type == Instruction_WHILE) { debugPrintf("Instruction_WHILE\n");
             debugPrintf("HANDLING WHILE_INSTRUCTION");
 
             //----- STEP 1: Calling recursion for ExpressionList
@@ -250,6 +248,8 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             continue; // Jump to next instruction
         }
 
+
+        debugPrintf("OTHER OPERATIONS\n");
         //--- Special instructions are captured, now we will execute the rest ---
 
         // EXECUTING OTHER INSTRUCTIONS, REPOINTING REQUIRED
