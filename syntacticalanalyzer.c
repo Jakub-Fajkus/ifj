@@ -46,6 +46,7 @@ void testTokens();
 void makeFirstPass();
 void makeSecondPass();
 void addIfj16Functions();
+void printAll();
 
 TOKEN *getCachedToken() {
     LIST_ELEMENT *element = malloc(sizeof(LIST_ELEMENT));
@@ -481,7 +482,7 @@ bool ruleDecl(DATA_TYPE declaredType, char *variableName){
             createAndInsertVariable(&actualFunction->localSymbolTable, variableName, declaredType, false);
             //no need to check types
         } else {
-            ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createLocalVariable(variableName, declaredType)));
+            ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createActualLocalVariable(variableName, declaredType)));
         }
 
         return true;
@@ -1059,6 +1060,12 @@ void runSyntacticalAnalysis(char *fileName) {
     addIfj16Functions();
 
     makeFirstPass();
+    makeSecondPass();
+    ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createInstrCallFunction(semantic_getFunction("Main.run")->instructions)));
+
+    Interpret(mainInstructionList, NULL, NULL);
+
+    printAll();
 }
 
 
@@ -1086,33 +1093,6 @@ void makeFirstPass() {
     }
 
     semanticCheckForFunctionRun();
-    makeSecondPass();
-    ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createInstrCallFunction(semantic_getFunction("Main.run")->instructions)));
-    Interpret(mainInstructionList, NULL, NULL);
-    debugPrintf("print list of main instructions\n");
-    printInstructions(mainInstructionList);
-
-    //test
-    struct STACK_STR *symbolTableStacked = BTInorder(globalSymbolTable);
-    while (!stackEmpty(symbolTableStacked)) {
-        struct STACK_ELEMENT actualElement;
-        stackTop(symbolTableStacked, &actualElement);
-
-        //filter all records for classe itself
-        if (actualElement.data.symbolTableNode->data->type == TREE_NODE_FUNCTION) {
-            SYMBOL_TABLE_FUNCTION *fun = actualElement.data.symbolTableNode->data->item->function;
-            debugPrintf("\n\nprinitng instrucitons of function: %s\n", fun->name);
-            ListFirst(fun->instructions);
-            while(DLActive(fun->instructions)) {
-                printInstruction(fun->instructions->Act->element.data.instr);
-                ListSuccessor(fun->instructions);
-            }
-        }
-
-        stackPop(symbolTableStacked);
-    }
-
-    debugPrintf("end of printing\n");
 }
 
 void makeSecondPass() {
@@ -1251,4 +1231,31 @@ void addIfj16Functions() {
     ListInsertLast(parametersSort, createListElementWithFunctionParamameter("s", TYPE_STRING));
     createAndInsertFunction(&globalSymbolTable, "ifj16.sort", TYPE_STRING, 0, parametersSort, NULL);
 
+}
+
+void printAll() {
+    debugPrintf("print list of main instructions\n");
+    printInstructions(mainInstructionList);
+
+    //test - print instructions for all functions
+    struct STACK_STR *symbolTableStacked = BTInorder(globalSymbolTable);
+    while (!stackEmpty(symbolTableStacked)) {
+        struct STACK_ELEMENT actualElement;
+        stackTop(symbolTableStacked, &actualElement);
+
+        //filter all records for classe itself
+        if (actualElement.data.symbolTableNode->data->type == TREE_NODE_FUNCTION) {
+            SYMBOL_TABLE_FUNCTION *fun = actualElement.data.symbolTableNode->data->item->function;
+            debugPrintf("\n\nprinitng instrucitons of function: %s\n", fun->name);
+            ListFirst(fun->instructions);
+            while(DLActive(fun->instructions)) {
+                printInstruction(fun->instructions->Act->element.data.instr);
+                ListSuccessor(fun->instructions);
+            }
+        }
+
+        stackPop(symbolTableStacked);
+    }
+
+    debugPrintf("end of printing\n");
 }
