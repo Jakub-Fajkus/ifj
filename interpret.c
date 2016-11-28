@@ -301,18 +301,21 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             }
 
             // TODO: check if this is required
-            char *tempDstName, *tempSrc1Name, *tempSrc2Name = NULL;
+            char *tempDstName = NULL, *tempSrc1Name = NULL, *tempSrc2Name = NULL;
 
             if (Instr->address_dst != NULL) {
                 tempDstName = malloc(sizeof(char)*strlen((char *)Instr->address_dst)+1);
+                tempDstName[0] = '\0';
                 strcpy(tempDstName, (char *)Instr->address_dst);
             }
             if (Instr->address_src1 != NULL) {
                 tempSrc1Name = malloc(sizeof(char)*strlen((char *)Instr->address_src1)+1);
+                tempSrc1Name[0] = '\0';
                 strcpy(tempSrc1Name, (char *)Instr->address_src1);
             }
             if (Instr->address_src2 != NULL) {
                 tempSrc2Name = malloc(sizeof(char)*strlen((char *)Instr->address_src2)+1);
+                tempSrc2Name[0] = '\0';
                 strcpy(tempSrc2Name, (char *)Instr->address_src2);
             }
 
