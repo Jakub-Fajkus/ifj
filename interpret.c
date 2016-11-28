@@ -20,7 +20,7 @@ int instrCounter = 0;
 
 //TODO: solve execution of insertVar into ActualLocalFrame, and the new CopyToUpcomingFrame instruction
 
-int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames, char *returnValue , DATA_TYPE *returnType){
+int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames, char *returnValue ){
     if (InstructionList == NULL) return 99;
     int interpretRetVal;
     debugPrintf("\n----- Interpret call No.%d\n",GLOBAL++);
@@ -136,7 +136,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             pushFrameToStack(stackOfLocalFrames, upcomingLocalFrame);
 
             // HERE COMES THE FUCKING RECURSION
-            interpretRetVal = Interpret((tDLList *)Instr->address_dst, globalFrame, stackOfLocalFrames, Instr->address_src1, (DATA_TYPE *)Instr->address_src2);
+            interpretRetVal = Interpret( (tDLList *)Instr->address_dst, globalFrame, stackOfLocalFrames, Instr->address_src1 );
             if ( interpretRetVal != 0 ) {
                 debugPrintf("Previous instance of interpret has failed. #CallFunction\n");
                 return interpretRetVal;
@@ -215,14 +215,14 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 booleanValue = findFrameVariable(globalFrame, Instr->address_dst);
 
             if (booleanValue->value.intValue == 1) {
-                interpretRetVal = Interpret((tDLList*)Instr->address_src1, globalFrame, stackOfLocalFrames, NULL, NULL);
+                interpretRetVal = Interpret( (tDLList *)Instr->address_src1, globalFrame, stackOfLocalFrames, NULL );
                 if ( interpretRetVal != 0 ) {
                     debugPrintf("Previous instance of interpret has failed. #IfTrueErr\n");
                     return interpretRetVal;
                 }
             }
             else if (booleanValue->value.intValue == 0) {
-                interpretRetVal = Interpret((tDLList*)Instr->address_src2, globalFrame, stackOfLocalFrames, NULL, NULL);
+                interpretRetVal = Interpret( (tDLList *)Instr->address_src2, globalFrame, stackOfLocalFrames, NULL );
                 if ( interpretRetVal != 0 ) {
                     debugPrintf("Previous instance of interpret has failed. #IfFalseErr\n");
                     return interpretRetVal;
@@ -236,7 +236,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             debugPrintf("HANDLING WHILE_INSTRUCTION");
 
             //----- STEP 1: Calling recursion for ExpressionList
-            interpretRetVal = Interpret((tDLList*)Instr->address_src1, globalFrame, stackOfLocalFrames, NULL, NULL);
+            interpretRetVal = Interpret( (tDLList *)Instr->address_src1, globalFrame, stackOfLocalFrames, NULL );
             if ( interpretRetVal != 0 ) {
                 debugPrintf("Previous instance of interpret has failed. #WhileEvalErr_1st\n");
                 return interpretRetVal;
@@ -256,13 +256,13 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             //----- STEP 3: This Monster
             while (booleanValue->value.intValue == 1) {
 
-                interpretRetVal = Interpret((tDLList*)Instr->address_src2, globalFrame, stackOfLocalFrames, NULL, NULL);
+                interpretRetVal = Interpret( (tDLList *)Instr->address_src2, globalFrame, stackOfLocalFrames, NULL );
                 if ( interpretRetVal != 0 ) {
                     debugPrintf("Previous instance of interpret has failed. #WhileEvalErr_n\n");
                     return interpretRetVal;
                 }
 
-                interpretRetVal = Interpret((tDLList*)Instr->address_src1, globalFrame, stackOfLocalFrames, NULL, NULL);
+                interpretRetVal = Interpret( (tDLList *)Instr->address_src1, globalFrame, stackOfLocalFrames, NULL );
                 if ( interpretRetVal != 0 ) {
                     debugPrintf("Previous instance of interpret has failed. #WhileCycleErr\n");
                     return interpretRetVal;
