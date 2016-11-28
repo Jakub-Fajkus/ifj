@@ -132,6 +132,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         // THINGS TO KEEP: global frame, stack of local frames
         if (Instr->type == Instruction_CallFunction) { debugPrintf("Instruction_CallFunction\n");
 
+            if(upcomingLocalFrame == NULL) upcomingLocalFrame = createFrame();
             pushFrameToStack(stackOfLocalFrames, upcomingLocalFrame);
 
             // HERE COMES THE FUCKING RECURSION
