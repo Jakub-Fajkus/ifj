@@ -148,6 +148,7 @@ char *ifj16_sort(char *s) {
 }
 
 char *stringConcat(char *str1, char *str2) {
+
     char *buffer = malloc(sizeof(char)*(strlen(str1) + strlen(str2)+1));
     buffer[0] = '\0';
 

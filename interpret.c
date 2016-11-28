@@ -290,6 +290,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         VARIABLE *src2 = NULL;
 
 
+
         if ( actualLocalFrame!= NULL ) {
 
             if ( actualLocalFrame->First != NULL ) {    //existing non-empty local frame
@@ -299,10 +300,44 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
             }
 
+            // TODO: check if this is required
+            char *tempDstName, *tempSrc1Name, *tempSrc2Name = NULL;
+
+            if (Instr->address_dst != NULL) {
+                tempDstName = malloc(sizeof(char)*strlen((char *)Instr->address_dst)+1);
+                strcpy(tempDstName, (char *)Instr->address_dst);
+            }
+            if (Instr->address_src1 != NULL) {
+                tempSrc1Name = malloc(sizeof(char)*strlen((char *)Instr->address_src1)+1);
+                strcpy(tempSrc1Name, (char *)Instr->address_src1);
+            }
+            if (Instr->address_src2 != NULL) {
+                tempSrc2Name = malloc(sizeof(char)*strlen((char *)Instr->address_src2)+1);
+                strcpy(tempSrc2Name, (char *)Instr->address_src2);
+            }
+
             // SEARCHING IN GLOBAL FRAME: PASS ONE MORE INFORMATION - NAME OF CLASS
-            if (dst == NULL) dst = findFrameVariable(globalFrame, Instr->address_dst);
-            if (src1 == NULL) src1 = findFrameVariable(globalFrame, Instr->address_src1);
-            if (src2 == NULL) src2 = findFrameVariable(globalFrame, Instr->address_src2);
+            if (dst == NULL) {
+                if ( strcmp(returnValue, "Main.run") == 0 ) {
+                    if (tempDstName != NULL)
+                        Instr->address_dst = stringConcat("Main.", tempDstName);
+                }
+                dst = findFrameVariable(globalFrame, Instr->address_dst);
+            }
+            if (src1 == NULL) {
+                if ( strcmp(returnValue, "Main.run") == 0 ) {
+                    if (tempSrc1Name != NULL)
+                        Instr->address_src1 = stringConcat("Main.", tempSrc1Name);
+                }
+                src1 = findFrameVariable(globalFrame, Instr->address_src1);
+            }
+            if (src2 == NULL) {
+                if ( strcmp(returnValue, "Main.run") == 0 ) {
+                    if (tempSrc2Name != NULL)
+                        Instr->address_src2 = stringConcat("Main.", tempSrc2Name);
+                }
+                src2 = findFrameVariable(globalFrame, Instr->address_src2);
+            }
 
         }
         else {  // not existing top-of-stack local frame
@@ -314,6 +349,14 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             }
         }
 
+        //debugPrintf("wait a minute. do i have the function name?\n");
+        //if (returnValue != NULL) debugPrintf("YES I DO! : |%s|\n", returnValue);
+
+        //debugPrintf("Look what i found: |%s|", dst->name);
+
+        debugPrintf("\n\n\n");
+
+        /*
         if ( Instr->type == Instruction_Function_readString ) {
             debugPrintf("----------------FATAL ERROR-------------------");
             debugPrintf("\nTo make all things clear, the interpret tries to find a variable named 'a'\n");
@@ -322,6 +365,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             debugPrintf("TODO: remake the frame-filler function? What if only for global frame? (necessity for full ID)\n");
             exit(42);
         }
+         */
 
         switch (Instr->type) {
             case Instruction_Assign:    // expecting DST & SRC variable name
@@ -377,7 +421,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             case Instruction_Function_Sort:
                 ;
 
-                debugPrintf("Executing built-in function: |%d|---|%p|-|%p|-|%p|", Instr->type, dst, src1, src2);
+                debugPrintf("Executing built-in function: |%d|\n", Instr->type, dst, src1, src2);
                 int funRetValue = executeInstructionBuiltInFunction(Instr->type, dst, src1, src2);
                 if (funRetValue != 0){
                     debugPrintf("Built-in function failed.\n");
