@@ -75,8 +75,8 @@ void pushToFrame(tDLList *frame, INSTRUCTION *instruction){
 VARIABLE *findFrameVariable(tDLList *frame, char *name) {
 
     //debugPrintf("i am seeking for: %s\t", name);
-
-    if ( name == NULL ) return NULL; // error handling
+    if ( frame->First == NULL ) return NULL; // the frame is empty
+    if ( name == NULL ) return NULL; // what are we actually looking for?
     int compare;
     ListFirst(frame);
     do { // Search for the variable in the globalFrame

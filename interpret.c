@@ -186,6 +186,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             // Executing returning value to a variable
             VARIABLE *variableFromNewTopFrame = findFrameVariable(stackOfLocalFrames->arr->data.localFrame, seekName);
 
+
             switch (variableFromNewTopFrame->type){
                 case TYPE_INT:  ;
                     variableFromNewTopFrame->value.intValue = poppedIntValue;
@@ -199,7 +200,11 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 default:;
             }
 
+
+            debugPrintf("volam successora!\n");
             ListSuccessor(InstructionList);
+
+            if (InstructionList->Act == NULL) debugPrintf("vykolajil som sa!\n");
             continue; // Jump to next instruction
         }
 
@@ -284,21 +289,38 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         VARIABLE *src1 = NULL;
         VARIABLE *src2 = NULL;
 
-        if (actualLocalFrame != NULL) {
-            //existing local frame
-            dst = findFrameVariable(actualLocalFrame, Instr->address_dst);
-            src1 = findFrameVariable(actualLocalFrame, Instr->address_src1);
-            src2 = findFrameVariable(actualLocalFrame, Instr->address_src2);
 
+        if ( actualLocalFrame!= NULL ) {
+
+            if ( actualLocalFrame->First != NULL ) {    //existing non-empty local frame
+                dst = findFrameVariable(actualLocalFrame, Instr->address_dst);
+                src1 = findFrameVariable(actualLocalFrame, Instr->address_src1);
+                src2 = findFrameVariable(actualLocalFrame, Instr->address_src2);
+
+            }
+
+            // SEARCHING IN GLOBAL FRAME: PASS ONE MORE INFORMATION - NAME OF CLASS
             if (dst == NULL) dst = findFrameVariable(globalFrame, Instr->address_dst);
             if (src1 == NULL) src1 = findFrameVariable(globalFrame, Instr->address_src1);
             if (src2 == NULL) src2 = findFrameVariable(globalFrame, Instr->address_src2);
+
         }
-        else {
-            // Not found in local frame
-            dst = findFrameVariable(globalFrame, Instr->address_dst);
-            src1 = findFrameVariable(globalFrame, Instr->address_src1);
-            src2 = findFrameVariable(globalFrame, Instr->address_src2);
+        else {  // not existing top-of-stack local frame
+            if (globalFrame->First != NULL) {
+                // SEARCHING IN GLOBAL FRAME: PASS ONE MORE INFORMATION - NAME OF CLASS
+                dst = findFrameVariable(globalFrame, Instr->address_dst);
+                src1 = findFrameVariable(globalFrame, Instr->address_src1);
+                src2 = findFrameVariable(globalFrame, Instr->address_src2);
+            }
+        }
+
+        if ( Instr->type == Instruction_Function_readString ) {
+            debugPrintf("----------------FATAL ERROR-------------------");
+            debugPrintf("\nTo make all things clear, the interpret tries to find a variable named 'a'\n");
+            debugPrintf("Not knowing, that there is such variable. but 'Main.a' - full ID... \n");
+            debugPrintf("TODO: remake the search function? \n");
+            debugPrintf("TODO: remake the frame-filler function? What if only for global frame? (necessity for full ID)\n");
+            exit(42);
         }
 
         switch (Instr->type) {
@@ -354,6 +376,8 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             case Instruction_Function_Find:
             case Instruction_Function_Sort:
                 ;
+
+                debugPrintf("Executing built-in function: |%d|---|%p|-|%p|-|%p|", Instr->type, dst, src1, src2);
                 int funRetValue = executeInstructionBuiltInFunction(Instr->type, dst, src1, src2);
                 if (funRetValue != 0){
                     debugPrintf("Built-in function failed.\n");
