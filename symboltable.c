@@ -336,11 +336,10 @@ SYMBOL_TABLE_FUNCTION* createAndInsertFunction(SYMBOL_TABLE_NODEPtr *symbolTable
         ListInit(function->instructions);
     }
 
+    function->hasReturn = hasReturn;
+
     TREE_NODE_DATA *treeData = createFunctionData(function);
     BSTInsert(symbolTable, function->name, *treeData);
-
-//    function->localSymbolTable = malloc(sizeof(struct SYMBOL_TABLE_NODE *));
-//    initializeSymbolTable(function->localSymbolTable);
 
     return function;
 }
