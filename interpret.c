@@ -119,14 +119,14 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
             switch (upcomingFrameVariable->type) {
 
-                case TYPE_INT: upcomingFrameVariable->value.intValue = seekVariable->value.intValue;
-                case TYPE_DOUBLE: upcomingFrameVariable->value.doubleValue = seekVariable->value.doubleValue;
+                case TYPE_INT: upcomingFrameVariable->value.intValue = seekVariable->value.intValue; break;
+                case TYPE_DOUBLE: upcomingFrameVariable->value.doubleValue = seekVariable->value.doubleValue; break;
                 case TYPE_STRING:   ;
                     char *temp = malloc(sizeof(char) * (int)strlen(seekVariable->value.stringValue) + 1 );
                     strcpy(temp, seekVariable->value.stringValue);
                     upcomingFrameVariable->value.stringValue = temp;
                     break;
-                default:;
+                default:break;
             }
             ListSuccessor(InstructionList);
             continue; // Jump to next instruction
