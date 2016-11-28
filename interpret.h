@@ -19,7 +19,7 @@
  *                      TL;DR: Interpret called from parser passes NULL value
  * @return int value in case of crash if the interpret, to make sure the function main can free() everything else
  */
-int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames );
+int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames, char *returnValue, DATA_TYPE *returnType );
 
 
 /* ************************************************ EXECUTE ************************************************/
@@ -75,18 +75,5 @@ int executeInstructionExpressionEvaluation(INSTRUCTION_TYPE instrType, VARIABLE 
  */
 int executeInstructionBuiltInFunction(INSTRUCTION_TYPE instrType, VARIABLE *dst, VARIABLE *src1, VARIABLE *src2);
 
-
-//----------------------------------REST
-
-/**
- * GENERAL FUNCTION FOR EXECUTION OF ANY INSTRUCITON
- * EXCEPTIONS HAVE THEIR OWN FUNCTIONS
- * @param Instr
- */
-void InstructionExecute(INSTRUCTION *Instr);
-
-int callInterpret();
-void exitInterpret(int errNumber);
-void checkMalloc(void *ptr);
 
 #endif //IFJ_INTERPRET_H

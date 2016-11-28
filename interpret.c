@@ -20,7 +20,7 @@ int instrCounter = 0;
 
 //TODO: solve execution of insertVar into ActualLocalFrame, and the new CopyToUpcomingFrame instruction
 
-int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames ){
+int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames, char *returnValue , DATA_TYPE *returnType){
     if (InstructionList == NULL) return 99;
     int interpretRetVal;
     debugPrintf("\n----- Interpret call No.%d\n",GLOBAL++);
@@ -136,7 +136,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             pushFrameToStack(stackOfLocalFrames, upcomingLocalFrame);
 
             // HERE COMES THE FUCKING RECURSION
-            interpretRetVal = Interpret((tDLList*)Instr->address_dst, globalFrame, stackOfLocalFrames);
+            interpretRetVal = Interpret((tDLList *)Instr->address_dst, globalFrame, stackOfLocalFrames, Instr->address_src1, (DATA_TYPE *)Instr->address_src2);
             if ( interpretRetVal != 0 ) {
                 debugPrintf("Previous instance of interpret has failed. #CallFunction\n");
                 return interpretRetVal;
@@ -155,20 +155,51 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
             STACK_ELEMENT *element = malloc(sizeof(STACK_ELEMENT));
             stackTop(stackOfLocalFrames, element);
-            stackPop(stackOfLocalFrames);
-            upcomingLocalFrame = element->data.localFrame;
+            tDLList *poppedLocalFrame = element->data.localFrame;
 
+            char *seekName = malloc(sizeof(char) * strlen(returnValue) +2);
+            strcpy(seekName,"#");
+            stringConcat(seekName,returnValue);
+            // in this moment we have #function
 
-            VARIABLE *returnValue = findFrameVariable(stackOfLocalFrames->arr->data.localFrame, Instr->address_dst);
-            if (returnValue == NULL) {
-                returnValue = findFrameVariable(globalFrame, Instr->address_dst);
-                if (returnValue == NULL) {
-                    returnValue = findFrameVariable(upcomingLocalFrame, Instr->address_dst);
-                }
+            VARIABLE *variableFromPoppedFrame = findFrameVariable(poppedLocalFrame, seekName);
+
+            int poppedIntValue = 0;
+            double poppedDoubleValue = 0.0;
+            char *poppedStringValue = NULL;
+
+            switch (variableFromPoppedFrame->type){
+                case TYPE_INT:  ;
+                    poppedIntValue = variableFromPoppedFrame->value.intValue;
+                    break;
+                case TYPE_DOUBLE:   ;
+                    poppedDoubleValue = variableFromPoppedFrame->value.doubleValue;
+                    break;
+                case TYPE_STRING:   ;
+                    poppedStringValue = malloc(sizeof(char) * strlen(variableFromPoppedFrame->value.stringValue) +1);
+                    strcpy(poppedStringValue, variableFromPoppedFrame->value.stringValue);
+                    break;
+                default:;
             }
 
-            debugPrintf("i am so sorry guys");
-            exit(42);
+            stackPop(stackOfLocalFrames);   // removal of top-local-frame
+
+
+            // Executing returning value to a variable
+            VARIABLE *variableFromNewTopFrame = findFrameVariable(stackOfLocalFrames->arr->data.localFrame, seekName);
+
+            switch (variableFromNewTopFrame->type){
+                case TYPE_INT:  ;
+                    variableFromNewTopFrame->value.intValue = poppedIntValue;
+                    break;
+                case TYPE_DOUBLE:   ;
+                    variableFromNewTopFrame->value.doubleValue = poppedDoubleValue;
+                    break;
+                case TYPE_STRING:   ;
+                    variableFromNewTopFrame->value.stringValue = poppedStringValue;
+                    break;
+                default:;
+            }
 
             ListSuccessor(InstructionList);
             continue; // Jump to next instruction
@@ -184,14 +215,14 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 booleanValue = findFrameVariable(globalFrame, Instr->address_dst);
 
             if (booleanValue->value.intValue == 1) {
-                interpretRetVal = Interpret((tDLList*)Instr->address_src1, globalFrame, stackOfLocalFrames);
+                interpretRetVal = Interpret((tDLList*)Instr->address_src1, globalFrame, stackOfLocalFrames, NULL, NULL);
                 if ( interpretRetVal != 0 ) {
                     debugPrintf("Previous instance of interpret has failed. #IfTrueErr\n");
                     return interpretRetVal;
                 }
             }
             else if (booleanValue->value.intValue == 0) {
-                interpretRetVal = Interpret((tDLList*)Instr->address_src2, globalFrame, stackOfLocalFrames);
+                interpretRetVal = Interpret((tDLList*)Instr->address_src2, globalFrame, stackOfLocalFrames, NULL, NULL);
                 if ( interpretRetVal != 0 ) {
                     debugPrintf("Previous instance of interpret has failed. #IfFalseErr\n");
                     return interpretRetVal;
@@ -205,7 +236,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             debugPrintf("HANDLING WHILE_INSTRUCTION");
 
             //----- STEP 1: Calling recursion for ExpressionList
-            interpretRetVal = Interpret((tDLList*)Instr->address_src1, globalFrame, stackOfLocalFrames);
+            interpretRetVal = Interpret((tDLList*)Instr->address_src1, globalFrame, stackOfLocalFrames, NULL, NULL);
             if ( interpretRetVal != 0 ) {
                 debugPrintf("Previous instance of interpret has failed. #WhileEvalErr_1st\n");
                 return interpretRetVal;
@@ -225,13 +256,13 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             //----- STEP 3: This Monster
             while (booleanValue->value.intValue == 1) {
 
-                interpretRetVal = Interpret((tDLList*)Instr->address_src2, globalFrame, stackOfLocalFrames);
+                interpretRetVal = Interpret((tDLList*)Instr->address_src2, globalFrame, stackOfLocalFrames, NULL, NULL);
                 if ( interpretRetVal != 0 ) {
                     debugPrintf("Previous instance of interpret has failed. #WhileEvalErr_n\n");
                     return interpretRetVal;
                 }
 
-                interpretRetVal = Interpret((tDLList*)Instr->address_src1, globalFrame, stackOfLocalFrames);
+                interpretRetVal = Interpret((tDLList*)Instr->address_src1, globalFrame, stackOfLocalFrames, NULL, NULL);
                 if ( interpretRetVal != 0 ) {
                     debugPrintf("Previous instance of interpret has failed. #WhileCycleErr\n");
                     return interpretRetVal;
@@ -248,7 +279,6 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             ListSuccessor(InstructionList);
             continue; // Jump to next instruction
         }
-
 
         debugPrintf("OTHER: ");
         //--- Special instructions are captured, now we will execute the rest ---
@@ -295,7 +325,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
                 int mathRetValue = executeInstructionMathOperation(Instr->type, dst, src1, src2);
                 if ( mathRetValue != 0 ){
-                    debugPrintf("you have fucked this up AS HELL\n");
+                    debugPrintf("Math operation failed.\n");
                     return mathRetValue;
                 }
 
@@ -311,7 +341,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 if ( dst ==NULL || src1 == NULL || src2 == NULL ) return 99;
                 int evalRetValue = executeInstructionExpressionEvaluation(Instr->type, dst, src1, src2);
                 if ( evalRetValue != 0 ){
-                    debugPrintf("you have fucked this up AS HELL\n");
+                    debugPrintf("Expression evaluation failed.\n");
                     return mathRetValue;
                 }
                 break;
@@ -327,15 +357,14 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 ;
                 int funRetValue = executeInstructionBuiltInFunction(Instr->type, dst, src1, src2);
                 if (funRetValue != 0){
-                    debugPrintf("you have fucked this up AS HELL\n");
+                    debugPrintf("Built-in function failed.\n");
                     return mathRetValue;
                 }
                 break;
 
             default:
                 ;
-                debugPrintf("TRYING TO HANDLE INSTRUCTION WITHOUT SOLUTION\n");
-                //InstructionExecute(Instr);
+                debugPrintf("!!!!! !!!!! TRYING TO HANDLE INSTRUCTION WITHOUT SOLUTION !!!!! !!!!!\n");
                 break;
         }
 
@@ -862,9 +891,7 @@ int executeInstructionAssign(VARIABLE *dst, VARIABLE *src) {
     return 0;
 }   // end of Assign instruction
 
-
 //...
-
 
 int executeInstructionBuiltInFunction(INSTRUCTION_TYPE instrType, VARIABLE *dst, VARIABLE *src1, VARIABLE *src2) {
 
@@ -873,159 +900,53 @@ int executeInstructionBuiltInFunction(INSTRUCTION_TYPE instrType, VARIABLE *dst,
         case Instruction_Function_readInt:  debugPrintf("Instruction_Function_readInt\n");
             ;
             if (dst == NULL || src1 != NULL || src2 != NULL) return 99;
+            // int ifj16_readInt();
             dst->value.intValue = ifj16_readInt();
             break;
         case Instruction_Function_readDouble:   debugPrintf("Instruction_Function_readDouble\n");
             ;
             if (dst == NULL || src1 != NULL || src2 != NULL) return 99;
+            // double ifj16_readDouble();
             dst->value.doubleValue = ifj16_readDouble();
             break;
         case Instruction_Function_readString:   debugPrintf("Instruction_Function_readString\n");
             ;
             if (dst == NULL || src1 != NULL || src2 != NULL) return 99;
+            // char *ifj16_readString();
             dst->value.stringValue = ifj16_readString();
             break;
         case Instruction_Function_Print:    debugPrintf("Instruction_Function_Print\n");
             ;
             if (dst == NULL || src1 != NULL || src2 != NULL) return 99;
+            // void ifj16_print(char *s);
             ifj16_print(dst->value.stringValue);
             break;
         case Instruction_Function_Length:   debugPrintf("Instruction_Function_Length\n");
             ;
             if (dst == NULL || src1 == NULL || src2 != NULL) return 99;
+            // int ifj16_length(char *);
             dst->value.intValue = ifj16_length(src1->value.stringValue);
             break;
         case Instruction_Function_Compare:  debugPrintf("Instruction_Function_Compare\n");
             ;
             if (dst == NULL || src1 == NULL || src2 == NULL) return 99;
+            // int ifj16_compare(char *, char *);
             dst->value.intValue = ifj16_compare(src1->value.stringValue, src2->value.stringValue);
             break;
         case Instruction_Function_Find: debugPrintf("Instruction_Function_Find\n");
             ;
             if (dst == NULL || src1 == NULL || src2 == NULL) return 99;
+            // int ifj16_find(char *, char *);
             dst->value.intValue = ifj16_find(src1->value.stringValue, src2->value.stringValue);
             break;
         case Instruction_Function_Sort: debugPrintf("Instruction_Function_Sort\n");
             ;
             if (dst == NULL || src1 == NULL || src2 != NULL) return 99;
+            // char *ifj16_sort(char *s);
             dst->value.stringValue = ifj16_sort(src1->value.stringValue);
             break;
 
-        default:;
+        default:;   // char *ifj16_substr(char *, int, int); <---- YET TO HANDLE
     }
     return 0;
-}
-
-//...
-
-// to be squished fully
-void InstructionExecute(INSTRUCTION *instr){
-// Always: overiť či sedia typy premenných ktoré idem použiť na danú operáciu, inak bude behová chyba
-    // error 7 (behová chyba pri načítaní číselnej hodnoty zo vstupu)
-    // error 8 (behová chyba pri práci s neinicializovanou premennou)
-    // error 9 (behová chyba delenia nulou)
-    // error 10 (ostatné behové chyby) <- zlá premenná... možno sem?
-
-    // code shortening
-    VARIABLE *dstAddr = ((VARIABLE*)instr->address_dst);
-    VARIABLE *srcAddr1 = ((VARIABLE*)instr->address_src1);
-    VARIABLE *srcAddr2 = ((VARIABLE*)instr->address_src2);
-
-    VARIABLE_VALUE *dstVal = &dstAddr->value;
-    VARIABLE_VALUE *src1Val = &srcAddr1->value;
-    VARIABLE_VALUE *src2Val = &srcAddr2->value;
-
-    //The Giant Switch
-    switch ( instr -> type ) {
-
-        //----------------------------------------------------------------------------------------------------------------
-        // BUILD-IN FUNCTIONS
-        //----------------------------------------------------------------------------------------------------------------
-        case Instruction_Function_readInt:
-            // int ifj16_readInt();
-            dstVal->intValue = ifj16_readInt();
-            break;
-
-        case Instruction_Function_readDouble:
-            // double ifj16_readDouble();
-            dstVal->doubleValue = ifj16_readDouble();
-            break;
-
-        case Instruction_Function_readString:
-            // char *ifj16_readString();
-            dstVal->stringValue = ifj16_readString();
-            break;
-
-        case Instruction_Function_Print:
-            // void ifj16_print(char *s);
-            //TODO: lots of things to figure out
-            break;
-
-        case Instruction_Function_Length:
-            // int ifj16_length(char *);
-            dstVal->intValue = ifj16_length( src1Val->stringValue );
-            break;
-
-        case Instruction_Function_Substr:
-            // char *ifj16_substr(char *, int, int);
-            // asi mame kurva problem
-            break;
-
-        case Instruction_Function_Compare:
-            // int ifj16_compare(char *, char *);
-            dstVal->intValue = ifj16_compare( src1Val->stringValue , src2Val->stringValue );
-            break;
-
-        case Instruction_Function_Find:
-            // int ifj16_find(char *, char *);
-            dstVal->intValue = ifj16_find( src1Val->stringValue , src2Val->stringValue );
-            break;
-
-        case Instruction_Function_Sort:
-            // char *ifj16_sort(char *s);
-            dstVal->stringValue = ifj16_sort( src1Val->stringValue );
-            break;
-
-        default: ;
-    } // end of giant switch
-
-} // end of InstructionExecute
-
-//---------------------------------- to be deleted
-
-void exitInterpret(int errNumber) {
-    switch (errNumber) {
-        case 6:
-            fprintf(stderr, "Semantic error: other.\n");
-            break;
-        case 7:
-            fprintf(stderr, "Runtime error: loading values from input.\n");
-            break;
-        case 8:
-            fprintf(stderr, "Runtime error: working with uninitialized variables\n");
-            break;
-        case 9:
-            fprintf(stderr, "Runtime error: dividing by zero.\n");
-            break;
-        case 10:
-            fprintf(stderr, "Interpret: Other runtime error.\n");
-            break;
-        case 99:
-            fprintf(stderr, "Intern error: Unable to allocate memory.");
-            break;
-        default: ;
-    } // end of switch
-
-    //TODO: free all allocated memory
-
-    exit(errNumber);
-}
-
-//...
-
-void checkMalloc(void *ptr){
-    if ( ptr == NULL ) {
-        fprintf(stderr, "Intern error: Unable to allocate memory.\n");
-        exit(99);
-    }
 }

@@ -330,22 +330,7 @@ INSTRUCTION *createInstrBFSort(char *retValue, char *param);
 LIST_ELEMENT createInstruction(INSTRUCTION *instr);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 // to be deleted
 void printInstructionTest(int x, tDLList *TestInstructionList);
-
-
 
 #endif //IFJ_INSTRUCTION_H
