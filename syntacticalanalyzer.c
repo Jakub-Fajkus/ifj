@@ -1065,7 +1065,7 @@ void runSyntacticalAnalysis(char *fileName) {
     SYMBOL_TABLE_FUNCTION *fun = semantic_getFunction("Main.run");
     ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createInstrCallFunction(fun->instructions, fun->name, fun->type)));
 
-    Interpret(mainInstructionList, NULL, NULL);
+    Interpret(mainInstructionList, NULL, NULL, NULL);
 
 //    printAll();
 }

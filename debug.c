@@ -117,61 +117,61 @@ void printEaTerminalType(enum EA_TERMINAL_TYPE_ENUM type) {
 
 void printInstruction(INSTRUCTION *instruction) {
     switch (instruction->type) {
-        case Instruction_Create_GlobalFrame_And_LocalStack: printf("Instruction_Create_GlobalFrame_And_LocalStack\n"); break;
-        case Instruction_Push_Global_Variable:              printf("Instruction_Push_Global_Variable: %s\n", (char*)instruction->address_dst); break;
-        case Instruction_Create_Global_Variable:            printf("Instruction_Create_Global_Variable: %s\n", (char*)instruction->address_dst); break;
-        case Instruction_Create_Local_Frame:                printf("Instruction_Create_Local_Frame: \n"); break;
-        case Instruction_Push_Local_Variable:               printf("Instruction_Push_Local_Variable: %s\n", (char*)instruction->address_dst); break;
-        case Instruction_Create_Local_Variable:             printf("Instruction_Create_Local_Variable: %s\n", (char*)instruction->address_dst); break;
-        case Instruction_CallFunction:                      printf("Instruction_CallFunction: returnTo: %s\n", (char*)instruction->address_src1); break;
-        case Instruction_ReturnFunction:                    printf("Instruction_ReturnFunction\n"); break;
-        case Instruction_Assign:                            printf("Instruction_Assign: %s = %s\n", (char*)instruction->address_dst, (char*)instruction->address_src1); break;
-        case Instruction_Addition:                          printf("Instruction_Addition %s = %s + %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;
-        case Instruction_Subtraction:                       printf("Instruction_Subtraction %s = %s - %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;
-        case Instruction_Multiply:                          printf("Instruction_Multiply %s = %s * %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;
-        case Instruction_Divide:                            printf("Instruction_Divide %s = %s / %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;
+        case Instruction_Create_GlobalFrame_And_LocalStack: debugPrintf("Instruction_Create_GlobalFrame_And_LocalStack\n"); break;
+        case Instruction_Push_Global_Variable:              debugPrintf("Instruction_Push_Global_Variable: %s\n", (char*)instruction->address_dst); break;
+        case Instruction_Create_Global_Variable:            debugPrintf("Instruction_Create_Global_Variable: %s\n", (char*)instruction->address_dst); break;
+        case Instruction_Create_Local_Frame:                debugPrintf("Instruction_Create_Local_Frame: \n"); break;
+        case Instruction_Push_Local_Variable:               debugPrintf("Instruction_Push_Local_Variable: %s\n", (char*)instruction->address_dst); break;
+        case Instruction_Create_Local_Variable:             debugPrintf("Instruction_Create_Local_Variable: %s\n", (char*)instruction->address_dst); break;
+        case Instruction_CallFunction:                      debugPrintf("Instruction_CallFunction: returnTo: %s\n", (char*)instruction->address_src1); break;
+        case Instruction_ReturnFunction:                    debugPrintf("Instruction_ReturnFunction\n"); break;
+        case Instruction_Assign:                            debugPrintf("Instruction_Assign: %s = %s\n", (char*)instruction->address_dst, (char*)instruction->address_src1); break;
+        case Instruction_Addition:                          debugPrintf("Instruction_Addition %s = %s + %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;
+        case Instruction_Subtraction:                       debugPrintf("Instruction_Subtraction %s = %s - %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;
+        case Instruction_Multiply:                          debugPrintf("Instruction_Multiply %s = %s * %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;
+        case Instruction_Divide:                            debugPrintf("Instruction_Divide %s = %s / %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;
         case Instruction_IF:                                {
 
-            printf("Instruction_IF: ridiciProm:%s\n", (char*)instruction->address_dst);
-            printf("     *****Instructions for true branch:\n");
+            debugPrintf("Instruction_IF: ridiciProm:%s\n", (char*)instruction->address_dst);
+            debugPrintf("     *****Instructions for true branch:\n");
             printInstructions((tDLList*)instruction->address_src1);
-            printf("     *****End of true branch:\n");
-            printf("     *****Instructions for false branch:\n");
+            debugPrintf("     *****End of true branch:\n");
+            debugPrintf("     *****Instructions for false branch:\n");
             printInstructions((tDLList*)instruction->address_src2);
-            printf("     *****End of false branch:\n");
+            debugPrintf("     *****End of false branch:\n");
             break;
         } ;
         case Instruction_WHILE:                             {
-            printf("Instruction_WHILE, result in var: %s\n", (char*)instruction->address_dst);
-            printf("     *****Instructions for condition:\n");
+            debugPrintf("Instruction_WHILE, result in var: %s\n", (char*)instruction->address_dst);
+            debugPrintf("     *****Instructions for condition:\n");
             printInstructions((tDLList*)instruction->address_src1);
-            printf("     *****End of instructions for condition:\n");
+            debugPrintf("     *****End of instructions for condition:\n");
 
-            printf("     *****Instructions for body:\n");
+            debugPrintf("     *****Instructions for body:\n");
             printInstructions((tDLList*)instruction->address_src2);
-            printf("     *****End of instructions for body:\n");
+            debugPrintf("     *****End of instructions for body:\n");
             break;
         }
-        case Instruction_Bool_Equals:                       printf("Instruction_Bool_Equals: %s = %s == %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;
-        case Instruction_Bool_EqualsNot:                    printf("Instruction_Bool_EqualsNot: %s = %s != %s + \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;
-        case Instruction_Bool_More:                         printf("Instruction_Bool_More: %s = %s > %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;
-        case Instruction_Bool_Less:                         printf("Instruction_Bool_Less: %s = %s < %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;
-        case Instruction_Bool_MoreEqual:                    printf("Instruction_Bool_MoreEqual: %s = %s >= %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;
-        case Instruction_Bool_LessEqual:                    printf("Instruction_Bool_LessEqual: %s = %s <= %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;
-        case Instruction_Function_readInt:                  printf("Instruction_Function_readInt returnTo %s\n", (char*)instruction->address_dst); break;
-        case Instruction_Function_readDouble:               printf("Instruction_Function_readDouble returnTo %s\n", (char*)instruction->address_dst); break;
-        case Instruction_Function_readString:               printf("Instruction_Function_readString returnTo %s\n", (char*)instruction->address_dst); break;
-        case Instruction_Function_Print:                    printf("Instruction_Function_Print: %s\n", (char*)instruction->address_dst); break;
-        case Instruction_Function_Length:                   printf("Instruction_Function_Length: %s returnTo %s\n", (char*)instruction->address_dst, (char*)instruction->address_dst); break;
-        case Instruction_Function_Substr:                   printf("Instruction_Function_Substr:  returnTo %s\n", (((tDLList*)instruction->address_dst)->First->element.data.parameter->name)); break;
-        case Instruction_Function_Compare:                  printf("Instruction_Function_Compare: %s %s returnTo %s\n", (char*)instruction->address_dst, (char*)instruction->address_dst, (char*)instruction->address_src1); break;
-        case Instruction_Function_Find:                     printf("Instruction_Function_Find: %s %s returnTo %s\n", (char*)instruction->address_dst, (char*)instruction->address_dst, (char*)instruction->address_src1); break;
-        case Instruction_End_Interpret:                     printf("Instruction_End_Interpret\n"); break;
-        case Instruction_Push_Actual_Local_Variable: printf("Instruction_Push_Actual_Local_Variable:name %s\n", (char*)instruction->address_dst);break;
-        case Instruction_Create_Actual_Local_Variable: printf("Instruction_Create_Actual_Local_Variable: %s\n", (char*)instruction->address_dst);break;
-        case Instruction_Copy_To_Upcoming_Frame: printf("Instruction_Copy_To_Upcoming_Frame: %s <= %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1);break;
+        case Instruction_Bool_Equals:                       debugPrintf("Instruction_Bool_Equals: %s = %s == %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;
+        case Instruction_Bool_EqualsNot:                    debugPrintf("Instruction_Bool_EqualsNot: %s = %s != %s + \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;
+        case Instruction_Bool_More:                         debugPrintf("Instruction_Bool_More: %s = %s > %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;
+        case Instruction_Bool_Less:                         debugPrintf("Instruction_Bool_Less: %s = %s < %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;
+        case Instruction_Bool_MoreEqual:                    debugPrintf("Instruction_Bool_MoreEqual: %s = %s >= %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;
+        case Instruction_Bool_LessEqual:                    debugPrintf("Instruction_Bool_LessEqual: %s = %s <= %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;
+        case Instruction_Function_readInt:                  debugPrintf("Instruction_Function_readInt returnTo %s\n", (char*)instruction->address_dst); break;
+        case Instruction_Function_readDouble:               debugPrintf("Instruction_Function_readDouble returnTo %s\n", (char*)instruction->address_dst); break;
+        case Instruction_Function_readString:               debugPrintf("Instruction_Function_readString returnTo %s\n", (char*)instruction->address_dst); break;
+        case Instruction_Function_Print:                    debugPrintf("Instruction_Function_Print: %s\n", (char*)instruction->address_dst); break;
+        case Instruction_Function_Length:                   debugPrintf("Instruction_Function_Length: %s returnTo %s\n", (char*)instruction->address_dst, (char*)instruction->address_dst); break;
+        case Instruction_Function_Substr:                   debugPrintf("Instruction_Function_Substr:  returnTo %s\n", (((tDLList*)instruction->address_dst)->First->element.data.parameter->name)); break;
+        case Instruction_Function_Compare:                  debugPrintf("Instruction_Function_Compare: %s %s returnTo %s\n", (char*)instruction->address_dst, (char*)instruction->address_dst, (char*)instruction->address_src1); break;
+        case Instruction_Function_Find:                     debugPrintf("Instruction_Function_Find: %s %s returnTo %s\n", (char*)instruction->address_dst, (char*)instruction->address_dst, (char*)instruction->address_src1); break;
+        case Instruction_End_Interpret:                     debugPrintf("Instruction_End_Interpret\n"); break;
+        case Instruction_Push_Actual_Local_Variable: debugPrintf("Instruction_Push_Actual_Local_Variable:name %s\n", (char*)instruction->address_dst);break;
+        case Instruction_Create_Actual_Local_Variable: debugPrintf("Instruction_Create_Actual_Local_Variable: %s\n", (char*)instruction->address_dst);break;
+        case Instruction_Copy_To_Upcoming_Frame: debugPrintf("Instruction_Copy_To_Upcoming_Frame: %s <= %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1);break;
 
-        default: printf("UNKNOWN INSTRUCTION");
+        default: debugPrintf("UNKNOWN INSTRUCTION");
     }
 }
 
