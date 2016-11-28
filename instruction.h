@@ -212,7 +212,7 @@ INSTRUCTION *createInstrWhile(char *boolVar, tDLList *exprInstrList, tDLList *cy
  * @param returnVariableName
  * @return
  */
-INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList);
+INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList, char *functionName, DATA_TYPE returnValueType);
 
 
 /**
