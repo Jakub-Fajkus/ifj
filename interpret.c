@@ -161,9 +161,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             stackTop(stackOfLocalFrames, element);
             tDLList *poppedLocalFrame = element->data.localFrame;
 
-            char *seekName = malloc(sizeof(char) * strlen(returnValue) +2);
-            strcpy(seekName,"#");
-            stringConcat(seekName,returnValue);
+            char *seekName = stringConcat("#", returnValue);
             // in this moment we have #function
 
             VARIABLE *variableFromPoppedFrame = findFrameVariable(poppedLocalFrame, seekName);
