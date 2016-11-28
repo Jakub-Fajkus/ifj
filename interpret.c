@@ -75,7 +75,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         // Inserting variable into UPCOMING local frame (the frame is not in stack)
         if (Instr->type == Instruction_Create_Local_Variable || Instr->type == Instruction_Push_Local_Variable) { debugPrintf("Instruction_Insert_Local_Variable-UpcomingFrame\n");
             if (upcomingLocalFrame == NULL) {
-                return 99;
+                upcomingLocalFrame = createFrame();
             }
 
             pushToFrame(upcomingLocalFrame, Instr);
@@ -138,7 +138,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             // HERE COMES THE FUCKING RECURSION
             interpretRetVal = Interpret((tDLList*)Instr->address_dst, globalFrame, stackOfLocalFrames);
             if ( interpretRetVal != 0 ) {
-                debugPrintf("Previous instance of interpret has failed.\n");
+                debugPrintf("Previous instance of interpret has failed. #CallFunction\n");
                 return interpretRetVal;
             }
 
@@ -186,14 +186,14 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             if (booleanValue->value.intValue == 1) {
                 interpretRetVal = Interpret((tDLList*)Instr->address_src1, globalFrame, stackOfLocalFrames);
                 if ( interpretRetVal != 0 ) {
-                    debugPrintf("Previous instance of interpret has failed.\n");
+                    debugPrintf("Previous instance of interpret has failed. #IfTrueErr\n");
                     return interpretRetVal;
                 }
             }
             else if (booleanValue->value.intValue == 0) {
                 interpretRetVal = Interpret((tDLList*)Instr->address_src2, globalFrame, stackOfLocalFrames);
                 if ( interpretRetVal != 0 ) {
-                    debugPrintf("Previous instance of interpret has failed.\n");
+                    debugPrintf("Previous instance of interpret has failed. #IfFalseErr\n");
                     return interpretRetVal;
                 }
             }
@@ -207,7 +207,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             //----- STEP 1: Calling recursion for ExpressionList
             interpretRetVal = Interpret((tDLList*)Instr->address_src1, globalFrame, stackOfLocalFrames);
             if ( interpretRetVal != 0 ) {
-                debugPrintf("Previous instance of interpret has failed.\n");
+                debugPrintf("Previous instance of interpret has failed. #WhileEvalErr_1st\n");
                 return interpretRetVal;
             }
 
@@ -227,13 +227,13 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
                 interpretRetVal = Interpret((tDLList*)Instr->address_src2, globalFrame, stackOfLocalFrames);
                 if ( interpretRetVal != 0 ) {
-                    debugPrintf("Previous instance of interpret has failed.\n");
+                    debugPrintf("Previous instance of interpret has failed. #WhileEvalErr_n\n");
                     return interpretRetVal;
                 }
 
                 interpretRetVal = Interpret((tDLList*)Instr->address_src1, globalFrame, stackOfLocalFrames);
                 if ( interpretRetVal != 0 ) {
-                    debugPrintf("Previous instance of interpret has failed.\n");
+                    debugPrintf("Previous instance of interpret has failed. #WhileCycleErr\n");
                     return interpretRetVal;
                 }
 
@@ -250,7 +250,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         }
 
 
-        debugPrintf("OTHER OPERATIONS\n");
+        debugPrintf("OTHER: ");
         //--- Special instructions are captured, now we will execute the rest ---
 
         // EXECUTING OTHER INSTRUCTIONS, REPOINTING REQUIRED
@@ -278,7 +278,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                     //TODO: free?
                     return 99;
                 }
-
+                debugPrintf("Instruction_Assign\n");
                 executeInstructionAssign(dst, src1);
                 break;
 
@@ -353,7 +353,7 @@ int executeInstructionMathOperation(INSTRUCTION_TYPE instrType, VARIABLE *dst, V
 
     switch ( instrType ) {
 
-    case Instruction_Addition:
+    case Instruction_Addition:  debugPrintf("Instruction_Addition\n");
         ;
         if (src1->type==TYPE_STRING && src2->type==TYPE_STRING) {
             // Concatenate strings, withtout casting
@@ -450,7 +450,7 @@ int executeInstructionMathOperation(INSTRUCTION_TYPE instrType, VARIABLE *dst, V
         }
     break;
 
-    case Instruction_Subtraction:
+    case Instruction_Subtraction:   debugPrintf("Instruction_Subtraction\n");
         ;
         if (src1->type == TYPE_STRING || src2->type == TYPE_STRING)
             return 10; // cannot subtract strings
@@ -482,7 +482,7 @@ int executeInstructionMathOperation(INSTRUCTION_TYPE instrType, VARIABLE *dst, V
         }
     break;
 
-    case Instruction_Multiply:
+    case Instruction_Multiply:  debugPrintf("Instruction_Multiply\n");
         ;
         if ( src1->type == TYPE_STRING || src2->type == TYPE_STRING)
             return 10;  // cannot multiply strings
@@ -514,7 +514,7 @@ int executeInstructionMathOperation(INSTRUCTION_TYPE instrType, VARIABLE *dst, V
         }
     break;
 
-    case Instruction_Divide:
+    case Instruction_Divide:    debugPrintf("Instruction_Divide\n");
         ;
         if ( src1->type == TYPE_STRING || src2->type == TYPE_STRING )
             return 10; // cannot divide strings
@@ -569,6 +569,7 @@ int executeInstructionExpressionEvaluation(INSTRUCTION_TYPE instrType, VARIABLE 
 
     switch ( instrType ) {
         case Instruction_Bool_Equals:   // if ( src1 == src2 ) dst=TRUE else dst=FALSE;
+            debugPrintf("Instruction_Bool_Equals\n");
             ;
             if (src1->type == TYPE_STRING || src2->type == TYPE_STRING)
                 return 10;
@@ -611,6 +612,7 @@ int executeInstructionExpressionEvaluation(INSTRUCTION_TYPE instrType, VARIABLE 
 
             break;
         case Instruction_Bool_EqualsNot:    // if ( src1 != src2 ) dst=TRUE else dst=FALSE;
+            debugPrintf("Instruction_Bool_EqualsNot\n");
             ;
             if (src1->type == TYPE_STRING || src2->type == TYPE_STRING)
                 return 10;
@@ -653,6 +655,7 @@ int executeInstructionExpressionEvaluation(INSTRUCTION_TYPE instrType, VARIABLE 
 
             break;
         case Instruction_Bool_More: // if ( src1 > src2 ) dst=TRUE else dst=FALSE;
+            debugPrintf("Instruction_Bool_More\n");
             ;
             if (src1->type == TYPE_STRING || src2->type == TYPE_STRING)
                 return 10;
@@ -694,6 +697,7 @@ int executeInstructionExpressionEvaluation(INSTRUCTION_TYPE instrType, VARIABLE 
             }
             break;
         case Instruction_Bool_Less: // if ( src1 < src2 ) dst=TRUE else dst=FALSE;
+            debugPrintf("Instruction_Bool_Less\n");
             ;
             if (src1->type == TYPE_STRING || src2->type == TYPE_STRING)
                 return 10;
@@ -735,6 +739,7 @@ int executeInstructionExpressionEvaluation(INSTRUCTION_TYPE instrType, VARIABLE 
             }
             break;
         case Instruction_Bool_MoreEqual:    // if ( src1 >= src2 ) dst=TRUE else dst=FALSE;
+            debugPrintf("Instruction_Bool_MoreEqual\n");
             ;
             if (src1->type == TYPE_STRING || src2->type == TYPE_STRING)
                 return 10;
@@ -776,6 +781,7 @@ int executeInstructionExpressionEvaluation(INSTRUCTION_TYPE instrType, VARIABLE 
             }
             break;
         case Instruction_Bool_LessEqual:    // if ( src1 <= src2 ) dst=TRUE else dst=FALSE;
+            debugPrintf("Instruction_Bool_LessEqual\n");
             ;
             if (src1->type == TYPE_STRING || src2->type == TYPE_STRING)
                 return 10;
@@ -864,40 +870,45 @@ int executeInstructionBuiltInFunction(INSTRUCTION_TYPE instrType, VARIABLE *dst,
 
     switch (instrType) {
 
-        case Instruction_Function_readInt:
+        case Instruction_Function_readInt:  debugPrintf("Instruction_Function_readInt\n");
             ;
             if (dst == NULL || src1 != NULL || src2 != NULL) return 99;
             dst->value.intValue = ifj16_readInt();
             break;
-        case Instruction_Function_readDouble:
+        case Instruction_Function_readDouble:   debugPrintf("Instruction_Function_readDouble\n");
             ;
             if (dst == NULL || src1 != NULL || src2 != NULL) return 99;
             dst->value.doubleValue = ifj16_readDouble();
             break;
-        case Instruction_Function_readString:
+        case Instruction_Function_readString:   debugPrintf("Instruction_Function_readString\n");
             ;
             if (dst == NULL || src1 != NULL || src2 != NULL) return 99;
             dst->value.stringValue = ifj16_readString();
             break;
-        case Instruction_Function_Print:
+        case Instruction_Function_Print:    debugPrintf("Instruction_Function_Print\n");
             ;
             if (dst == NULL || src1 != NULL || src2 != NULL) return 99;
+            ifj16_print(dst->value.stringValue);
             break;
-        case Instruction_Function_Length:
+        case Instruction_Function_Length:   debugPrintf("Instruction_Function_Length\n");
             ;
             if (dst == NULL || src1 == NULL || src2 != NULL) return 99;
+            dst->value.intValue = ifj16_length(src1->value.stringValue);
             break;
-        case Instruction_Function_Compare:
+        case Instruction_Function_Compare:  debugPrintf("Instruction_Function_Compare\n");
             ;
             if (dst == NULL || src1 == NULL || src2 == NULL) return 99;
+            dst->value.intValue = ifj16_compare(src1->value.stringValue, src2->value.stringValue);
             break;
-        case Instruction_Function_Find:
+        case Instruction_Function_Find: debugPrintf("Instruction_Function_Find\n");
             ;
             if (dst == NULL || src1 == NULL || src2 == NULL) return 99;
+            dst->value.intValue = ifj16_find(src1->value.stringValue, src2->value.stringValue);
             break;
-        case Instruction_Function_Sort:
+        case Instruction_Function_Sort: debugPrintf("Instruction_Function_Sort\n");
             ;
             if (dst == NULL || src1 == NULL || src2 != NULL) return 99;
+            dst->value.stringValue = ifj16_sort(src1->value.stringValue);
             break;
 
         default:;
