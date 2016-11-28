@@ -739,8 +739,9 @@ bool ruleFuncCall(char *calledFunctionName, char *assignReturnValueToVariable){
                         ListSuccessor(functionToCall->parameters);
                     }
 
+                    //todo hvezdicka sem, hvezdicka tam... kdo vi...
                     ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createActualLocalVariable(stringConcat("#"/*"#"*/, functionToCall->name), functionToCall->type)));
-                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrCallFunction(functionToCall->instructions, functionToCall->name, functionToCall->type)));
+                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrCallFunction(functionToCall->instructions, stringConcat("#"/*"#"*/, functionToCall->name), functionToCall->type)));
                     ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrAssign(assignReturnValueToVariable, functionToCall->name)));
                 }
             }
@@ -1071,9 +1072,10 @@ void runSyntacticalAnalysis(char *fileName) {
     ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createInstrCallFunction(fun->instructions, fun->name, fun->type)));
     ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createLastInstruction()));
 
+    printAll();
+
     Interpret(mainInstructionList, NULL, NULL, NULL);
 
-    printAll();
 }
 
 
