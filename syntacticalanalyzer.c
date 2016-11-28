@@ -1189,11 +1189,11 @@ LIST_ELEMENT createListElementWithFunctionParamameter(char *name, DATA_TYPE type
 void addIfj16Functions() {
 
     createAndInsertIntVariable(&globalSymbolTable, "ifj16.*", true);
-    createAndInsertFunction(&globalSymbolTable, "ifj16.readInt", TYPE_INT, 0, NULL, NULL, 0);
+    createAndInsertFunction(&globalSymbolTable, "ifj16.readInt", TYPE_INT, 0, NULL, NULL, 1);
 
-    createAndInsertFunction(&globalSymbolTable, "ifj16.readDouble", TYPE_DOUBLE, 0, NULL, NULL, 0);
+    createAndInsertFunction(&globalSymbolTable, "ifj16.readDouble", TYPE_DOUBLE, 0, NULL, NULL, 1);
 
-    createAndInsertFunction(&globalSymbolTable, "ifj16.readString", TYPE_STRING, 0, NULL, NULL, 0);
+    createAndInsertFunction(&globalSymbolTable, "ifj16.readString", TYPE_STRING, 0, NULL, NULL, 1);
 
     tDLList *parametersPrint = malloc(sizeof(tDLList));
     ListInit(parametersPrint);
@@ -1203,31 +1203,31 @@ void addIfj16Functions() {
     tDLList *parametersLength = malloc(sizeof(tDLList));
     ListInit(parametersLength);
     ListInsertLast(parametersLength, createListElementWithFunctionParamameter("s", TYPE_STRING));
-    createAndInsertFunction(&globalSymbolTable, "ifj16.length", TYPE_INT, 0, parametersLength, NULL, 0);
+    createAndInsertFunction(&globalSymbolTable, "ifj16.length", TYPE_INT, 0, parametersLength, NULL, 1);
 
     tDLList *parametersSubstr = malloc(sizeof(tDLList));
     ListInit(parametersSubstr);
     ListInsertLast(parametersSubstr, createListElementWithFunctionParamameter("s", TYPE_STRING));
     ListInsertLast(parametersSubstr, createListElementWithFunctionParamameter("i", TYPE_INT));
     ListInsertLast(parametersSubstr, createListElementWithFunctionParamameter("n", TYPE_INT));
-    createAndInsertFunction(&globalSymbolTable, "ifj16.substr", TYPE_STRING, 0, parametersSubstr, NULL, 0);
+    createAndInsertFunction(&globalSymbolTable, "ifj16.substr", TYPE_STRING, 0, parametersSubstr, NULL, 1);
 
     tDLList *parametersCompare = malloc(sizeof(tDLList));
     ListInit(parametersCompare);
     ListInsertLast(parametersCompare, createListElementWithFunctionParamameter("s1", TYPE_STRING));
     ListInsertLast(parametersCompare, createListElementWithFunctionParamameter("s2", TYPE_STRING));
-    createAndInsertFunction(&globalSymbolTable, "ifj16.compare", TYPE_INT, 0, parametersCompare, NULL, 0);
+    createAndInsertFunction(&globalSymbolTable, "ifj16.compare", TYPE_INT, 0, parametersCompare, NULL, 1);
 
     tDLList *parametersFind = malloc(sizeof(tDLList));
     ListInit(parametersFind);
     ListInsertLast(parametersFind, createListElementWithFunctionParamameter("s", TYPE_STRING));
     ListInsertLast(parametersFind, createListElementWithFunctionParamameter("search", TYPE_STRING));
-    createAndInsertFunction(&globalSymbolTable, "ifj16.find", TYPE_INT, 0, parametersFind, NULL, 0);
+    createAndInsertFunction(&globalSymbolTable, "ifj16.find", TYPE_INT, 0, parametersFind, NULL, 1);
 
     tDLList *parametersSort = malloc(sizeof(tDLList));
     ListInit(parametersSort);
     ListInsertLast(parametersSort, createListElementWithFunctionParamameter("s", TYPE_STRING));
-    createAndInsertFunction(&globalSymbolTable, "ifj16.sort", TYPE_STRING, 0, parametersSort, NULL, 0);
+    createAndInsertFunction(&globalSymbolTable, "ifj16.sort", TYPE_STRING, 0, parametersSort, NULL, 1);
 
 }
 
