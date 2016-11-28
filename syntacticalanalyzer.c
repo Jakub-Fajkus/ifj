@@ -741,7 +741,7 @@ bool ruleFuncCall(char *calledFunctionName, char *assignReturnValueToVariable){
 
                     //todo hvezdicka sem, hvezdicka tam... kdo vi...
                     ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createActualLocalVariable(stringConcat("#"/*"#"*/, functionToCall->name), functionToCall->type)));
-                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrCallFunction(functionToCall->instructions, stringConcat("#"/*"#"*/, functionToCall->name), functionToCall->type)));
+                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrCallFunction(functionToCall->instructions, functionToCall->name, functionToCall->type)));
                     ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrAssign(assignReturnValueToVariable, functionToCall->name)));
                 }
             }

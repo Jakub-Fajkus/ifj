@@ -157,14 +157,10 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
             //but first, let me pop the stack, in order to work with 3 frames... i really wanna find it
 
-            STACK_ELEMENT *element = malloc(sizeof(STACK_ELEMENT));
-            stackTop(stackOfLocalFrames, element);
-            tDLList *poppedLocalFrame = element->data.localFrame;
-
             char *seekName = stringConcat("#", returnValue);
             // in this moment we have #function
-
-            VARIABLE *variableFromPoppedFrame = findFrameVariable(poppedLocalFrame, seekName);
+            VARIABLE *variableFromPoppedFrame = findFrameVariable(stackOfLocalFrames->arr->data.localFrame, seekName);
+            if (variableFromPoppedFrame == NULL) exit(42);
 
             int poppedIntValue = 0;
             double poppedDoubleValue = 0.0;
@@ -184,8 +180,8 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 default:;
             }
 
-            stackPop(stackOfLocalFrames);   // removal of top-local-frame
 
+            stackPop(stackOfLocalFrames);   // removal of top-local-frame
 
             // Executing returning value to a variable
             VARIABLE *variableFromNewTopFrame = findFrameVariable(stackOfLocalFrames->arr->data.localFrame, seekName);
