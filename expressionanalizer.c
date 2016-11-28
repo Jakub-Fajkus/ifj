@@ -402,7 +402,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                     concatenateString();
                     char *tempName = (char *) malloc(sizeof(char) * 30);
                     strcpy(tempName, varName);
-                    INSTRUCTION *instruction1 = createLocalVariable(tempName, outputType);
+                    INSTRUCTION *instruction1 = createActualLocalVariable(tempName, outputType);
                     ListInsertLast(threeAddressCode,createInstruction(instruction1));
 
                     INSTRUCTION *instruction2 = createInstrMath(Instruction_Addition, tempName,
@@ -434,7 +434,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
 
                     char *tempName = (char *) malloc(sizeof(char) * 30);
                     strcpy(tempName, varName);
-                    INSTRUCTION *instruction1 = createLocalVariable(tempName, outputType);
+                    INSTRUCTION *instruction1 = createActualLocalVariable(tempName, outputType);
                     ListInsertLast(threeAddressCode,createInstruction(instruction1));
 
                     INSTRUCTION *instruction2 = createInstrMath(Instruction_Subtraction, tempName,
@@ -465,7 +465,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
 
                     char *tempName = (char *) malloc(sizeof(char) * 30);
                     strcpy(tempName, varName);
-                    INSTRUCTION *instruction1 = createLocalVariable(tempName, outputType);
+                    INSTRUCTION *instruction1 = createActualLocalVariable(tempName, outputType);
                     ListInsertLast(threeAddressCode,createInstruction(instruction1));
 
                     INSTRUCTION *instruction2 = createInstrMath(Instruction_Multiply, tempName,
