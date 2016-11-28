@@ -107,13 +107,34 @@ void checkFunctionParametersType(char *functionName, tDLList *parameters){
     }
 }
 
-void checkFunctionReturnValue(char *functionName, tDLList *instructions) {
-    struct SYMBOL_TABLE_FUNCTION_STR *function = semantic_getFunction(functionName);
+void semantical_ControlFunctionReturnsExist(SYMBOL_TABLE_NODEPtr *symbolTable) {
 
-    if (function->type != TYPE_VOID) {
-        if(function->hasReturn == 0){
-            exit(8);//missing return
+    struct SYMBOL_TABLE_NODE *actualEL = NULL;
+
+    //new stack for checking all functions
+    tStack *MujStack = malloc(sizeof(tStack));
+    stackInit(MujStack);
+
+    //put all there
+    MujStack = BTInorder(globalSymbolTable);
+
+    STACK_ELEMENT *elem = malloc(sizeof(STACK_ELEMENT));
+
+    while(!stackEmpty(MujStack)){
+
+        stackTop(MujStack, elem);
+        actualEL = elem->data.symbolTableNode;
+
+        if (actualEL != NULL && actualEL->data->type == TREE_NODE_FUNCTION && actualEL->data->item->function->type != TYPE_VOID) {
+            printf("kurva pico vole");
+            if(actualEL->data->item->function->hasReturn == 0){
+                printf("Missing return of non-void function");
+                exit(8);
+            }
         }
+
+        //pop top element
+        stackPop(MujStack);
     }
 }
 

@@ -645,6 +645,7 @@ bool ruleStat(){
             }
         //<STAT> -> return <EXP_SEMICOLON>
         } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "return")) {
+            actualFunction->hasReturn = true;
 //            char* resultVariableName;
             if (ruleExpSemicolon()) {
                 STACK_ELEMENT *stackElement = (STACK_ELEMENT*)malloc(sizeof(STACK_ELEMENT));
@@ -1100,6 +1101,7 @@ void makeSecondPass() {
     if(result == 0) {
         exit(2);
     }
+    //semantical_ControlFunctionReturnsExist(&globalSymbolTable);
 }
 
 /**
