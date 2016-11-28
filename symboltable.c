@@ -325,6 +325,7 @@ SYMBOL_TABLE_FUNCTION* createAndInsertFunction(SYMBOL_TABLE_NODEPtr *symbolTable
         exit(3);
     }
 
+
     SYMBOL_TABLE_FUNCTION *function = createFunction(name, type, usages, parameters, instructions);
     if (function->parameters == NULL) {
         function->parameters = malloc(sizeof(tDLList));
