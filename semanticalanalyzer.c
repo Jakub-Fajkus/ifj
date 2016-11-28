@@ -107,6 +107,18 @@ void checkFunctionParametersType(char *functionName, tDLList *parameters){
     }
 }
 
+void checkFunctionReturnValue(char *functionName, tDLList *instructions) {
+    struct SYMBOL_TABLE_FUNCTION_STR *function = semantic_getFunction(functionName);
+
+    if (function->type != TYPE_VOID) {
+        if(function->hasReturn == 0){
+            exit(8);//missing return
+        }
+    }
+}
+
+
+
 bool canConvertTypes(DATA_TYPE destination, DATA_TYPE source) {
     if (destination == source) {
         return true;

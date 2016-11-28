@@ -40,6 +40,7 @@ typedef struct SYMBOL_TABLE_FUNCTION_STR{
     tDLList *parameters; //parameters of the function
     struct SYMBOL_TABLE_NODE *localSymbolTable; //local symbol table of the function
     tDLList *instructions; //instructions of the function
+    int hasReturn;
 } SYMBOL_TABLE_FUNCTION;
 
 //the symbol table can contain 2 types of nodes
@@ -206,7 +207,7 @@ TREE_NODE_DATA* createFunctionData(SYMBOL_TABLE_FUNCTION *function);
  * @param parameters
  * @param instructions
  */
-SYMBOL_TABLE_FUNCTION *createAndInsertFunction(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, unsigned int usages, tDLList *parameters, tDLList *instructions);
+SYMBOL_TABLE_FUNCTION *createAndInsertFunction(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, unsigned int usages, tDLList *parameters, tDLList *instructions, int warReturned);
 
 /**
  * Add function parameter to the end of the function parameters
