@@ -314,14 +314,12 @@ bool rulePropDef(bool *variableInitialized, DATA_TYPE variableType, char *variab
                     createAndInsertVariable(&globalSymbolTable, fullyQualifiedVariableName, variableType, true);
                     //check type of the result variable with variable declaration
                     ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createInstrAssign(fullyQualifiedVariableName, resultVariableName)));
-
                 } else{
                     if(!canConvertTypes(variableType, resultVariableType)) {
-                        debugPrintf("can not convert types");
+                        debugPrintf("Incompatible types for assigned");
                         exit(4);
                     }
                 }
-
                 return true;
             } else {
                 //the rule application was unsuccessful, so return the token list to the state in which it was before this function call
