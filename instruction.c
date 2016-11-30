@@ -290,16 +290,13 @@ INSTRUCTION *createInstrWhile(char *boolVar, tDLList *exprInstrList, tDLList *cy
 /* **************************************** User Function constructors ************************************************/
 
 
-INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList, ) {
+INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList, SYMBOL_TABLE_FUNCTION *functionToCall) {
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
-    DATA_TYPE *type = malloc(sizeof(DATA_TYPE));
-    *type = returnValueType;
-
     instruction->type = Instruction_CallFunction;
 
     instruction->address_dst = functionInstrList;
-    instruction->address_src1 = functionName;
-    instruction->address_src2 = type;
+    instruction->address_src1 = functionToCall;
+    instruction->address_src2 = NULL;
 
     return instruction;
 }

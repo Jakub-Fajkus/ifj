@@ -58,7 +58,7 @@ bool ruleTypeInt(DATA_TYPE *type);
 bool ruleTypeDouble(DATA_TYPE *type);
 bool ruleTypeString(DATA_TYPE *type);
 bool ruleDefinitionStart(char *className);
-bool ruleExpSemicolon();
+bool ruleExpSemicolon(char **tempVariableName, DATA_TYPE *tempVariableType);
 
 int analyzeExpression(tDLList *instructionList, char **resultVariableName, DATA_TYPE *resultVariableType);
 #endif //IFJ_SYNTACTICANALYZER_H

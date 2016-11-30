@@ -207,12 +207,12 @@ INSTRUCTION *createInstrWhile(char *boolVar, tDLList *exprInstrList, tDLList *cy
 /**
  * INSTRUCTION CONSTRUCTOR: Call Function
  *
- * @param functionInstrList - List of instructions
- * @param
+ * @param functionInstrList Instructions of the function
+ * @param functionToCall Pointer to the symbol table
+ *
  * @return
  */
-INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList, SYMBOL_TABLE_FUNCTION *activeFunction);
-
+INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList, struct SYMBOL_TABLE_FUNCTION_STR *functionToCall);
 
 /**
  * INSTRUCTION CONSTRUCTOR: Return from Function

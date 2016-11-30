@@ -20,6 +20,7 @@ struct tDLListStruct *mainInstructionList;
 struct tDLListStruct *actualInstructionList;
 struct STACK_STR *returnToVariables;
 
+//todo: osetrit datovy typ vyrazu v prikazu return
 
 bool firstPass = true;
 
@@ -644,12 +645,19 @@ bool ruleStat(){
             }
         //<STAT> -> return <EXP_SEMICOLON>
         } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "return")) {
-//            char* resultVariableName;
-            if (ruleExpSemicolon()) {
+            char* tempVariableName;
+            DATA_TYPE tempVariableType;
+
+            if (ruleExpSemicolon(&tempVariableName, &tempVariableType)) {
                 STACK_ELEMENT *stackElement = (STACK_ELEMENT*)malloc(sizeof(STACK_ELEMENT));
                 stackTop(returnToVariables,stackElement);
                 stackPop(returnToVariables);
                 if(!firstPass) {
+                    //generate assign to retValName from exprResultName
+                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createActualLocalVariable(stringConcat("#", actualFunction->name), actualFunction->type)));
+                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrAssign(stringConcat("#", actualFunction->name), tempVariableName)));
+                    //todo: check for datatypes(typeo f func and type of the result, possible implicit conversions)
+
                     ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrReturnFunction()));
                 }
                 return true;
@@ -661,7 +669,7 @@ bool ruleStat(){
     return false;
 }
 
-bool ruleExpSemicolon() {
+bool ruleExpSemicolon(char **tempVariableName, DATA_TYPE *tempVariableType) {
     tDLElemPtr activeElementRuleApplication = globalTokens->Act;
     TOKEN *token = getCachedToken();
 
@@ -670,16 +678,13 @@ bool ruleExpSemicolon() {
     } else {
         returnCachedTokens(1);
 
-        char *resultVariableName = NULL;
-        DATA_TYPE resultVariableType;
-
         debugPrintf("calling analyzeExpression from ruleExpSemicolon\n");
-        if (analyzeExpression(actualInstructionList, &resultVariableName, &resultVariableType)) {
+        if (analyzeExpression(actualInstructionList, tempVariableName, tempVariableType)) {
             token = getCachedToken();
             if (token->type == SEMICOLON){
 
                 //check return type
-                if(actualFunction->type == resultVariableType){
+                if(actualFunction->type == *tempVariableType){
                     actualFunction->hasReturn = true;
                 }
 
@@ -741,8 +746,8 @@ bool ruleFuncCall(char *calledFunctionName, char *assignReturnValueToVariable){
 
                     //todo hvezdicka sem, hvezdicka tam... kdo vi...
                     ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createActualLocalVariable(stringConcat("#"/*"#"*/, functionToCall->name), functionToCall->type)));
-                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrCallFunction(functionToCall->instructions, functionToCall->name, functionToCall->type)));
-                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrAssign(assignReturnValueToVariable, functionToCall->name)));
+                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrCallFunction(functionToCall->instructions, functionToCall)));
+                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrAssign(assignReturnValueToVariable, stringConcat("#", functionToCall->name))));
                 }
             }
 
@@ -1069,12 +1074,12 @@ void runSyntacticalAnalysis(char *fileName) {
     makeSecondPass();
     ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createInstrFillLocalFrame()));
     SYMBOL_TABLE_FUNCTION *fun = semantic_getFunction("Main.run");
-    ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createInstrCallFunction(fun->instructions, fun->name, fun->type)));
+    ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createInstrCallFunction(fun->instructions, fun)));
     ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createLastInstruction()));
 
     printAll();
 
-    Interpret(mainInstructionList, NULL, NULL, NULL);
+    Interpret(mainInstructionList, NULL, NULL, NULL, false);
 
 }
 

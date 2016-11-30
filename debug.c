@@ -123,7 +123,7 @@ void printInstruction(INSTRUCTION *instruction) {
         case Instruction_Create_Local_Frame:                debugPrintf("Instruction_Create_Local_Frame: \n"); break;
         case Instruction_Push_Local_Variable:               debugPrintf("Instruction_Push_Local_Variable: %s\n", (char*)instruction->address_dst); break;
         case Instruction_Create_Local_Variable:             debugPrintf("Instruction_Create_Local_Variable: %s\n", (char*)instruction->address_dst); break;
-        case Instruction_CallFunction:                      debugPrintf("Instruction_CallFunction: returnTo: %s\n", (char*)instruction->address_src1); break;
+        case Instruction_CallFunction:                      debugPrintf("Instruction_CallFunction: \n"); break;
         case Instruction_ReturnFunction:                    debugPrintf("Instruction_ReturnFunction\n"); break;
         case Instruction_Assign:                            debugPrintf("Instruction_Assign: %s = %s\n", (char*)instruction->address_dst, (char*)instruction->address_src1); break;
         case Instruction_Addition:                          debugPrintf("Instruction_Addition %s = %s + %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;
