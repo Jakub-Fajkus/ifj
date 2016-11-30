@@ -649,7 +649,9 @@ bool ruleStat(){
                 STACK_ELEMENT *stackElement = (STACK_ELEMENT*)malloc(sizeof(STACK_ELEMENT));
                 stackTop(returnToVariables,stackElement);
                 stackPop(returnToVariables);
-                ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrReturnFunction()));
+                if(!firstPass) {
+                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrReturnFunction()));
+                }
                 return true;
             }
         }

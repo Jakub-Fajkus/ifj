@@ -132,24 +132,24 @@ void printInstruction(INSTRUCTION *instruction) {
         case Instruction_Divide:                            debugPrintf("Instruction_Divide %s = %s / %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;
         case Instruction_IF:                                {
 
-            debugPrintf("Instruction_IF: ridiciProm:%s\n", (char*)instruction->address_dst);
+            debugPrintf("\nInstruction_IF: ridiciProm:%s\n", (char*)instruction->address_dst);
             debugPrintf("     *****Instructions for true branch:\n");
             printInstructions((tDLList*)instruction->address_src1);
-            debugPrintf("     *****End of true branch:\n");
+            debugPrintf("     *****End of true branch:\n\n");
             debugPrintf("     *****Instructions for false branch:\n");
             printInstructions((tDLList*)instruction->address_src2);
-            debugPrintf("     *****End of false branch:\n");
+            debugPrintf("     *****End of false branch:\n\n");
             break;
         } ;
         case Instruction_WHILE:                             {
-            debugPrintf("Instruction_WHILE, result in var: %s\n", (char*)instruction->address_dst);
+            debugPrintf("\nInstruction_WHILE, result in var: %s\n", (char*)instruction->address_dst);
             debugPrintf("     *****Instructions for condition:\n");
             printInstructions((tDLList*)instruction->address_src1);
             debugPrintf("     *****End of instructions for condition:\n");
 
             debugPrintf("     *****Instructions for body:\n");
             printInstructions((tDLList*)instruction->address_src2);
-            debugPrintf("     *****End of instructions for body:\n");
+            debugPrintf("     *****End of instructions for body:\n\n");
             break;
         }
         case Instruction_Bool_Equals:                       debugPrintf("Instruction_Bool_Equals: %s = %s == %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;
