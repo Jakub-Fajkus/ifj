@@ -1,0 +1,16 @@
+//lex test
+
+class Main
+{
+    static void run()
+    {
+        String neco;
+
+        neco = "\n\t";
+        neco = "\\";
+        neco = "\\kljhgc";
+        neco = "\\123kljhgc";
+        neco = "\"lajjf1u930123";
+        neco = "";
+    }
+}
