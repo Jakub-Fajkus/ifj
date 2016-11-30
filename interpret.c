@@ -20,7 +20,16 @@ int instrCounter = 0;
 
 //TODO: solve execution of insertVar into ActualLocalFrame, and the new CopyToUpcomingFrame instruction
 
-int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames, char *returnValue ){
+/**
+ *
+ * @param InstructionList
+ * @param globalFrame
+ * @param stackOfLocalFrames
+ * @param activeFunction
+ * @param checkReturn - whether to check if i should ask for return function
+ * @return
+ */
+int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames, struct SYMBOL_TABLE_FUNCTION_STR *activeFunction, bool checkReturn ){
     if (InstructionList == NULL) return 99;
     int interpretRetVal;
     debugPrintf("\n----- Interpret call No.%d\n",GLOBAL++);
@@ -102,8 +111,8 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         // Finds the other variable in upcoming frame, expecting it has no value
         // - and finally the content is copied "upcoming <- found"
         // Special version of Assignment
-        if (Instr->type == Instruction_Copy_To_Upcoming_Frame) {
-            debugPrintf("Instruction_Copy_To_Upcoming_Frame: DST=|%s|, SRC=|%s|\n", (char *)Instr->address_dst, (char *)Instr->address_src1);
+        if (Instr->type == Instruction_Copy_From_Actual_To_Upcoming_Frame) {
+            debugPrintf("Instruction_Copy_From_Actual_To_Upcoming_Frame: DST=|%s|, SRC=|%s|\n", (char *)Instr->address_dst, (char *)Instr->address_src1);
 
             // expecting: dst = (char *) name of variable inside upcoming frame
             // expecting: src1 =(char *) name of variable inside actual local frame
@@ -139,25 +148,26 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             if(upcomingLocalFrame == NULL) upcomingLocalFrame = createFrame();
             pushFrameToStack(stackOfLocalFrames, upcomingLocalFrame);
 
-            // HERE COMES THE FUCKING RECURSION
-            interpretRetVal = Interpret( (tDLList *)Instr->address_dst, globalFrame, stackOfLocalFrames, Instr->address_src1 );
+            // Here we come! Calling interpret with new instruction tape, passing itself the same frames
+            // !!! new addition: pointer to symbol table and bool value, if we are inside function (main.run or some kind of user function)
+            interpretRetVal = Interpret( (tDLList *)Instr->address_dst, globalFrame, stackOfLocalFrames, (SYMBOL_TABLE_FUNCTION *)Instr->address_src1, true );
             if ( interpretRetVal != 0 ) {
                 debugPrintf("Previous instance of interpret has failed. #CallFunctionError\n");
                 return interpretRetVal;
             }
+            // ended recursion
 
-            ListSuccessor(InstructionList);
-            continue; // Jump to next instruction
-        }
+            // v tomto momente mame ukoncenu instance vykonavania funkcie, treba popnut stack a
+            // .... technicky "Instruction_Copy_From_Popped_Frame_To_Actual"
 
-        if (Instr->type == Instruction_ReturnFunction) {    debugPrintf("Instruction_ReturnFunction\n");
+            //TODO
 
             // This instruction gets one parameter - name of return value, in DST
             // let's find it!
 
             //but first, let me pop the stack, in order to work with 3 frames... i really wanna find it
 
-            char *seekName = stringConcat("#", returnValue);
+            char *seekName = stringConcat("#", activeFunction->name);
             // in this moment we have #function
             VARIABLE *variableFromPoppedFrame = findFrameVariable(stackOfLocalFrames->arr->data.localFrame, seekName);
             if (variableFromPoppedFrame == NULL) exit(42);
@@ -180,7 +190,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 default:;
             }
 
-
+            // DISCARDING TOP-OF-STACK
             stackPop(stackOfLocalFrames);   // removal of top-local-frame
 
             // Executing returning value to a variable
@@ -200,12 +210,15 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 default:;
             }
 
+            // Here we have successfully returned the variable. The frame from previous function is gone.
 
-            debugPrintf("volam successora!\n");
             ListSuccessor(InstructionList);
-
-            if (InstructionList->Act == NULL) debugPrintf("vykolajil som sa!\n");
             continue; // Jump to next instruction
+        }
+
+        if (Instr->type == Instruction_ReturnFunction) {    debugPrintf("Instruction_ReturnFunction\n");
+            // It feels to be kinda important.
+            return 0;
         }
 
         // DST = BOOL, SRC1 = TRUE, SRC2 = FALSE
@@ -218,14 +231,14 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 booleanValue = findFrameVariable(globalFrame, Instr->address_dst);
 
             if (booleanValue->value.intValue == 1) {
-                interpretRetVal = Interpret( (tDLList *)Instr->address_src1, globalFrame, stackOfLocalFrames, NULL );
+                interpretRetVal = Interpret( (tDLList *)Instr->address_src1, globalFrame, stackOfLocalFrames, activeFunction, false );
                 if ( interpretRetVal != 0 ) {
                     debugPrintf("Previous instance of interpret has failed. #IfTrueErr\n");
                     return interpretRetVal;
                 }
             }
             else if (booleanValue->value.intValue == 0) {
-                interpretRetVal = Interpret( (tDLList *)Instr->address_src2, globalFrame, stackOfLocalFrames, NULL );
+                interpretRetVal = Interpret( (tDLList *)Instr->address_src2, globalFrame, stackOfLocalFrames, activeFunction, false );
                 if ( interpretRetVal != 0 ) {
                     debugPrintf("Previous instance of interpret has failed. #IfFalseErr\n");
                     return interpretRetVal;
@@ -239,7 +252,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         if (Instr->type == Instruction_WHILE) { debugPrintf("Instruction_WHILE\n");
 
             //----- STEP 1: Calling recursion for ExpressionList
-            interpretRetVal = Interpret( (tDLList *)Instr->address_src1, globalFrame, stackOfLocalFrames, NULL );
+            interpretRetVal = Interpret( (tDLList *)Instr->address_src1, globalFrame, stackOfLocalFrames, activeFunction, false );
             if ( interpretRetVal != 0 ) {
                 debugPrintf("Previous instance of interpret has failed. #WhileEvalErr_1st\n");
                 return interpretRetVal;
@@ -257,14 +270,14 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             while (booleanValue->value.intValue == 1) {
 
                 // Execute Cycle tape
-                interpretRetVal = Interpret( (tDLList *)Instr->address_src2, globalFrame, stackOfLocalFrames, NULL );
+                interpretRetVal = Interpret( (tDLList *)Instr->address_src2, globalFrame, stackOfLocalFrames, activeFunction, false );
                 if ( interpretRetVal != 0 ) {
                     debugPrintf("Previous instance of interpret has failed. #WhileCycleErr\n");
                     return interpretRetVal;
                 }
 
                 // Set new values
-                interpretRetVal = Interpret( (tDLList *)Instr->address_src1, globalFrame, stackOfLocalFrames, NULL );
+                interpretRetVal = Interpret( (tDLList *)Instr->address_src1, globalFrame, stackOfLocalFrames, activeFunction, false );
                 if ( interpretRetVal != 0 ) {
                     debugPrintf("Previous instance of interpret has failed. #WhileEvalErr_n\n");
                     return interpretRetVal;
@@ -281,152 +294,165 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             continue; // Jump to next instruction
         }
 
-        //--- Special instructions are captured, now we will execute the rest ---
+        // PURE MAGIC! DO NOT REARRANGE THE INSTRUCTION ENUM
+        if ( Instr->type >= Instruction_Assign && Instr->type <= Instruction_Function_Sort ) {
 
-        // EXECUTING OTHER INSTRUCTIONS, REPOINTING REQUIRED
-        VARIABLE *dst = NULL;   VARIABLE *src1 = NULL;  VARIABLE *src2 = NULL;
-        char *tempDstName = NULL, *tempSrc1Name = NULL, *tempSrc2Name = NULL;
+            //--- Special instructions are captured, now we will execute the rest ---
 
-        //  taking out the name of variable. needed to use while searching in global frame!!!
-        if (Instr->address_dst != NULL) {
-            tempDstName = malloc(sizeof(char)*strlen((char *)Instr->address_dst)+1);
-            tempDstName[0] = '\0';
-            strcpy(tempDstName, (char *)Instr->address_dst);
-        }
-        if (Instr->address_src1 != NULL) {
-            tempSrc1Name = malloc(sizeof(char)*strlen((char *)Instr->address_src1)+1);
-            tempSrc1Name[0] = '\0';
-            strcpy(tempSrc1Name, (char *)Instr->address_src1);
-        }
-        if (Instr->address_src2 != NULL) {
-            tempSrc2Name = malloc(sizeof(char)*strlen((char *)Instr->address_src2)+1);
-            tempSrc2Name[0] = '\0';
-            strcpy(tempSrc2Name, (char *)Instr->address_src2);
-        }
+            // EXECUTING OTHER INSTRUCTIONS, REPOINTING REQUIRED
+            VARIABLE *dst = NULL;   VARIABLE *src1 = NULL;  VARIABLE *src2 = NULL;
+            char *tempDstName = NULL, *tempSrc1Name = NULL, *tempSrc2Name = NULL;
 
-        if ( actualLocalFrame!= NULL ) {    // first seeking in top-of-stack
-
-            if ( actualLocalFrame->First != NULL ) {   //  existing non-empty local frame
-                dst = findFrameVariable(actualLocalFrame, Instr->address_dst);
-                src1 = findFrameVariable(actualLocalFrame, Instr->address_src1);
-                src2 = findFrameVariable(actualLocalFrame, Instr->address_src2);
+            //  taking out the name of variable. needed to use while searching in global frame!!!
+            if (Instr->address_dst != NULL) {
+                tempDstName = malloc(sizeof(char)*strlen((char *)Instr->address_dst)+1);
+                tempDstName[0] = '\0';
+                strcpy(tempDstName, (char *)Instr->address_dst);
             }
-            // Now there is a possibility that dsr, src1 or src2 are NULL = not found
-
-            // SEARCHING IN GLOBAL FRAME: PASS ONE MORE INFORMATION - NAME OF CLASS
-            //if the varaible was not found and the pointer in the instruction is not null
-            //without this check you would ty to find a variable even if you dont want to
-
-            if ( dst == NULL && tempDstName != NULL ) {
-                Instr->address_dst = stringConcat(getClassNameWithDotFromFullIdentifier(returnValue), tempDstName);
-                dst = findFrameVariable(globalFrame, Instr->address_dst);
+            if (Instr->address_src1 != NULL) {
+                tempSrc1Name = malloc(sizeof(char)*strlen((char *)Instr->address_src1)+1);
+                tempSrc1Name[0] = '\0';
+                strcpy(tempSrc1Name, (char *)Instr->address_src1);
             }
-            if ( src1 == NULL && tempSrc1Name != NULL ) {
-                Instr->address_src1 = stringConcat(getClassNameWithDotFromFullIdentifier(returnValue), tempSrc1Name);
-                src1 = findFrameVariable(globalFrame, Instr->address_src1);
-            }
-            if ( src2 == NULL && tempSrc2Name != NULL ) {
-                Instr->address_src2 = stringConcat(getClassNameWithDotFromFullIdentifier(returnValue), tempSrc2Name);
-                src2 = findFrameVariable(globalFrame, Instr->address_src2);
+            if (Instr->address_src2 != NULL) {
+                tempSrc2Name = malloc(sizeof(char)*strlen((char *)Instr->address_src2)+1);
+                tempSrc2Name[0] = '\0';
+                strcpy(tempSrc2Name, (char *)Instr->address_src2);
             }
 
-        }   // ended searching in 2 frames in a sequence
-        // first seeking in global frame, because top-of-stack doesn't exist
-        else {
-            if (globalFrame->First != NULL) {   //
+            if ( actualLocalFrame!= NULL ) {    // first seeking in top-of-stack
+
+                if ( actualLocalFrame->First != NULL ) {   //  existing non-empty local frame
+                    dst = findFrameVariable(actualLocalFrame, Instr->address_dst);
+                    src1 = findFrameVariable(actualLocalFrame, Instr->address_src1);
+                    src2 = findFrameVariable(actualLocalFrame, Instr->address_src2);
+                }
+                // Now there is a possibility that dsr, src1 or src2 are NULL = not found
+
                 // SEARCHING IN GLOBAL FRAME: PASS ONE MORE INFORMATION - NAME OF CLASS
+                //if the varaible was not found and the pointer in the instruction is not null
+                //without this check you would ty to find a variable even if you dont want to
 
-                if ( tempDstName != NULL ) {
-                    Instr->address_dst = stringConcat(getClassNameWithDotFromFullIdentifier(returnValue), tempDstName);
+                if ( dst == NULL && tempDstName != NULL ) {
+                    Instr->address_dst = stringConcat(getClassNameWithDotFromFullIdentifier(activeFunction->name), tempDstName);
                     dst = findFrameVariable(globalFrame, Instr->address_dst);
                 }
-                if ( tempSrc1Name != NULL ) {
-                    Instr->address_src1 = stringConcat(getClassNameWithDotFromFullIdentifier(returnValue), tempSrc1Name);
+                if ( src1 == NULL && tempSrc1Name != NULL ) {
+                    Instr->address_src1 = stringConcat(getClassNameWithDotFromFullIdentifier(activeFunction->name), tempSrc1Name);
                     src1 = findFrameVariable(globalFrame, Instr->address_src1);
                 }
-                if ( tempSrc2Name != NULL ) {
-                    Instr->address_src2 = stringConcat(getClassNameWithDotFromFullIdentifier(returnValue), tempSrc2Name);
+                if ( src2 == NULL && tempSrc2Name != NULL ) {
+                    Instr->address_src2 = stringConcat(getClassNameWithDotFromFullIdentifier(activeFunction->name), tempSrc2Name);
                     src2 = findFrameVariable(globalFrame, Instr->address_src2);
                 }
 
+            }   // ended searching in 2 frames in a sequence
+            // first seeking in global frame, because top-of-stack doesn't exist
+            else {
+                if (globalFrame->First != NULL) {   //
+                    // SEARCHING IN GLOBAL FRAME: PASS ONE MORE INFORMATION - NAME OF CLASS
+
+                    if ( tempDstName != NULL ) {
+                        Instr->address_dst = stringConcat(getClassNameWithDotFromFullIdentifier(activeFunction->name), tempDstName);
+                        dst = findFrameVariable(globalFrame, Instr->address_dst);
+                    }
+                    if ( tempSrc1Name != NULL ) {
+                        Instr->address_src1 = stringConcat(getClassNameWithDotFromFullIdentifier(activeFunction->name), tempSrc1Name);
+                        src1 = findFrameVariable(globalFrame, Instr->address_src1);
+                    }
+                    if ( tempSrc2Name != NULL ) {
+                        Instr->address_src2 = stringConcat(getClassNameWithDotFromFullIdentifier(activeFunction->name), tempSrc2Name);
+                        src2 = findFrameVariable(globalFrame, Instr->address_src2);
+                    }
+
+                }
+            } // end of searching in global frame (local was NULL)
+
+            switch (Instr->type) {
+                case Instruction_Assign:    // expecting DST & SRC variable name
+                    ;
+                    if (!(dst != NULL && src1 != NULL && src2 == NULL)){
+                        //TODO: free?
+                        return 99;
+                    }
+                    debugPrintf("Instruction_Assign\n");
+                    executeInstructionAssign(dst, src1);
+                    break;
+
+                case Instruction_Addition:
+                case Instruction_Subtraction:
+                case Instruction_Multiply:
+                case Instruction_Divide:
+                    ;
+                    if ( dst ==NULL || src1 == NULL || src2 == NULL ){
+                        //TODO: dst, src1 or src2 not found
+                        //free resources
+                        return 99;
+                    }
+
+                    int mathRetValue = executeInstructionMathOperation(Instr->type, dst, src1, src2);
+                    if ( mathRetValue != 0 ){
+                        debugPrintf("Math operation failed.\n");
+                        return mathRetValue;
+                    }
+                    break;
+
+                case Instruction_Bool_Equals:
+                case Instruction_Bool_EqualsNot:
+                case Instruction_Bool_More:
+                case Instruction_Bool_Less:
+                case Instruction_Bool_MoreEqual:
+                case Instruction_Bool_LessEqual:
+
+                    if ( dst ==NULL || src1 == NULL || src2 == NULL ) return 99;
+                    int evalRetValue = executeInstructionExpressionEvaluation(Instr->type, dst, src1, src2);
+                    if ( evalRetValue != 0 ){
+                        debugPrintf("Expression evaluation failed.\n");
+                        return mathRetValue;
+                    }
+                    break;
+
+                case Instruction_Function_readInt:
+                case Instruction_Function_readDouble:
+                case Instruction_Function_readString:
+                case Instruction_Function_Print:
+                case Instruction_Function_Length:
+                case Instruction_Function_Compare:
+                case Instruction_Function_Find:
+                case Instruction_Function_Sort:
+                    ;
+
+                    debugPrintf("Executing built-in function: |%d|\n", Instr->type, dst, src1, src2);
+                    int funRetValue = executeInstructionBuiltInFunction(Instr->type, dst, src1, src2);
+                    if (funRetValue != 0){
+                        debugPrintf("Built-in function failed.\n");
+                        return mathRetValue;
+                    }
+                    break;
+
+                default:
+                    ;
+                    debugPrintf("!!!!! !!!!! TRYING TO HANDLE INSTRUCTION WITHOUT SOLUTION !!!!! !!!!!\n");
+                    break;
             }
-        } // end of searching in global frame (local was NULL)
 
-        switch (Instr->type) {
-            case Instruction_Assign:    // expecting DST & SRC variable name
-                ;
-                if (!(dst != NULL && src1 != NULL && src2 == NULL)){
-                    //TODO: free?
-                    return 99;
-                }
-                debugPrintf("Instruction_Assign\n");
-                executeInstructionAssign(dst, src1);
-                break;
-
-            case Instruction_Addition:
-            case Instruction_Subtraction:
-            case Instruction_Multiply:
-            case Instruction_Divide:
-                ;
-                if ( dst ==NULL || src1 == NULL || src2 == NULL ){
-                    //TODO: dst, src1 or src2 not found
-                    //free resources
-                    return 99;
-                }
-
-                int mathRetValue = executeInstructionMathOperation(Instr->type, dst, src1, src2);
-                if ( mathRetValue != 0 ){
-                    debugPrintf("Math operation failed.\n");
-                    return mathRetValue;
-                }
-                break;
-
-            case Instruction_Bool_Equals:
-            case Instruction_Bool_EqualsNot:
-            case Instruction_Bool_More:
-            case Instruction_Bool_Less:
-            case Instruction_Bool_MoreEqual:
-            case Instruction_Bool_LessEqual:
-
-                if ( dst ==NULL || src1 == NULL || src2 == NULL ) return 99;
-                int evalRetValue = executeInstructionExpressionEvaluation(Instr->type, dst, src1, src2);
-                if ( evalRetValue != 0 ){
-                    debugPrintf("Expression evaluation failed.\n");
-                    return mathRetValue;
-                }
-                break;
-
-            case Instruction_Function_readInt:
-            case Instruction_Function_readDouble:
-            case Instruction_Function_readString:
-            case Instruction_Function_Print:
-            case Instruction_Function_Length:
-            case Instruction_Function_Compare:
-            case Instruction_Function_Find:
-            case Instruction_Function_Sort:
-                ;
-
-                debugPrintf("Executing built-in function: |%d|\n", Instr->type, dst, src1, src2);
-                int funRetValue = executeInstructionBuiltInFunction(Instr->type, dst, src1, src2);
-                if (funRetValue != 0){
-                    debugPrintf("Built-in function failed.\n");
-                    return mathRetValue;
-                }
-                break;
-
-            default:
-                ;
-                debugPrintf("!!!!! !!!!! TRYING TO HANDLE INSTRUCTION WITHOUT SOLUTION !!!!! !!!!!\n");
-                break;
         }
 
         // break condition
-        if (InstructionList->Last->element.data.instr == Instr) break;
+        if (InstructionList->Last->element.data.instr == Instr) {
+            if ( checkReturn && activeFunction->type != TYPE_VOID ) {
+                if (Instr->type != Instruction_ReturnFunction) {
+                    // This user function is not VOID AND DOES NOT include return X.
+                    return 8;
+                }
+            }
+            break;
+        }
         ListSuccessor(InstructionList);
     } // end of the big cycle
 
     return 0; // I had no idea what have I done
-}
+}   // end of the magical interpret
 
 //...
 

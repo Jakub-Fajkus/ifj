@@ -11,15 +11,20 @@
 #include "stack.h"
 #include <string.h>
 
+
 /**
- * @param InstructionList - list of instructons passed by parser
+ * ~ Interpret instruction executor ~
+ *
+ * @param InstructionList - Our beloved instruction list
  * @param globalFrame - Important note: function interpret passes this argument to itself
  *                      TL;DR: Interpret called from parser passes NULL value
  * @param stackOfLocalFrames - Important note: function interpret passes this argument to itself
  *                      TL;DR: Interpret called from parser passes NULL value
- * @return int value in case of crash if the interpret, to make sure the function main can free() everything else
+ * @param activeFunction - POINTER TO SYMBOL TABLE. I want to get the name of the function & it's return type.
+ * @param checkReturn - important for runtime error 8!
+ * @return
  */
-int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames, char *returnValue );
+int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames, struct SYMBOL_TABLE_FUNCTION_STR *activeFunction, bool checkReturn );
 
 
 /* ************************************************ EXECUTE ************************************************/

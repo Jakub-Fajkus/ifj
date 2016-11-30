@@ -169,7 +169,7 @@ void printInstruction(INSTRUCTION *instruction) {
         case Instruction_End_Interpret:                     debugPrintf("Instruction_End_Interpret\n"); break;
         case Instruction_Push_Actual_Local_Variable: debugPrintf("Instruction_Push_Actual_Local_Variable:name %s\n", (char*)instruction->address_dst);break;
         case Instruction_Create_Actual_Local_Variable: debugPrintf("Instruction_Create_Actual_Local_Variable: %s\n", (char*)instruction->address_dst);break;
-        case Instruction_Copy_To_Upcoming_Frame: debugPrintf("Instruction_Copy_To_Upcoming_Frame: %s <= %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1);break;
+        case Instruction_Copy_From_Actual_To_Upcoming_Frame: debugPrintf("Instruction_Copy_From_Actual_To_Upcoming_Frame: %s <= %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1);break;
 
         default: debugPrintf("UNKNOWN INSTRUCTION");
     }

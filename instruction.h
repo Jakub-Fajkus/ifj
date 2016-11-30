@@ -47,7 +47,7 @@ typedef enum {
     Instruction_End_Interpret = 10030,
     Instruction_Push_Actual_Local_Variable = 10031,
     Instruction_Create_Actual_Local_Variable = 10032,
-    Instruction_Copy_To_Upcoming_Frame = 10034
+    Instruction_Copy_From_Actual_To_Upcoming_Frame = 10034
 } INSTRUCTION_TYPE;
 
 typedef struct sINSTRUCTION{
@@ -134,8 +134,7 @@ INSTRUCTION *createActualLocalVariable(char *name, DATA_TYPE type);
  * @param actual
  * @return
  */
-INSTRUCTION *createInstrCopyToUpcomingFrame (char *upcoming, char *actual);
-
+INSTRUCTION *createInstrCopyFromActualToUpcomingFrame (char *upcoming, char *actual);
 
 /**
  * INSTRUCTION CONSTRUCTOR: Assign
@@ -208,11 +207,11 @@ INSTRUCTION *createInstrWhile(char *boolVar, tDLList *exprInstrList, tDLList *cy
 /**
  * INSTRUCTION CONSTRUCTOR: Call Function
  *
- * @param functionInstrList  Instructions of the function
- * @param returnVariableName
+ * @param functionInstrList - List of instructions
+ * @param
  * @return
  */
-INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList, char *functionName, DATA_TYPE returnValueType);
+INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList, SYMBOL_TABLE_FUNCTION *activeFunction);
 
 
 /**

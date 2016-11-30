@@ -212,10 +212,10 @@ INSTRUCTION *createActualLocalVariable(char *name, DATA_TYPE type) {
 /* ******************************************* Operations constructors ************************************************/
 
 
-INSTRUCTION *createInstrCopyToUpcomingFrame (char *upcomingFrameVar, char *actualFrameVar){
+INSTRUCTION *createInstrCopyFromActualToUpcomingFrame (char *upcomingFrameVar, char *actualFrameVar){
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
 
-    instruction->type = Instruction_Copy_To_Upcoming_Frame;
+    instruction->type = Instruction_Copy_From_Actual_To_Upcoming_Frame;
     instruction->address_dst = upcomingFrameVar;
     instruction->address_src1 = actualFrameVar;
     instruction->address_src2 = NULL;
@@ -290,7 +290,7 @@ INSTRUCTION *createInstrWhile(char *boolVar, tDLList *exprInstrList, tDLList *cy
 /* **************************************** User Function constructors ************************************************/
 
 
-INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList, char *functionName, DATA_TYPE returnValueType) {
+INSTRUCTION *createInstrCallFunction(tDLList *functionInstrList, ) {
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
     DATA_TYPE *type = malloc(sizeof(DATA_TYPE));
     *type = returnValueType;

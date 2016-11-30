@@ -732,7 +732,7 @@ bool ruleFuncCall(char *calledFunctionName, char *assignReturnValueToVariable){
                     while(DLActive(parameters) ) {
                         FUNCTION_PARAMETER *param = functionToCall->parameters->Act->element.data.parameter;
                         ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createLocalVariable(param->name, param->type)));
-                        ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrCopyToUpcomingFrame(functionToCall->parameters->Act->element.data.parameter->name, parameters->Act->element.data.parameter->name)));
+                        ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrCopyFromActualToUpcomingFrame(functionToCall->parameters->Act->element.data.parameter->name, parameters->Act->element.data.parameter->name)));
 
                         //move to the next parameter
                         ListSuccessor(parameters);
