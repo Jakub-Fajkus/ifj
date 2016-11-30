@@ -160,57 +160,60 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             // v tomto momente mame ukoncenu instance vykonavania funkcie, treba popnut stack a
             // .... technicky "Instruction_Copy_From_Popped_Frame_To_Actual"
 
-            //TODO
-
-            // This instruction gets one parameter - name of return value, in DST
-            // let's find it!
 
             //but first, let me pop the stack, in order to work with 3 frames... i really wanna find it
 
-            char *seekName = stringConcat("#", activeFunction->name);
-            // in this moment we have #function
-            VARIABLE *variableFromPoppedFrame = findFrameVariable(stackOfLocalFrames->arr->data.localFrame, seekName);
-            if (variableFromPoppedFrame == NULL) exit(42);
+            if ( activeFunction != NULL ) {
 
-            int poppedIntValue = 0;
-            double poppedDoubleValue = 0.0;
-            char *poppedStringValue = NULL;
+                if ( activeFunction->type != TYPE_VOID ) {
 
-            switch (variableFromPoppedFrame->type){
-                case TYPE_INT:  ;
-                    poppedIntValue = variableFromPoppedFrame->value.intValue;
-                    break;
-                case TYPE_DOUBLE:   ;
-                    poppedDoubleValue = variableFromPoppedFrame->value.doubleValue;
-                    break;
-                case TYPE_STRING:   ;
-                    poppedStringValue = malloc(sizeof(char) * strlen(variableFromPoppedFrame->value.stringValue) +1);
-                    strcpy(poppedStringValue, variableFromPoppedFrame->value.stringValue);
-                    break;
-                default:;
+                    char *seekName = stringConcat("#", activeFunction->name);
+                    // in this moment we have #function
+                    VARIABLE *variableFromPoppedFrame = findFrameVariable(stackOfLocalFrames->arr->data.localFrame, seekName);
+                    if (variableFromPoppedFrame == NULL) exit(42);
+
+                    int poppedIntValue = 0;
+                    double poppedDoubleValue = 0.0;
+                    char *poppedStringValue = NULL;
+
+                    switch (variableFromPoppedFrame->type){
+                        case TYPE_INT:  ;
+                            poppedIntValue = variableFromPoppedFrame->value.intValue;
+                            break;
+                        case TYPE_DOUBLE:   ;
+                            poppedDoubleValue = variableFromPoppedFrame->value.doubleValue;
+                            break;
+                        case TYPE_STRING:   ;
+                            poppedStringValue = malloc(sizeof(char) * strlen(variableFromPoppedFrame->value.stringValue) +1);
+                            strcpy(poppedStringValue, variableFromPoppedFrame->value.stringValue);
+                            break;
+                        default:;
+                    }
+
+                    // DISCARDING TOP-OF-STACK
+                    stackPop(stackOfLocalFrames);   // removal of top-local-frame
+
+                    // Executing returning value to a variable
+                    VARIABLE *variableFromNewTopFrame = findFrameVariable(stackOfLocalFrames->arr->data.localFrame, seekName);
+
+
+                    switch (variableFromNewTopFrame->type){
+                        case TYPE_INT:  ;
+                            variableFromNewTopFrame->value.intValue = poppedIntValue;
+                            break;
+                        case TYPE_DOUBLE:   ;
+                            variableFromNewTopFrame->value.doubleValue = poppedDoubleValue;
+                            break;
+                        case TYPE_STRING:   ;
+                            variableFromNewTopFrame->value.stringValue = poppedStringValue;
+                            break;
+                        default:;
+                    }
+
+                    // Here we have successfully returned the variable. The frame from previous function is gone.
+
+                } // end of case where we have non-void function returning
             }
-
-            // DISCARDING TOP-OF-STACK
-            stackPop(stackOfLocalFrames);   // removal of top-local-frame
-
-            // Executing returning value to a variable
-            VARIABLE *variableFromNewTopFrame = findFrameVariable(stackOfLocalFrames->arr->data.localFrame, seekName);
-
-
-            switch (variableFromNewTopFrame->type){
-                case TYPE_INT:  ;
-                    variableFromNewTopFrame->value.intValue = poppedIntValue;
-                    break;
-                case TYPE_DOUBLE:   ;
-                    variableFromNewTopFrame->value.doubleValue = poppedDoubleValue;
-                    break;
-                case TYPE_STRING:   ;
-                    variableFromNewTopFrame->value.stringValue = poppedStringValue;
-                    break;
-                default:;
-            }
-
-            // Here we have successfully returned the variable. The frame from previous function is gone.
 
             ListSuccessor(InstructionList);
             continue; // Jump to next instruction
