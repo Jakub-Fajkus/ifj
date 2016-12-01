@@ -20,6 +20,7 @@ class Main
         }
 
         a = funkce1(1);
+        ifj16.print(""+a+"\n");
     }
 
     static int funkce1(int n)

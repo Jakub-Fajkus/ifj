@@ -160,11 +160,11 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             // v tomto momente mame ukoncenu instance vykonavania funkcie, treba popnut stack a
             // .... technicky "Instruction_Copy_From_Popped_Frame_To_Actual"
 
-
             //but first, let me pop the stack, in order to work with 3 frames... i really wanna find it
 
             if ( activeFunction != NULL ) {
 
+                debugPrintf("What is the active function? |%s|", activeFunction->name);
                 if ( activeFunction->type != TYPE_VOID ) {
 
                     char *seekName = stringConcat("#", activeFunction->name);
@@ -190,6 +190,8 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                         default:;
                     }
 
+
+
                     // DISCARDING TOP-OF-STACK
                     stackPop(stackOfLocalFrames);   // removal of top-local-frame
 
@@ -213,6 +215,12 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                     // Here we have successfully returned the variable. The frame from previous function is gone.
 
                 } // end of case where we have non-void function returning
+                else {
+                    debugPrintf("Maybe this helps?\n");
+                }
+            }
+            else {
+                debugPrintf("Exiting Main.run.\n");
             }
 
             ListSuccessor(InstructionList);
