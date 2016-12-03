@@ -38,6 +38,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
     LIST_ELEMENT *NewPtr = malloc(sizeof(struct LIST_ELEMENT));
     INSTRUCTION *Instr;
 
+    struct SYMBOL_TABLE_FUNCTION_STR *returnedFromFunction;
     tDLList *upcomingLocalFrame = NULL; // creating the pointer, yet not using it
     tDLList *actualLocalFrame = NULL;
     if (stackOfLocalFrames != NULL) {
@@ -122,8 +123,12 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
             upcomingFrameVariable = findFrameVariable(upcomingLocalFrame, Instr->address_dst);
             seekVariable = findFrameVariable(actualLocalFrame, Instr->address_src1);
-            if(seekVariable == NULL) seekVariable = findFrameVariable(globalFrame, Instr->address_src1);
-            if(seekVariable == NULL) return 99;
+            if(seekVariable == NULL) {
+                seekVariable = findFrameVariable(globalFrame, Instr->address_src1);
+            }
+            if(seekVariable == NULL) {
+                return 99;
+            }
 
 
             switch (upcomingFrameVariable->type) {
@@ -143,13 +148,14 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
         // Pushing upcoming local frame into stack of local frames
         // THINGS TO KEEP: global frame, stack of local frames
-        if (Instr->type == Instruction_CallFunction) { debugPrintf("Instruction_CallFunction\n");
+        if (Instr->type == Instruction_CallFunction) { debugPrintf("Instruction_CallFunction: |%s|\n", ((SYMBOL_TABLE_FUNCTION *)Instr->address_src1)->name);
 
             if(upcomingLocalFrame == NULL) upcomingLocalFrame = createFrame();
             pushFrameToStack(stackOfLocalFrames, upcomingLocalFrame);
 
             // Here we come! Calling interpret with new instruction tape, passing itself the same frames
             // !!! new addition: pointer to symbol table and bool value, if we are inside function (main.run or some kind of user function)
+            returnedFromFunction = (SYMBOL_TABLE_FUNCTION *)Instr->address_src1;
             interpretRetVal = Interpret( (tDLList *)Instr->address_dst, globalFrame, stackOfLocalFrames, (SYMBOL_TABLE_FUNCTION *)Instr->address_src1, true );
             if ( interpretRetVal != 0 ) {
                 debugPrintf("Previous instance of interpret has failed. #CallFunctionError\n");
@@ -162,14 +168,19 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
             //but first, let me pop the stack, in order to work with 3 frames... i really wanna find it
 
-            if ( activeFunction != NULL ) {
+            if ( returnedFromFunction != NULL ) {
 
-                debugPrintf("What is the active function? |%s|", activeFunction->name);
-                if ( activeFunction->type != TYPE_VOID ) {
+//                for (int i = 0; i < stackOfLocalFrames->actualSize; ++i) {
+//                    debugPrintf("---printing stack with index %d\n", i);
+//                    printFrame(stackOfLocalFrames->arr[i].data.localFrame);
+//                    debugPrintf("---end of printing stack with index %d\n", i);
+//                }
 
-                    char *seekName = stringConcat("#", activeFunction->name);
+                debugPrintf("What is the active function? |%s|", returnedFromFunction->name);
+                if ( returnedFromFunction->type != TYPE_VOID ) {
+                    char *seekName = stringConcat("#", returnedFromFunction->name);
                     // in this moment we have #function
-                    VARIABLE *variableFromPoppedFrame = findFrameVariable(stackOfLocalFrames->arr->data.localFrame, seekName);
+                    VARIABLE *variableFromPoppedFrame = findFrameVariable(stackOfLocalFrames->arr[stackOfLocalFrames->top].data.localFrame, seekName);
                     if (variableFromPoppedFrame == NULL) exit(42);
 
                     int poppedIntValue = 0;
@@ -541,7 +552,9 @@ int executeInstructionMathOperation(INSTRUCTION_TYPE instrType, VARIABLE *dst, V
 
             case TYPE_INT:  // SRC1 is int
                 ; // SRC2 is int
-                if (src2->type==TYPE_INT) dst->value.intValue = src1->value.intValue + src2->value.intValue;
+                if (src2->type==TYPE_INT) {
+                    dst->value.intValue = src1->value.intValue + src2->value.intValue;
+                }
                 else {  // SRC2 is double
                     if (dst->type==TYPE_INT){ // DST is int
                         dst->type = TYPE_DOUBLE;
@@ -956,7 +969,9 @@ int executeInstructionAssign(VARIABLE *dst, VARIABLE *src) {
     switch (type_dst) {
 
         case TYPE_INT:
-            if (type_src==TYPE_INT) dst->value.intValue = src->value.intValue;
+            if (type_src==TYPE_INT) {
+                dst->value.intValue = src->value.intValue;
+            }
             else return 6; // Incompatibile assign
             break;
 

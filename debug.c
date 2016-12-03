@@ -186,3 +186,18 @@ void printInstructions(tDLList *instructions) {
 
     instructions->Act = backup;
 }
+
+void printFrame(tDLList *frame) {
+    do {
+        VARIABLE *var = frame->Act->element.data.variable;
+        printf("variable with name: %s and value: ", var->name);
+        if (var->type == TYPE_INT) {
+            printf("%d\n", var->value.intValue);
+        } else if(var->type == TYPE_DOUBLE) {
+            printf("%g\n", var->value.doubleValue);
+        } else {
+            printf("%s\n", var->value.stringValue);
+        }
+        ListSuccessor(frame);
+    } while ( frame->Act != NULL );
+}

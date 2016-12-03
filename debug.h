@@ -22,4 +22,5 @@ void printStack(tStack stack);
 void printEaTerminalType(enum EA_TERMINAL_TYPE_ENUM type);
 void printInstruction(INSTRUCTION *instruction);
 void printInstructions(tDLList *instructions);
+void printFrame(tDLList *frame);
 #endif //IFJ_DEBUG_H
