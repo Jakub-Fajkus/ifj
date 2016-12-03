@@ -249,8 +249,10 @@ void string1(TOKEN *token) {
                             i+=2;
                             j++;
                         } else{
-                            newStr[j] = (char) c;
-                            j++;
+                            free(str);
+                            free(newStr);
+                            token->type = LEX_ERROR;
+                            return;
                         }
                     }
                 } else {
