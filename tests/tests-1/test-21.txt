@@ -1,0 +1,7 @@
+class Main{
+    static void run() {
+        int neco.while;
+        int if.while;
+        int if.neco;
+    }
+}
