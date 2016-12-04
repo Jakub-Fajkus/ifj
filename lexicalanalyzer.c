@@ -45,7 +45,7 @@ void id(TOKEN *, int);
 
 void idFull(TOKEN *, char *);
 
-void magicRecognizer(TOKEN *, char *);
+bool keywordRecognizer(TOKEN *, char *, bool);
 
 bool testValid(int);
 // end local
@@ -453,7 +453,7 @@ void id(TOKEN *token, int c) {
         } else if (testValid(c)) {
             ungetc(c, fp);
             str[i] = '\0';
-            magicRecognizer(token, str);
+            keywordRecognizer(token, str, false);
             break;
         } else {
             free(str);
@@ -464,9 +464,14 @@ void id(TOKEN *token, int c) {
 }
 
 void idFull(TOKEN *token, char *str1) {
+    if(keywordRecognizer(NULL, str1, true)){
+        free(str1);
+        token->type = LEX_ERROR;
+        return;
+    }
+
     char *str2 = (char *) malloc(sizeof(char));
     int c, i = 0;
-
     c = getc(fp);
     if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || c == '$') {
         str2[i] = (char) c;
@@ -484,10 +489,13 @@ void idFull(TOKEN *token, char *str1) {
             str2[i] = (char) c;
             i++;
             str2 = realloc(str2, sizeof(char) * (i + 1));
-//        }else if (c == '.'){   todo co teď?????
-//            str2[i] = '\0';
-//            idFull(token,str2);
         } else if (testValid(c)) {
+            if(keywordRecognizer(NULL, str2, true)){
+                free(str1);
+                free(str2);
+                token->type = LEX_ERROR;
+                return;
+            }
             ungetc(c, fp);
             str2[i] = '\0';
             token->type = IDENTIFIER_FULL;
@@ -502,7 +510,7 @@ void idFull(TOKEN *token, char *str1) {
     }
 }
 
-void magicRecognizer(TOKEN *token, char *str) {
+bool keywordRecognizer(TOKEN *token, char *str, bool getOnlyBool) { //is ky word?
     if (
             strcmp(str, "break") == 0 || strcmp(str, "class") == 0 || strcmp(str, "continue") == 0 ||
             strcmp(str, "do") == 0 ||
@@ -513,14 +521,19 @@ void magicRecognizer(TOKEN *token, char *str) {
             strcmp(str, "static") == 0 || strcmp(str, "true") == 0 || strcmp(str, "void") == 0 ||
             strcmp(str, "while") == 0
             ) {
-//        printf("keyword");
+        if(getOnlyBool){
+            return true;
+        }
         token->type = KEYWORD;
         token->data.keyword.name = str;
     } else {
+        if(getOnlyBool){
+            return false;
+        }
         token->type = IDENTIFIER;
         token->data.identifier.name = str;
     }
-
+    return true;
 }
 
 bool testValid(int c) {

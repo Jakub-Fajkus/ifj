@@ -7,7 +7,11 @@ class Main
 
 	static void run()
 	{
+	    ifj16.print("Type something: \n");
+
 		a = ifj16.readString();
+
+	    ifj16.print("Type something again: \n");
 		b = ifj16.readString();
 
 		ifj16.print(a);
