@@ -19,6 +19,7 @@ int GLOBAL = 0;
 int instrCounter = 0;
 
 //TODO: solve execution of insertVar into ActualLocalFrame, and the new CopyToUpcomingFrame instruction
+VARIABLE *getVariableFromFrames(tDLList *actualFrame, tDLList *globalFrame, SYMBOL_TABLE_FUNCTION *activeFunction, char *variableName);
 
 /**
  *
@@ -326,6 +327,32 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             continue; // Jump to next instruction
         }
 
+        if(Instr->type == Instruction_Function_Substr) {
+            char *destinationVariableName = (char*)Instr->address_dst;
+            VARIABLE *dst = getVariableFromFrames(actualLocalFrame,globalFrame,activeFunction, destinationVariableName);
+
+            tDLList *params = (tDLList*)Instr->address_src1;
+            ListFirst(params);
+
+            VARIABLE *param1 = getVariableFromFrames(actualLocalFrame,globalFrame,activeFunction, params->Act->element.data.parameter->name);
+            ListSuccessor(params);
+            VARIABLE *param2 = getVariableFromFrames(actualLocalFrame,globalFrame,activeFunction, params->Act->element.data.parameter->name);
+            ListSuccessor(params);
+            VARIABLE *param3 = getVariableFromFrames(actualLocalFrame,globalFrame,activeFunction, params->Act->element.data.parameter->name);
+
+            debugPrintf("PARAMS:%d %d \n\n\n\n\n\n\n\n\n\n\n", param2->value.intValue, param3->value.intValue);
+
+            if(param1 == NULL || param2 == NULL || param3 == NULL) {
+                debugPrintf("one of substr parameters was not found in frames\n");
+            }
+
+            dst->value.stringValue = ifj16_substr(param1->value.stringValue, param2->value.intValue, param3->value.intValue);
+
+            ListSuccessor(InstructionList);
+            continue; // Jump to next instruction
+        }
+
+
         // PURE MAGIC! DO NOT REARRANGE THE INSTRUCTION ENUM
         if ( Instr->type >= Instruction_Assign && Instr->type <= Instruction_Function_Sort ) {
 
@@ -479,7 +506,6 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 case Instruction_Function_Length:
                 case Instruction_Function_Compare:
                 case Instruction_Function_Find:
-                case Instruction_Function_Substr:
                 case Instruction_Function_Sort:
                     ;
 
@@ -490,7 +516,6 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                         return mathRetValue;
                     }
                     break;
-
                 default:
                     ;
                     debugPrintf("!!!!! !!!!! TRYING TO HANDLE INSTRUCTION WITHOUT SOLUTION !!!!! !!!!!type:%d \n", Instr->type);
@@ -1088,6 +1113,9 @@ int executeInstructionBuiltInFunction(INSTRUCTION_TYPE instrType, VARIABLE *dst,
             // char *ifj16_sort(char *s);
             dst->value.stringValue = ifj16_sort(src1->value.stringValue);
             break;
+        case Instruction_Function_Substr:
+
+            break;
 
         default:;   // char *ifj16_substr(char *, int, int); <---- YET TO HANDLE
     }
@@ -1107,3 +1135,18 @@ char* getClassNameWithDotFromFullIdentifier(char *fullIdentifier) {
 
     return stringConcat(className, ".");
 }
+
+VARIABLE *getVariableFromFrames(tDLList *actualFrame, tDLList *globalFrame, SYMBOL_TABLE_FUNCTION *activeFunction, char *variableName) {
+    VARIABLE *dst = findFrameVariable(actualFrame, variableName);
+
+    if(dst == NULL) {
+        if(ifj16_find(variableName, ".") == -1) {
+            variableName = stringConcat(getClassNameWithDotFromFullIdentifier(activeFunction->name), variableName);
+        }
+
+        return findFrameVariable(globalFrame, variableName);
+    }
+
+    return dst;
+}
+

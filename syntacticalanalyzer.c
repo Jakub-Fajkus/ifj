@@ -817,6 +817,8 @@ bool ruleParam(struct SYMBOL_TABLE_FUNCTION_STR *functionToCall, tDLList *parame
                 char *newResultVariableName = malloc(strlen(resultVariableName) + 1* sizeof(char));
                 strcpy(newResultVariableName, resultVariableName);
                 //if the paramseters is empty
+                debugPrintf("insert parameter with name: %s\n", resultVariableName);
+
                 if(parameters->Act == NULL){
                     InsertFirst(parameters, createListElementWithFunctionParamameter(newResultVariableName, resultVariableType));
                 } else {

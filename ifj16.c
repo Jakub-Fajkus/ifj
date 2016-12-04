@@ -5,6 +5,7 @@
 
 #include "ifj16.h"
 #include "ial.h"
+#include "debug.h"
 
 #define CHAR_SIZE    sizeof(char)
 
@@ -120,15 +121,21 @@ int ifj16_length(char *s) {
 
 char *ifj16_substr(char *s, int i, int n) {
 
-    if ( s == NULL || n <= 0 || i < 0 )
+    if ( s == NULL || n <= 0 || i < 0 ) {
         Error10();
+    }
+
     int length = (int)strlen(s);
-    if ( i + n > length )
+
+    if ( i + n > length ) {
         Error10();
+    }
 
     char *newSubstr = malloc( CHAR_SIZE * (n-i+1) );
-    if (newSubstr == NULL)
+    if (newSubstr == NULL){
         Error10();
+    }
+    newSubstr[0] = '\0';
 
     strncpy(newSubstr, s+i, n);
     newSubstr[n] = '\0';

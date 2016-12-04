@@ -434,6 +434,14 @@ INSTRUCTION *createInstrBFSort(char *retValue, char *param) {
     return instruction;
 }
 
+INSTRUCTION *createInstrBFSubstr(char *retValue, tDLList *params){
+    INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
+
+    instruction->type = Instruction_Function_Sort;
+
+    instruction->address_dst = retValue;
+    instruction->address_src1 = params;
+}
 
 /* ********************************************************************************************************************/
 

@@ -315,8 +315,13 @@ INSTRUCTION *createInstrBFFind(char *retValue, char *param1, char *param2);
  */
 INSTRUCTION *createInstrBFSort(char *retValue, char *param);
 
-// still to do
-// Instruction_Function_Substr
+/**
+ * INSTRUCTION CONSTRUCTOR: Built in instruction int substr(char*);
+ * @param retValue  - string
+ * @param params    - tDLList
+ * @return
+ */
+INSTRUCTION *createInstrBFSubstr(char *retValue, tDLList *params);
 
 // ------------------------------------------------------ wrapper, seems like unused...
 

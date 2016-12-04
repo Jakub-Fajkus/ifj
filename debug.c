@@ -163,7 +163,7 @@ void printInstruction(INSTRUCTION *instruction) {
         case Instruction_Function_readString:               debugPrintf("Instruction_Function_readString returnTo %s\n", (char*)instruction->address_dst); break;
         case Instruction_Function_Print:                    debugPrintf("Instruction_Function_Print: %s\n", (char*)instruction->address_dst); break;
         case Instruction_Function_Length:                   debugPrintf("Instruction_Function_Length: %s returnTo %s\n", (char*)instruction->address_dst, (char*)instruction->address_dst); break;
-        case Instruction_Function_Substr:                   debugPrintf("Instruction_Function_Substr:  returnTo %s\n", (((tDLList*)instruction->address_dst)->First->element.data.parameter->name)); break;
+        case Instruction_Function_Substr:                   debugPrintf("Instruction_Function_Substr:  returnTo %s\n", (char*)instruction->address_dst); break;
         case Instruction_Function_Compare:                  debugPrintf("Instruction_Function_Compare: %s %s returnTo %s\n", (char*)instruction->address_dst, (char*)instruction->address_dst, (char*)instruction->address_src1); break;
         case Instruction_Function_Find:                     debugPrintf("Instruction_Function_Find: %s %s returnTo %s\n", (char*)instruction->address_dst, (char*)instruction->address_dst, (char*)instruction->address_src1); break;
         case Instruction_End_Interpret:                     debugPrintf("Instruction_End_Interpret\n"); break;

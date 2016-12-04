@@ -243,7 +243,9 @@ void createInstructionsToCallIfj16Function(char *functionName, tDLList *instruct
         tDLList *args = malloc(sizeof(tDLList));
         ListInit(args);
 
-        InsertFirst(args, createListElementWithFunctionParamameter(returnValueToVariable, TYPE_STRING));
+        instruction->address_dst = returnValueToVariable;
+
+        InsertFirst(args, createListElementWithFunctionParamameter(givenParameters->Act->element.data.parameter->name, TYPE_STRING));
         ListFirst(args);
         if(givenParameters->Act->element.data.parameter->type != TYPE_STRING) {
             exit(4);
@@ -265,7 +267,7 @@ void createInstructionsToCallIfj16Function(char *functionName, tDLList *instruct
         ListSuccessor(givenParameters);
 
 
-        instruction->address_dst = args;
+        instruction->address_src1 = args;
         ListInsertLast(instructions, wrapInstructionIntoListElement(instruction));
 
     }else if(stringEquals("ifj16.compare", functionName)) {
