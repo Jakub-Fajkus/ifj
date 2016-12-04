@@ -558,11 +558,16 @@ bool ruleStat(){
 
             token = getCachedToken();
             if (token->type == BRACKET && token->data.bracket.name == '(') {
-                char* resultVariableName;
-                DATA_TYPE resultVariableType;
+                char* resultVariableName = NULL;
+                DATA_TYPE resultVariableType = TYPE_INT; //just some default value
                 actualInstructionList = whileConditionList;
                 debugPrintf("calling analyzeExpression from ruleStat <STAT> -> while ( <EXP> ) { <ST_LIST> }\n");
                 if (analyzeExpression(actualInstructionList, &resultVariableName, &resultVariableType)) {
+                    if(resultVariableType != TYPE_BOOL) {
+                        debugPrintf("variable used in the confition of an while statement must be of type bool, type: %d given", resultVariableType);
+                        exit(4);
+                    }
+
                     token = getCachedToken();
                     actualInstructionList = actualInstructionListBackup;
                     if (token->type == BRACKET && token->data.bracket.name == ')') {
@@ -599,13 +604,17 @@ bool ruleStat(){
 
             token = getCachedToken();
             if (token->type == BRACKET && token->data.bracket.name == '(') {
-                char* resultVariableName;
-                DATA_TYPE resultVariableType;
+                char* resultVariableName = NULL;
+                DATA_TYPE resultVariableType = TYPE_STRING; //jus tdefault value
                 debugPrintf("calling analyzeExpression from ruleStat <STAT> -> if ( <EXP> ) { <ST_LIST> } else { <ST_LIST> }\n");
                 if (analyzeExpression(actualInstructionList, &resultVariableName, &resultVariableType)) {
-
                     //result of expression, temp which would be used in createInsIf
                     if(!firstPass){
+                        if(resultVariableType != TYPE_BOOL) {
+                            debugPrintf("variable used in the confition of an if statement must be of type bool, type: %d given", resultVariableType);
+                            exit(4);
+                        }
+
                         ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createActualLocalVariable(resultVariableName, resultVariableType)));
                         //todo: test resultVariableType with bool
                     }
@@ -660,10 +669,15 @@ bool ruleStat(){
                 stackPop(returnToVariables);
                 if(!firstPass) {
                     if(tempVariableName != NULL) {
+                        //todo: check for datatypes(typeo f func and type of the result, possible implicit conversions)
+                        if (actualFunction->type != tempVariableType) {
+                            debugPrintf("incompatible return type of function: %s", actualFunction->name);
+                            exit(4);
+                        }
+
                         //the ruleExpSemicolon returned a variable name. in this case the statement was: return <EXP>; and we want to generate the assign instruction
                         ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createActualLocalVariable(stringConcat("#", actualFunction->name), actualFunction->type)));
                         ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrAssign(stringConcat("#", actualFunction->name), tempVariableName)));
-                        //todo: check for datatypes(typeo f func and type of the result, possible implicit conversions)
                     }
 
                     ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrReturnFunction()));
@@ -1103,8 +1117,6 @@ void makeFirstPass() {
     returnToVariables = malloc(sizeof(struct STACK_STR));
     stackInit(returnToVariables);
     bool result = ruleProg();
-
-    //todo: create local stack and call function Main.run
 
     if(result == false) {
         exit(2);

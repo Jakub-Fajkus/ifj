@@ -1,3 +1,4 @@
+//to bude trochu slozitejsi upravit...
 class Main {
     static double a = 5.0 + b;
     static double b = 41.9;

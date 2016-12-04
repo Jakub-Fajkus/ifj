@@ -19,12 +19,12 @@ class Main
             ifj16.print("Vysledek je: " + vysl + "\n");
         }
 
-        a = funkce1(1);
+        a = funkce1(1,2);
         ifj16.print("funkce vratila: "+a+"\n");
     }
 
-    static int funkce1(int n)
+    static int funkce1(int n, int b)
     {
-        return n+2;
+        return n + 2 - b;
     }
 }

@@ -1,4 +1,4 @@
-// Boolean v podmienke
+// porovnavani stringu
 
 class Main
 {
@@ -6,7 +6,7 @@ class Main
     {
          String a = "retazec";
 
-         if (a > 3)
+         if (a > 5)
          {
             a = "Sematicka chyba";
          } else {
@@ -14,4 +14,3 @@ class Main
          }
     }
 }
-
