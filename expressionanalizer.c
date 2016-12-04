@@ -13,6 +13,7 @@
 
 extern struct SYMBOL_TABLE_FUNCTION_STR *actualFunction;
 extern char* actualClass;
+extern struct SYMBOL_TABLE_NODE *globalSymbolTable;
 
 unsigned long iterator = 0;
 int brackets = 0;
@@ -21,6 +22,8 @@ DATA_TYPE returnType;
 
 char *varName = NULL;
 int generate3AddressCode(tDLList *threeAddressCode,tStack *stack, tStack *backStack, bool firstPass);
+char *convertShortNameToFullName(char *name);
+INSTRUCTION *createInstrMathWithUpdatedNames(INSTRUCTION_TYPE instType, char *nameDst, char *nameSrc1, char *nameSrc2);
 
 INSTRUCTION *createLocalOrGlobalVariable(char *name, DATA_TYPE type);
 INSTRUCTION *pushLocalOrGlobalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value);
@@ -393,7 +396,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
             }
             break;
         default:
-            exit(114);
+            exit(99);
     }
 
     switch (actionType) {
@@ -412,7 +415,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                     INSTRUCTION *instruction1 = createLocalOrGlobalVariable(tempName, outputType);
                     ListInsertLast(threeAddressCode,createInstruction(instruction1));
 
-                    INSTRUCTION *instruction2 = createInstrMath(Instruction_Addition, tempName,
+                    INSTRUCTION *instruction2 = createInstrMathWithUpdatedNames(Instruction_Addition, tempName,
                                                    stackElement1.data.notTerminalData.name,
                                                    stackElement3.data.notTerminalData.name);
                     ListInsertLast(threeAddressCode,createInstruction(instruction2));
@@ -444,7 +447,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                     INSTRUCTION *instruction1 = createLocalOrGlobalVariable(tempName, outputType);
                     ListInsertLast(threeAddressCode,createInstruction(instruction1));
 
-                    INSTRUCTION *instruction2 = createInstrMath(Instruction_Subtraction, tempName,
+                    INSTRUCTION *instruction2 = createInstrMathWithUpdatedNames(Instruction_Subtraction, tempName,
                                                    stackElement1.data.notTerminalData.name,
                                                    stackElement3.data.notTerminalData.name);
                     ListInsertLast(threeAddressCode,createInstruction(instruction2));
@@ -475,7 +478,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                     INSTRUCTION *instruction1 = createLocalOrGlobalVariable(tempName, outputType);
                     ListInsertLast(threeAddressCode,createInstruction(instruction1));
 
-                    INSTRUCTION *instruction2 = createInstrMath(Instruction_Multiply, tempName,
+                    INSTRUCTION *instruction2 = createInstrMathWithUpdatedNames(Instruction_Multiply, tempName,
                                                    stackElement1.data.notTerminalData.name,
                                                    stackElement3.data.notTerminalData.name);
                     ListInsertLast(threeAddressCode,createInstruction(instruction2));
@@ -511,7 +514,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                     INSTRUCTION *instruction1 = createLocalOrGlobalVariable(tempName, outputType);
                     ListInsertLast(threeAddressCode,createInstruction(instruction1));
 
-                    INSTRUCTION *instruction2 = createInstrMath(Instruction_Divide, tempName,
+                    INSTRUCTION *instruction2 = createInstrMathWithUpdatedNames(Instruction_Divide, tempName,
                                     stackElement1.data.notTerminalData.name,
                                     stackElement3.data.notTerminalData.name);
                     ListInsertLast(threeAddressCode,createInstruction(instruction2));
@@ -624,9 +627,9 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                     strcpy(tempName, varName);
                     INSTRUCTION *instruction1 = createLocalOrGlobalVariable(tempName, TYPE_INT);
                     ListInsertLast(threeAddressCode,createInstruction(instruction1));
-                    INSTRUCTION *instruction2 =  createInstrExprEval(actionToLogicInstruction(actionType), tempName,
-                                                          stackElement1.data.notTerminalData.name,
-                                                          stackElement3.data.notTerminalData.name);
+                    INSTRUCTION *instruction2 =  createInstrExprEval(actionToLogicInstruction(actionType), convertShortNameToFullName(tempName),
+                                                     convertShortNameToFullName(stackElement1.data.notTerminalData.name),
+                                                     convertShortNameToFullName(stackElement3.data.notTerminalData.name));
                     ListInsertLast(threeAddressCode,createInstruction(instruction2));
                     debugPrintf("generate: E->E_LOGIC_E\n");
                     stackElement1.data.notTerminalData.name = tempName;
@@ -680,4 +683,19 @@ void concatenateString() {
     }
 }
 
+char *convertShortNameToFullName(char *name) {
+    if (ifj16_find(name, "#") == -1 ) {
+        //it is not temp variable
+        char *result = getVariable((actualFunction == NULL)? NULL : &actualFunction->localSymbolTable, &globalSymbolTable, actualClass, name)->name;
 
+        return result;
+    } else {
+        //nothing to do...
+        return name;
+    }
+}
+
+INSTRUCTION *createInstrMathWithUpdatedNames(INSTRUCTION_TYPE instType, char *nameDst, char *nameSrc1, char *nameSrc2) {
+
+    return createInstrMath(instType, convertShortNameToFullName(nameDst), convertShortNameToFullName(nameSrc1), convertShortNameToFullName(nameSrc2));
+}

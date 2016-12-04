@@ -14,7 +14,9 @@ class Main{
     static double sm =  a + b /( c ) + b ;
 
     static void run() {
-        //nebavi mne to...
+
+        ifj16.print("Main.sm = " + Main.sm);
+        ifj16.print("sm = " + sm);
     }
 
 }
