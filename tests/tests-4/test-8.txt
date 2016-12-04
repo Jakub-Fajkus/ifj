@@ -1,0 +1,9 @@
+//succ statement for return
+//sematic fail??
+
+class Main{
+
+    static void run(){
+        return (2+2);
+    }
+}

@@ -1,0 +1,30 @@
+//check exp in condition
+
+class smth{
+
+}
+
+class Smth{
+
+}
+
+class Main{
+    static void run(){
+        while(1+2+3){
+            if(0){
+
+            } else{
+                if(1){
+                    return 1;
+                } else {
+
+                }
+            }
+        }
+    }
+
+}
+
+class $smth{
+
+}
