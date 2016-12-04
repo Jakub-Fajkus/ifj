@@ -19,6 +19,7 @@ struct SYMBOL_TABLE_FUNCTION_STR *actualFunction;
 struct tDLListStruct *mainInstructionList;
 struct tDLListStruct *actualInstructionList;
 struct STACK_STR *returnToVariables;
+char* actualClass;
 
 //todo: osetrit datovy typ vyrazu v prikazu return
 
@@ -176,6 +177,7 @@ bool ruleProg(){
     //<PROG> -> class <ID> {<CLASS_DEFINITION> } <PROG>
     if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "class")) {
         if (ruleId(&className)) {
+            actualClass = className;
             if(firstPass) {
                 //insert a record for the class itself
                 createAndInsertIntVariable(&globalSymbolTable, stringConcat(className, ".*"), false);
@@ -222,6 +224,8 @@ bool ruleProg(){
 bool ruleClassDefinition(char *className){
     tDLElemPtr activeElementRuleApplication = globalTokens->Act;
     TOKEN *token = getCachedToken();
+
+    actualFunction = NULL;
 
     //<CLASS_DEFINITION> -> static <DEFINITION_START> <CLASS_DEFINITION>
     if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "static")) {
@@ -312,14 +316,16 @@ bool rulePropDef(bool *variableInitialized, DATA_TYPE variableType, char *variab
             if (token->type == SEMICOLON) {
                 *variableInitialized = true;
                 if(firstPass) {
+                    ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createGlobalVariable(fullyQualifiedVariableName, variableType)));
                     createAndInsertVariable(&globalSymbolTable, fullyQualifiedVariableName, variableType, true);
-                    //check type of the result variable with variable declaration
-                    ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createInstrAssign(fullyQualifiedVariableName, resultVariableName)));
                 } else{
                     if(!canConvertTypes(variableType, resultVariableType)) {
                         debugPrintf("Incompatible types for assigned");
                         exit(4);
                     }
+
+                    //todo: check type of the result variable with variable declaration
+                    ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createInstrAssign(fullyQualifiedVariableName, resultVariableName)));
                 }
                 return true;
             } else {
@@ -1079,7 +1085,8 @@ void runSyntacticalAnalysis(char *fileName) {
 
     printAll();
 
-    Interpret(mainInstructionList, NULL, NULL, NULL, false);
+    exit(Interpret(mainInstructionList, NULL, NULL, NULL, false));
+
 
 }
 
@@ -1114,6 +1121,7 @@ void makeSecondPass() {
     debugPrintf("\n\n********************************\n********************************\n\nSTARTING WITH THE SECOND PASS!\n\n********************************\n********************************\n");
     ListFirst(globalTokens);
     firstPass = false;
+    actualFunction = NULL;
 
     bool result = ruleProg();
 

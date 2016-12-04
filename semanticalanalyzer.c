@@ -9,7 +9,9 @@
 #include "symboltable.h"
 
 struct SYMBOL_TABLE_NODE *globalSymbolTable;
-SYMBOL_TABLE_FUNCTION *actualFunction;
+extern SYMBOL_TABLE_FUNCTION *actualFunction;
+extern char* actualClass;
+
 
 void semanticCheckForFunctionRun() {
     // get function Main.run
@@ -71,7 +73,14 @@ SYMBOL_TABLE_FUNCTION *semantic_getFunction(char * functionName) {
 //}
 
 SYMBOL_TABLE_VARIABLE *semantic_getVariable(char * name) {
-    SYMBOL_TABLE_VARIABLE *variable = getVariable(&actualFunction->localSymbolTable, &globalSymbolTable, actualFunction, name);
+
+    SYMBOL_TABLE_VARIABLE *variable;
+
+    if(actualFunction == NULL) {
+         variable = getVariable(NULL, &globalSymbolTable, actualClass, name);
+    } else {
+        variable = getVariable(&actualFunction->localSymbolTable, &globalSymbolTable, actualClass, name);
+    }
     if(variable == NULL){
         exit(3);
     }

@@ -2,10 +2,10 @@ class Main {
     static int a = 5;
 
     static void run() {
-
+        ifj16.print("Pom.b = " + Pom.b);
     }
 }
 
 class Pom {
-    static double b = 3 + a;
+    static double b = 3 + Main.a * 2;
 }

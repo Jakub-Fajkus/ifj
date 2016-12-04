@@ -11,12 +11,19 @@
 #include "debug.h"
 #include "ifj16.h"
 
+extern struct SYMBOL_TABLE_FUNCTION_STR *actualFunction;
+extern char* actualClass;
+
 unsigned long iterator = 0;
-char *varName = NULL;
-int generate3AddressCode(tDLList *threeAddressCode,tStack *stack, tStack *backStack, bool firstPass);
 int brackets = 0;
 void concatenateString();
 DATA_TYPE returnType;
+
+char *varName = NULL;
+int generate3AddressCode(tDLList *threeAddressCode,tStack *stack, tStack *backStack, bool firstPass);
+
+INSTRUCTION *createLocalOrGlobalVariable(char *name, DATA_TYPE type);
+INSTRUCTION *pushLocalOrGlobalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value);
 
 void setVarName(char *name){
     if(varName != NULL)
@@ -307,7 +314,7 @@ INSTRUCTION_TYPE actionToLogicInstruction(EA_TERMINAL_TYPE actionType) {
         case EA_IS_EQUAL:
             return Instruction_Bool_Equals;
         case EA_IS_NOT_EQUAL:
-            Instruction_Bool_EqualsNot;
+            return Instruction_Bool_EqualsNot;
         default:
             exit(99);
     }
@@ -402,7 +409,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                     concatenateString();
                     char *tempName = (char *) malloc(sizeof(char) * 30);
                     strcpy(tempName, varName);
-                    INSTRUCTION *instruction1 = createActualLocalVariable(tempName, outputType);
+                    INSTRUCTION *instruction1 = createLocalOrGlobalVariable(tempName, outputType);
                     ListInsertLast(threeAddressCode,createInstruction(instruction1));
 
                     INSTRUCTION *instruction2 = createInstrMath(Instruction_Addition, tempName,
@@ -434,7 +441,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
 
                     char *tempName = (char *) malloc(sizeof(char) * 30);
                     strcpy(tempName, varName);
-                    INSTRUCTION *instruction1 = createActualLocalVariable(tempName, outputType);
+                    INSTRUCTION *instruction1 = createLocalOrGlobalVariable(tempName, outputType);
                     ListInsertLast(threeAddressCode,createInstruction(instruction1));
 
                     INSTRUCTION *instruction2 = createInstrMath(Instruction_Subtraction, tempName,
@@ -465,7 +472,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
 
                     char *tempName = (char *) malloc(sizeof(char) * 30);
                     strcpy(tempName, varName);
-                    INSTRUCTION *instruction1 = createActualLocalVariable(tempName, outputType);
+                    INSTRUCTION *instruction1 = createLocalOrGlobalVariable(tempName, outputType);
                     ListInsertLast(threeAddressCode,createInstruction(instruction1));
 
                     INSTRUCTION *instruction2 = createInstrMath(Instruction_Multiply, tempName,
@@ -501,7 +508,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                     char *tempName = (char *) malloc(sizeof(char) * 30);
                     strcpy(tempName, varName);
 
-                    INSTRUCTION *instruction1 = createActualLocalVariable(tempName, outputType);
+                    INSTRUCTION *instruction1 = createLocalOrGlobalVariable(tempName, outputType);
                     ListInsertLast(threeAddressCode,createInstruction(instruction1));
 
                     INSTRUCTION *instruction2 = createInstrMath(Instruction_Divide, tempName,
@@ -582,7 +589,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                         VARIABLE_VALUE *varVal = (VARIABLE_VALUE*)malloc(sizeof(VARIABLE_VALUE));
                         DATA_TYPE *varType = (DATA_TYPE*)malloc(sizeof(DATA_TYPE));
                         tokenTypeToVarTypeAndValue(stackElement1.data.terminalData.token, varType,varVal);
-                        INSTRUCTION *instruction1 = pushActualLocalVariable(tempName,*varType,*varVal);
+                        INSTRUCTION *instruction1 = pushLocalOrGlobalVariable(tempName,*varType,*varVal);
                         ListInsertLast(threeAddressCode,createInstruction(instruction1));
 
                         stackElement2.data.notTerminalData.type = *varType;
@@ -615,7 +622,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                     concatenateString();
                     char *tempName = (char *) malloc(sizeof(char) * 30);
                     strcpy(tempName, varName);
-                    INSTRUCTION *instruction1 = createActualLocalVariable(tempName, TYPE_INT);
+                    INSTRUCTION *instruction1 = createLocalOrGlobalVariable(tempName, TYPE_INT);
                     ListInsertLast(threeAddressCode,createInstruction(instruction1));
                     INSTRUCTION *instruction2 =  createInstrExprEval(actionToLogicInstruction(actionType), tempName,
                                                           stackElement1.data.notTerminalData.name,
@@ -638,6 +645,26 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
     return 0;
 };
 
+INSTRUCTION *createLocalOrGlobalVariable(char *name, DATA_TYPE type) {
+    if(actualFunction == NULL) {
+        debugPrintf("createLocalOrGlobalVariable %s - global\n", name);
+        return createGlobalVariable(name, type);
+    } else {
+        debugPrintf("createLocalOrGlobalVariable %s - local to function %s\n", name, actualFunction->name);
+        return createActualLocalVariable(name, type);
+    }
+}
+
+INSTRUCTION *pushLocalOrGlobalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value) {
+    if(actualFunction == NULL) {
+        debugPrintf("pushLocalOrGlobalVariable %s - global\n", name);
+        return pushGlobalVariable(name, type, value);
+    } else {
+        debugPrintf("pushLocalOrGlobalVariable %s - local to function %s\n", name, actualFunction->name);
+        return pushActualLocalVariable(name, type, value);
+    }
+}
+
 
 void concatenateString() {
     if(varName != NULL)
@@ -645,7 +672,12 @@ void concatenateString() {
     else
         varName = (char*)malloc(sizeof(char)*100);
     iterator++;
-    sprintf(varName, "#ExpressionAnalyzerVar%lu", iterator);
+
+    if(actualFunction == NULL) {
+        sprintf(varName, "#%s.ExpressionAnalyzerVar%lu", actualClass, iterator);
+    } else {
+        sprintf(varName, "#ExpressionAnalyzerVar%lu", iterator);
+    }
 }
 
 

@@ -49,11 +49,23 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
     ListFirst(InstructionList);
 
     while ( 1 ) {   // The great cycle
+        //check if the list is not empty
+        if(InstructionList->Act == NULL) {
+            if ( activeFunction->type != TYPE_VOID ) {
+                // This user function is not VOID AND DOES NOT include return X.
+                return 8;
+            } else {
+                //the function is void and it's body is empty
+                return 0;
+            }
+        }
+
         // Copy the actual instruction from the list
         ListElementCopy(InstructionList, NewPtr);
         Instr = NewPtr->data.instr;
 
-        debugPrintf("Instruction number %d: ", instrCounter++);
+        debugPrintf("Instruction number %d: \n", instrCounter++);
+        printInstruction(Instr);
 
         if (Instr->type == Instruction_End_Interpret) { debugPrintf("Instruction_End_Interpret\n");
             //TODO: return value, free all resources used by interpret (stack & globalframe)
@@ -356,15 +368,27 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 //without this check you would ty to find a variable even if you dont want to
 
                 if ( dst == NULL && tempDstName != NULL ) {
-                    Instr->address_dst = stringConcat(getClassNameWithDotFromFullIdentifier(activeFunction->name), tempDstName);
+                    //the name is fully qualified
+                    if(ifj16_find(tempDstName, ".") == -1) {
+                        Instr->address_dst = stringConcat(getClassNameWithDotFromFullIdentifier(activeFunction->name), tempDstName);
+                    }
+
                     dst = findFrameVariable(globalFrame, Instr->address_dst);
                 }
                 if ( src1 == NULL && tempSrc1Name != NULL ) {
-                    Instr->address_src1 = stringConcat(getClassNameWithDotFromFullIdentifier(activeFunction->name), tempSrc1Name);
+                    //the name is fully qualified
+                    if(ifj16_find(tempSrc1Name, ".") == -1) {
+                        Instr->address_src1 = stringConcat(getClassNameWithDotFromFullIdentifier(activeFunction->name), tempSrc1Name);
+                    }
+
                     src1 = findFrameVariable(globalFrame, Instr->address_src1);
                 }
                 if ( src2 == NULL && tempSrc2Name != NULL ) {
-                    Instr->address_src2 = stringConcat(getClassNameWithDotFromFullIdentifier(activeFunction->name), tempSrc2Name);
+                    //the name is fully qualified
+                    if(ifj16_find(tempSrc2Name, ".") == -1) {
+                        Instr->address_src2 = stringConcat(getClassNameWithDotFromFullIdentifier(activeFunction->name), tempSrc2Name);
+                    }
+
                     src2 = findFrameVariable(globalFrame, Instr->address_src2);
                 }
 
@@ -375,15 +399,31 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                     // SEARCHING IN GLOBAL FRAME: PASS ONE MORE INFORMATION - NAME OF CLASS
 
                     if ( tempDstName != NULL ) {
-                        Instr->address_dst = stringConcat(getClassNameWithDotFromFullIdentifier(activeFunction->name), tempDstName);
+                        //the name is fully qualified
+                        if(ifj16_find(tempDstName, ".") != -1) {
+                            Instr->address_dst = tempDstName;
+                        } else {
+                            Instr->address_dst = stringConcat(getClassNameWithDotFromFullIdentifier(activeFunction->name), tempDstName);
+                        }
                         dst = findFrameVariable(globalFrame, Instr->address_dst);
                     }
                     if ( tempSrc1Name != NULL ) {
-                        Instr->address_src1 = stringConcat(getClassNameWithDotFromFullIdentifier(activeFunction->name), tempSrc1Name);
+                        //the name is fully qualified
+                        if(ifj16_find(tempSrc1Name, ".") != -1) {
+                            Instr->address_src1 = tempSrc1Name;
+                        } else {
+                            Instr->address_src1 = stringConcat(getClassNameWithDotFromFullIdentifier(activeFunction->name), tempSrc1Name);
+                        }
                         src1 = findFrameVariable(globalFrame, Instr->address_src1);
                     }
                     if ( tempSrc2Name != NULL ) {
-                        Instr->address_src2 = stringConcat(getClassNameWithDotFromFullIdentifier(activeFunction->name), tempSrc2Name);
+                        //the name is fully qualified
+                        if(ifj16_find(tempSrc2Name, ".") != -1) {
+                            Instr->address_src2 = tempSrc2Name;
+                        } else {
+                            Instr->address_src2 = stringConcat(getClassNameWithDotFromFullIdentifier(activeFunction->name), tempSrc2Name);
+                        }
+
                         src2 = findFrameVariable(globalFrame, Instr->address_src2);
                     }
 

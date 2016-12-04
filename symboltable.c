@@ -185,6 +185,10 @@ SYMBOL_TABLE_FUNCTION* getFunctionFromTable(SYMBOL_TABLE_NODEPtr *symbolTable, c
 }
 
 TREE_NODE_DATA *getNodeDataFromTable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name) {
+    if(symbolTable == NULL || *symbolTable == NULL || (*symbolTable)->key == NULL) {
+        return NULL;
+    }
+
     TREE_NODE_DATA *nodeData = malloc(sizeof(TREE_NODE_DATA));
 
     if (true == BSTSearch(*symbolTable, name, nodeData)) {
@@ -198,15 +202,17 @@ TREE_NODE_DATA *getNodeDataFromTable(SYMBOL_TABLE_NODEPtr *symbolTable, char *na
     return NULL;
 }
 
-SYMBOL_TABLE_VARIABLE* getVariable(SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBOL_TABLE_NODEPtr *globalSymbolTable, SYMBOL_TABLE_FUNCTION *calledFunction, char* name)
+SYMBOL_TABLE_VARIABLE* getVariable(SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBOL_TABLE_NODEPtr *globalSymbolTable, char *activeClass, char* name)
 {
     SYMBOL_TABLE_VARIABLE *variable = NULL;
 
-    variable = getVariableFromTable(localSymbolTable, name);
+    if(localSymbolTable != NULL) {
+        variable = getVariableFromTable(localSymbolTable, name);
 
-    //the variable was found and is local
-    if(variable != NULL) {
-        return variable;
+        //the variable was found and is local
+        if(variable != NULL) {
+            return variable;
+        }
     }
 
     //when searching in the global table, there are 2 situations:
@@ -216,8 +222,7 @@ SYMBOL_TABLE_VARIABLE* getVariable(SYMBOL_TABLE_NODEPtr *localSymbolTable, SYMBO
     //if it does not contain a dot
     if (-1 == ifj16_find(name, ".")) {
         //add class prefix to it
-        char* className = ifj16_substr(calledFunction->name, 0, ifj16_find(calledFunction->name, "."));
-        char *nameWithDot = stringConcat(className, ".");
+        char *nameWithDot = stringConcat(activeClass, ".");
         char *fullyQualifiedName = stringConcat(nameWithDot, name);
         free(nameWithDot);
 
