@@ -526,7 +526,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                 debugPrintf("generate: E->E/E\n");
                 stackElement1.data.notTerminalData.type = outputType;
                 stackElement1.type = EA_NOT_TERMINAL;
-            } else return 2; //todo check
+            } else return 2;
             break;
         case EA_LEFT_BR:
             if (stackElement1.type == EA_TERMINAL &&
@@ -536,11 +536,10 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                 stackElement3.type == EA_TERMINAL) {
                 debugPrintf("generate: E->(E)\n");
                 stackElement1 = stackElement2;
-            } else return 2; //todo check
+            } else return 2;
 
             break;
         case EA_I:
-            //TODO tests/8/test2.txt
             if (stackElement1.type == EA_TERMINAL &&
                 stackElement1.data.terminalData.type == EA_I) {
 //                stackElement2 = temp :)
@@ -619,8 +618,11 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
         case EA_IS_NOT_EQUAL:
             if (stackElement1.type == EA_NOT_TERMINAL &&
                 stackElement2.type == EA_TERMINAL &&
-                //               stackElement2.data.terminalData.type == EA_ADD &&
                 stackElement3.type == EA_NOT_TERMINAL) {
+
+                if(stackElement1.data.notTerminalData.type == TYPE_STRING || stackElement2.data.notTerminalData.type == TYPE_STRING){
+                    return 4;
+                }
                 if (!firstPass) {
                     concatenateString();
                     char *tempName = (char *) malloc(sizeof(char) * 30);
@@ -631,13 +633,13 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                                                      convertShortNameToFullName(stackElement1.data.notTerminalData.name),
                                                      convertShortNameToFullName(stackElement3.data.notTerminalData.name));
                     ListInsertLast(threeAddressCode,createInstruction(instruction2));
-                    debugPrintf("generate: E->E_LOGIC_E\n");
                     stackElement1.data.notTerminalData.name = tempName;
                 } else {
                     stackElement1.data.notTerminalData.name = "tempName";
                 }
                 stackElement1.data.notTerminalData.type = TYPE_INT;
                 stackElement1.type = EA_NOT_TERMINAL;
+                debugPrintf("generate: E->E_LOGIC_E\n");
             } else return 2; //todo check
             break;
         default:

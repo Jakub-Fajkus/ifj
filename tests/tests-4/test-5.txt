@@ -1,0 +1,14 @@
+// porovnavani stringu
+
+class Main
+{
+    static void run()
+    {
+         String a = "retazec";
+
+         while (a==5)
+         {
+            a = "Sematicka chyba";
+         }
+    }
+}
