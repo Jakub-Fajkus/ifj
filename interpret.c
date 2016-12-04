@@ -213,13 +213,11 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                         default:;
                     }
 
-
-
                     // DISCARDING TOP-OF-STACK
                     stackPop(stackOfLocalFrames);   // removal of top-local-frame
 
                     // Executing returning value to a variable
-                    VARIABLE *variableFromNewTopFrame = findFrameVariable(stackOfLocalFrames->arr->data.localFrame, seekName);
+                    VARIABLE *variableFromNewTopFrame = findFrameVariable(stackOfLocalFrames->arr[stackOfLocalFrames->top].data.localFrame, seekName);
 
 
                     switch (variableFromNewTopFrame->type){

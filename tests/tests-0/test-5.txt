@@ -1,7 +1,5 @@
 class Main {
-
- static void run() {
-    return;
- }
-
+    static void run() {
+        return;
+    }
 }
