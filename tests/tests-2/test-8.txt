@@ -5,7 +5,7 @@ class Main{
     int a = 1;
     if(a){
 
-    }els{
+    }else{
 
     }
     static void run() {}

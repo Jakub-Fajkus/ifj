@@ -145,6 +145,7 @@ void logical1(TOKEN *token, int c1) {
         token->type = OPERATOR_LOGIC;
         token->data.operatorLogic.name = str;
     } else if (testValid(c2)) {
+        ungetc(c2,fp);
         str[1] = '\0'; // plýtvání bytem
         token->type = OPERATOR_LOGIC;
         token->data.operatorLogic.name = str;

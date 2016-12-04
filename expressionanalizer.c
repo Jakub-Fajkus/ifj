@@ -637,7 +637,8 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                 } else {
                     stackElement1.data.notTerminalData.name = "tempName";
                 }
-                stackElement1.data.notTerminalData.type = TYPE_INT;
+                setReturnType(TYPE_BOOL);
+                stackElement1.data.notTerminalData.type = TYPE_BOOL;
                 stackElement1.type = EA_NOT_TERMINAL;
                 debugPrintf("generate: E->E_LOGIC_E\n");
             } else return 2; //todo check

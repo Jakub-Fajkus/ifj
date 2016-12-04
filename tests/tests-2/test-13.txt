@@ -1,0 +1,12 @@
+// missing else for if
+
+class Main{
+
+    static void run() {
+
+        int a = 1;
+        while(a=1){
+        }
+    }
+
+}
