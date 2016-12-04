@@ -563,7 +563,7 @@ bool ruleStat(){
                 actualInstructionList = whileConditionList;
                 debugPrintf("calling analyzeExpression from ruleStat <STAT> -> while ( <EXP> ) { <ST_LIST> }\n");
                 if (analyzeExpression(actualInstructionList, &resultVariableName, &resultVariableType)) {
-                    if(resultVariableType != TYPE_BOOL) {
+                    if(!firstPass && resultVariableType != TYPE_BOOL) {
                         debugPrintf("variable used in the confition of an while statement must be of type bool, type: %d given", resultVariableType);
                         exit(4);
                     }
@@ -605,7 +605,7 @@ bool ruleStat(){
             token = getCachedToken();
             if (token->type == BRACKET && token->data.bracket.name == '(') {
                 char* resultVariableName = NULL;
-                DATA_TYPE resultVariableType = TYPE_STRING; //jus tdefault value
+                DATA_TYPE resultVariableType = TYPE_STRING; //just default value
                 debugPrintf("calling analyzeExpression from ruleStat <STAT> -> if ( <EXP> ) { <ST_LIST> } else { <ST_LIST> }\n");
                 if (analyzeExpression(actualInstructionList, &resultVariableName, &resultVariableType)) {
                     //result of expression, temp which would be used in createInsIf
@@ -1083,6 +1083,7 @@ void testTokens() {
 void runSyntacticalAnalysis(char *fileName) {
     globalTokens = getAllTokens(fileName);
 
+//    printAllTokens(globalTokens);
     initializeSymbolTable(globalSymbolTable);
     addIfj16Functions();
 
