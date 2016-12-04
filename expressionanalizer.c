@@ -40,10 +40,13 @@ void setReturnType(DATA_TYPE type){
     if(type == TYPE_BOOL){
         returnType = TYPE_BOOL;
         return;
-    }
-    if(type == TYPE_VOID){
+    }else if(type == TYPE_VOID){
         exit(4);
+    } else if(type == TYPE_STRING || returnType == TYPE_STRING){
+        returnType = TYPE_STRING;
+        return;
     }
+
     if(returnType == TYPE_INT){
         returnType = type;
         return;
