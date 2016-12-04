@@ -816,7 +816,12 @@ bool ruleParam(struct SYMBOL_TABLE_FUNCTION_STR *functionToCall, tDLList *parame
             if(!firstPass) {
                 char *newResultVariableName = malloc(strlen(resultVariableName) + 1* sizeof(char));
                 strcpy(newResultVariableName, resultVariableName);
-                ListInsertLast(parameters, createListElementWithFunctionParamameter(newResultVariableName, resultVariableType));
+                //if the paramseters is empty
+                if(parameters->Act == NULL){
+                    InsertFirst(parameters, createListElementWithFunctionParamameter(newResultVariableName, resultVariableType));
+                } else {
+                    ListInsertLast(parameters, createListElementWithFunctionParamameter(newResultVariableName, resultVariableType));
+                }
             }
             return true;
         }
@@ -1090,8 +1095,8 @@ void runSyntacticalAnalysis(char *fileName) {
     makeFirstPass();
     makeSecondPass();
     ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createInstrFillLocalFrame()));
-    SYMBOL_TABLE_FUNCTION *fun = semantic_getFunction("Main.run");
-    ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createInstrCallFunction(fun->instructions, fun)));
+    SYMBOL_TABLE_FUNCTION *mainRun = semantic_getFunction("Main.run");
+    ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createInstrCallFunction(mainRun->instructions, mainRun)));
     ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createLastInstruction()));
 
     printAll();
