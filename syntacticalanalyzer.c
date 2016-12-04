@@ -482,7 +482,6 @@ bool ruleDecl(DATA_TYPE declaredType, char *variableName){
         if (firstPass) {
             createAndInsertVariable(&actualFunction->localSymbolTable, variableName, declaredType, false);
             //no need to check types
-        } else {
             ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createActualLocalVariable(variableName, declaredType)));
         }
 
@@ -504,6 +503,7 @@ bool ruleDecl(DATA_TYPE declaredType, char *variableName){
                 if (firstPass) {
                     //insert the local variable to the symbol table
                     createAndInsertVariable(&actualFunction->localSymbolTable, variableName, declaredType, true);
+                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createActualLocalVariable(variableName, declaredType)));
                 } else {
                     //create instruction to assign the temporal variable created by expAnalyzer to the local variable which was defined right now
                     ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrAssign(variableName, resultVariableName)));
@@ -944,10 +944,6 @@ bool ruleDefinitionStart(char *className) {
             bool isFunction = false;
             type = TYPE_STRING;
             if (ruleDefinition(className, type, functionOrPropertyName, &propertyInitialized, &isFunction)) {
-//                char *classNameWithDot = stringConcat(className, ".");
-//                if(!isFunction) {
-//                    createAndInsertStringVariable(&globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), propertyInitialized);
-//                }
                 return true;
             }
         }
@@ -958,10 +954,6 @@ bool ruleDefinitionStart(char *className) {
             bool isFunction = false;
             type = TYPE_INT;
             if (ruleDefinition(className, type, functionOrPropertyName, &propertyInitialized, &isFunction)) {
-//                char *classNameWithDot = stringConcat(className, ".");
-//                if(!isFunction) {
-//                    createAndInsertIntVariable(&globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), propertyInitialized);
-//                }
                 return true;
             }
         }
@@ -972,10 +964,6 @@ bool ruleDefinitionStart(char *className) {
             bool isFunction = false;
             type = TYPE_DOUBLE;
             if (ruleDefinition(className, type, functionOrPropertyName, &propertyInitialized, &isFunction)) {
-//                char *classNameWithDot = stringConcat(className, ".");
-//                if(!isFunction) {
-//                    createAndInsertDoubleVariable(&globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), propertyInitialized);
-//                }
                 return true;
             }
         }
