@@ -1,0 +1,9 @@
+
+class Main {
+    static double a = 5.0;
+
+    static void run() {
+        ifj16.print(a);
+        ifj16.print(Main.a);
+    }
+}
