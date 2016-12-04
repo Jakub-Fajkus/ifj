@@ -651,7 +651,7 @@ bool ruleStat(){
             }
         //<STAT> -> return <EXP_SEMICOLON>
         } else if (token->type == KEYWORD && stringEquals(token->data.keyword.name, "return")) {
-            char* tempVariableName;
+            char* tempVariableName = NULL;
             DATA_TYPE tempVariableType;
 
             if (ruleExpSemicolon(&tempVariableName, &tempVariableType)) {
@@ -659,10 +659,12 @@ bool ruleStat(){
                 stackTop(returnToVariables,stackElement);
                 stackPop(returnToVariables);
                 if(!firstPass) {
-                    //generate assign to retValName from exprResultName
-                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createActualLocalVariable(stringConcat("#", actualFunction->name), actualFunction->type)));
-                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrAssign(stringConcat("#", actualFunction->name), tempVariableName)));
-                    //todo: check for datatypes(typeo f func and type of the result, possible implicit conversions)
+                    if(tempVariableName != NULL) {
+                        //the ruleExpSemicolon returned a variable name. in this case the statement was: return <EXP>; and we want to generate the assign instruction
+                        ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createActualLocalVariable(stringConcat("#", actualFunction->name), actualFunction->type)));
+                        ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrAssign(stringConcat("#", actualFunction->name), tempVariableName)));
+                        //todo: check for datatypes(typeo f func and type of the result, possible implicit conversions)
+                    }
 
                     ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrReturnFunction()));
                 }
@@ -750,10 +752,16 @@ bool ruleFuncCall(char *calledFunctionName, char *assignReturnValueToVariable){
                         ListSuccessor(functionToCall->parameters);
                     }
 
-                    //todo hvezdicka sem, hvezdicka tam... kdo vi...
-                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createActualLocalVariable(stringConcat("#"/*"#"*/, functionToCall->name), functionToCall->type)));
+                    //do not create local variable for void function
+                    if(functionToCall->type != TYPE_VOID) {
+                        ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createActualLocalVariable(stringConcat("#"/*"#"*/, functionToCall->name), functionToCall->type)));
+                    }
+
                     ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrCallFunction(functionToCall->instructions, functionToCall)));
-                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrAssign(assignReturnValueToVariable, stringConcat("#", functionToCall->name))));
+                    //do not assign to local variable for void function
+                    if(functionToCall->type != TYPE_VOID) {
+                        ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrAssign(assignReturnValueToVariable, stringConcat("#", functionToCall->name))));
+                    }
                 }
             }
 
