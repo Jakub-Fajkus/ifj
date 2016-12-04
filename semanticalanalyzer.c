@@ -243,24 +243,27 @@ void createInstructionsToCallIfj16Function(char *functionName, tDLList *instruct
         tDLList *args = malloc(sizeof(tDLList));
         ListInit(args);
 
-        ListInsertLast(args, createListElementWithFunctionParamameter(returnValueToVariable, TYPE_STRING));
-        ListSuccessor(givenParameters);
+        InsertFirst(args, createListElementWithFunctionParamameter(returnValueToVariable, TYPE_STRING));
+        ListFirst(args);
         if(givenParameters->Act->element.data.parameter->type != TYPE_STRING) {
             exit(4);
         }
-        ListInsertLast(args, createListElementWithFunctionParamameter(givenParameters->Act->element.data.parameter->name, givenParameters->Act->element.data.parameter->type));
         ListSuccessor(givenParameters);
 
+
+        DLPostInsert(args, createListElementWithFunctionParamameter(givenParameters->Act->element.data.parameter->name, givenParameters->Act->element.data.parameter->type));
         if(givenParameters->Act->element.data.parameter->type != TYPE_INT) {
             exit(4);
         }
-        ListInsertLast(args, createListElementWithFunctionParamameter(givenParameters->Act->element.data.parameter->name, givenParameters->Act->element.data.parameter->type));
         ListSuccessor(givenParameters);
 
+
+        DLPostInsert(args, createListElementWithFunctionParamameter(givenParameters->Act->element.data.parameter->name, givenParameters->Act->element.data.parameter->type));
         if(givenParameters->Act->element.data.parameter->type != TYPE_INT) {
             exit(4);
         }
-        ListInsertLast(args, createListElementWithFunctionParamameter(givenParameters->Act->element.data.parameter->name, givenParameters->Act->element.data.parameter->type));
+        ListSuccessor(givenParameters);
+
 
         instruction->address_dst = args;
         ListInsertLast(instructions, wrapInstructionIntoListElement(instruction));

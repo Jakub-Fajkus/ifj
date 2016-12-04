@@ -479,6 +479,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 case Instruction_Function_Length:
                 case Instruction_Function_Compare:
                 case Instruction_Function_Find:
+                case Instruction_Function_Substr:
                 case Instruction_Function_Sort:
                     ;
 
@@ -492,7 +493,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
                 default:
                     ;
-                    debugPrintf("!!!!! !!!!! TRYING TO HANDLE INSTRUCTION WITHOUT SOLUTION !!!!! !!!!!\n");
+                    debugPrintf("!!!!! !!!!! TRYING TO HANDLE INSTRUCTION WITHOUT SOLUTION !!!!! !!!!!type:%d \n", Instr->type);
                     break;
             }
 

@@ -7,5 +7,6 @@ class Main
         String input = "aa";
         String output;
         output = ifj16.substr(input, 5, 2);
+        ifj16.print("\n\n\noutput!:"+output+"\n\n\n");
     }
 }
