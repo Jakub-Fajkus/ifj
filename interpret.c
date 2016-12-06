@@ -220,7 +220,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                     // Executing returning value to a variable
                     VARIABLE *variableFromNewTopFrame = findFrameVariable(stackOfLocalFrames->arr[stackOfLocalFrames->top].data.localFrame, seekName);
 
-
+                    variableFromNewTopFrame->initialized = true;
                     switch (variableFromNewTopFrame->type){
                         case TYPE_INT:  ;
                             variableFromNewTopFrame->value.intValue = poppedIntValue;
