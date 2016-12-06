@@ -4,7 +4,7 @@ class Main
 {
    static void run() 
    {
-      ifj16.print("Hello World\n")
+      ifj16.print("Hello World\n");
       ifj16.print("Hello World\n");
       ifj16.print("Hello World\n")
    }

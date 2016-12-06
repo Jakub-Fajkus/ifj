@@ -4,7 +4,7 @@ class Main
 {
    static void run() 
    {
-    int cislo = 2.2 + int a;
+    int cislo = 2 + int a;
     ifj16.print("cislo je " + cislo + "\n");
    }
 }

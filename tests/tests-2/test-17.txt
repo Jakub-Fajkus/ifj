@@ -4,13 +4,12 @@ class Main
 {
    static void run() 
    {
-   		funkce(5);
    }
 }
 class trida 
 {
 	static int funkce(int n) {
-		ifj16.print(n);
-		return n = 2;
+		ifj16.print(""+n);
+		return n=2;
 	}
 }
