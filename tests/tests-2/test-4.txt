@@ -4,6 +4,8 @@ class Main {
     if(1<2<3<4)
     {
         a=8;
+    } else{
+
     }
  }
  static void run() {}

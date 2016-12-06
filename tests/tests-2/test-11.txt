@@ -2,7 +2,7 @@
 class Main{
     static void run() {}
     int a;
-    if a){
+    if a == 2){
         int b;
     }
 }

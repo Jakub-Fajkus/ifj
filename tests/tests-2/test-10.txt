@@ -1,7 +1,7 @@
 //fail syntax miss bracket
 
 class Main{
-    while(){
+    while( 0 == 0){
 
     static void run() {}
 

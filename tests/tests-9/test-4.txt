@@ -1,4 +1,17 @@
-class Main {
+// Delenie nulou - 9
+
+class Main
+{
+	static void run()
+	{
+		double a = 0;
+		int b = 5/0;
+	}
+}
+
+
+
+/*class Main {
 
     static int a = 1;
     static int c = 0;
@@ -9,4 +22,4 @@ class Main {
         x = 1 / 0;
      }
 
-}
+}*/

@@ -7,6 +7,6 @@ class Main{
     }
 
     static void run() {
-        a = 2 + func1();
+        int a = 2 + func1();
     }
 }
