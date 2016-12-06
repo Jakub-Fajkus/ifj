@@ -6,7 +6,7 @@ class Main {
         int vysl;
         vysl = funkce(x);
 
-        ifj16.print("" + x + y + vysl);
+        ifj16.print("what " + x + y + vysl);
     }
 
 
