@@ -1,15 +1,17 @@
-// missing else for if
+
 
 class Main{
 
     static int a = 1;
 
     static void run() {
-        if(a == 0){
 
-        }else{
-
-        }
     }
 
+
+    if(a == 0){
+
+    }else{
+
+    }
 }
