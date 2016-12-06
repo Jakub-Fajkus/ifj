@@ -24,9 +24,7 @@
  * @param checkReturn - important for runtime error 8!
  * @return
  */
-int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames, struct SYMBOL_TABLE_FUNCTION_STR *activeFunction, bool checkReturn );
-
-
+int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames, struct SYMBOL_TABLE_FUNCTION_STR *activeFunction, bool checkReturn, bool *hadReturn );
 /* ************************************************ EXECUTE ************************************************/
 
 /**

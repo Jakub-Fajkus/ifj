@@ -8,7 +8,7 @@ for FILE in $FILES; do
     EXPECTED_RETURN_CODE=`echo $FILE | cut -d'/' -f 2 | cut -d'-' -f 2`
 
     printf "\n**************** RUNNING INTERPRET FOR $FILE ****************\n"
-    printf "executing: ./bin/Debug/ifj %s \n" "$FILE"
+    printf "executing: ifj %s \n" "$FILE"
     ./ifj16 $FILE;
     RETURNED_CODE=$?
     if [ $RETURNED_CODE = $EXPECTED_RETURN_CODE ]; then

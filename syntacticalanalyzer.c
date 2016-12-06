@@ -1103,7 +1103,8 @@ void runSyntacticalAnalysis(char *fileName) {
 
     printAll();
 
-    exit(Interpret(mainInstructionList, NULL, NULL, NULL, false));
+    bool hadReturn = false;
+    exit(Interpret(mainInstructionList, NULL, NULL, NULL, false, &hadReturn));
 
 
 }

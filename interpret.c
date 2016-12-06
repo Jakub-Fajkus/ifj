@@ -30,7 +30,7 @@ VARIABLE *getVariableFromFrames(tDLList *actualFrame, tDLList *globalFrame, SYMB
  * @param checkReturn - whether to check if i should ask for return function
  * @return
  */
-int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames, struct SYMBOL_TABLE_FUNCTION_STR *activeFunction, bool checkReturn ){
+int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames, struct SYMBOL_TABLE_FUNCTION_STR *activeFunction, bool checkReturn, bool *hadReturn ) {
     if (InstructionList == NULL) return 99;
     int interpretRetVal;
     debugPrintf("\n----- Interpret call No.%d\n",GLOBAL++);
@@ -52,13 +52,15 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
     while ( 1 ) {   // The great cycle
         //check if the list is not empty
         if(InstructionList->Act == NULL) {
-            if ( activeFunction->type != TYPE_VOID ) {
-                // This user function is not VOID AND DOES NOT include return X.
-                return 8;
-            } else {
-                //the function is void and it's body is empty
-                return 0;
-            }
+            return 0;
+
+//            if ( activeFunction->type != TYPE_VOID ) {
+//                // This user function is not VOID AND DOES NOT include return X.
+//                return 8;
+//            } else {
+//                //the function is void and it's body is empty
+//                return 0;
+//            }
         }
 
         // Copy the actual instruction from the list
@@ -162,6 +164,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         // Pushing upcoming local frame into stack of local frames
         // THINGS TO KEEP: global frame, stack of local frames
         if (Instr->type == Instruction_CallFunction) { debugPrintf("Instruction_CallFunction: |%s|\n", ((SYMBOL_TABLE_FUNCTION *)Instr->address_src1)->name);
+            bool calledFunctionHadReturn = false;
 
             if(upcomingLocalFrame == NULL) upcomingLocalFrame = createFrame();
             pushFrameToStack(stackOfLocalFrames, upcomingLocalFrame);
@@ -169,12 +172,16 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             // Here we come! Calling interpret with new instruction tape, passing itself the same frames
             // !!! new addition: pointer to symbol table and bool value, if we are inside function (main.run or some kind of user function)
             returnedFromFunction = (SYMBOL_TABLE_FUNCTION *)Instr->address_src1;
-            interpretRetVal = Interpret( (tDLList *)Instr->address_dst, globalFrame, stackOfLocalFrames, (SYMBOL_TABLE_FUNCTION *)Instr->address_src1, true );
+            interpretRetVal = Interpret( (tDLList *)Instr->address_dst, globalFrame, stackOfLocalFrames, (SYMBOL_TABLE_FUNCTION *)Instr->address_src1, true, &calledFunctionHadReturn);
             if ( interpretRetVal != 0 ) {
-                debugPrintf("Previous instance of interpret has failed. #CallFunctionError\n");
+                debugPrintf("Previous instance of interpret has failed with code %d. #CallFunctionError\n", interpretRetVal);
                 return interpretRetVal;
             }
             // ended recursion
+
+            if(calledFunctionHadReturn == false && returnedFromFunction->type != TYPE_VOID) {
+                exit(8);
+            }
 
             // v tomto momente mame ukoncenu instance vykonavania funkcie, treba popnut stack a
             // .... technicky "Instruction_Copy_From_Popped_Frame_To_Actual"
@@ -190,7 +197,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 //                }
 
                 debugPrintf("What is the active function? |%s|", returnedFromFunction->name);
-                if ( returnedFromFunction->type != TYPE_VOID ) {
+                if ( returnedFromFunction->type != TYPE_VOID) {
                     char *seekName = stringConcat("#", returnedFromFunction->name);
                     // in this moment we have #function
                     VARIABLE *variableFromPoppedFrame = findFrameVariable(stackOfLocalFrames->arr[stackOfLocalFrames->top].data.localFrame, seekName);
@@ -251,6 +258,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
         if (Instr->type == Instruction_ReturnFunction) {    debugPrintf("Instruction_ReturnFunction\n");
             // It feels to be kinda important.
+            *hadReturn = true;
             return 0;
         }
 
@@ -264,14 +272,14 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 booleanValue = findFrameVariable(globalFrame, Instr->address_dst);
 
             if (booleanValue->value.intValue == 1) {
-                interpretRetVal = Interpret( (tDLList *)Instr->address_src1, globalFrame, stackOfLocalFrames, activeFunction, false );
+                interpretRetVal = Interpret( (tDLList *)Instr->address_src1, globalFrame, stackOfLocalFrames, activeFunction, false, hadReturn );
                 if ( interpretRetVal != 0 ) {
                     debugPrintf("Previous instance of interpret has failed. #IfTrueErr\n");
                     return interpretRetVal;
                 }
             }
             else if (booleanValue->value.intValue == 0) {
-                interpretRetVal = Interpret( (tDLList *)Instr->address_src2, globalFrame, stackOfLocalFrames, activeFunction, false );
+                interpretRetVal = Interpret( (tDLList *)Instr->address_src2, globalFrame, stackOfLocalFrames, activeFunction, false, hadReturn );
                 if ( interpretRetVal != 0 ) {
                     debugPrintf("Previous instance of interpret has failed. #IfFalseErr\n");
                     return interpretRetVal;
@@ -285,7 +293,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         if (Instr->type == Instruction_WHILE) { debugPrintf("Instruction_WHILE\n");
 
             //----- STEP 1: Calling recursion for ExpressionList
-            interpretRetVal = Interpret( (tDLList *)Instr->address_src1, globalFrame, stackOfLocalFrames, activeFunction, false );
+            interpretRetVal = Interpret( (tDLList *)Instr->address_src1, globalFrame, stackOfLocalFrames, activeFunction, false, hadReturn );
             if ( interpretRetVal != 0 ) {
                 debugPrintf("Previous instance of interpret has failed. #WhileEvalErr_1st\n");
                 return interpretRetVal;
@@ -303,14 +311,14 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             while (booleanValue->value.intValue == 1) {
 
                 // Execute Cycle tape
-                interpretRetVal = Interpret( (tDLList *)Instr->address_src2, globalFrame, stackOfLocalFrames, activeFunction, false );
+                interpretRetVal = Interpret( (tDLList *)Instr->address_src2, globalFrame, stackOfLocalFrames, activeFunction, false, hadReturn );
                 if ( interpretRetVal != 0 ) {
                     debugPrintf("Previous instance of interpret has failed. #WhileCycleErr\n");
                     return interpretRetVal;
                 }
 
                 // Set new values
-                interpretRetVal = Interpret( (tDLList *)Instr->address_src1, globalFrame, stackOfLocalFrames, activeFunction, false );
+                interpretRetVal = Interpret( (tDLList *)Instr->address_src1, globalFrame, stackOfLocalFrames, activeFunction, false, hadReturn );
                 if ( interpretRetVal != 0 ) {
                     debugPrintf("Previous instance of interpret has failed. #WhileEvalErr_n\n");
                     return interpretRetVal;
@@ -526,12 +534,12 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
         // break condition
         if (InstructionList->Last->element.data.instr == Instr) {
-            if ( checkReturn && activeFunction->type != TYPE_VOID ) {
-                if (Instr->type != Instruction_ReturnFunction) {
-                    // This user function is not VOID AND DOES NOT include return X.
-                    return 8;
-                }
-            }
+//            if ( checkReturn && activeFunction->type != TYPE_VOID ) {
+//                if (Instr->type != Instruction_ReturnFunction) {
+//                    // This user function is not VOID AND DOES NOT include return X.
+//                    return 8;
+//                }
+//            }
             break;
         }
         ListSuccessor(InstructionList);

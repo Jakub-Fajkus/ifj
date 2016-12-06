@@ -6,7 +6,7 @@ class Main{
 
         int a; int vysl; int neg;
         //ifj16.print("Vypocitame si faktorial z cisla 9.\n");
-        a = 9;
+        a = 3;
         if (a < 0) {
             ifj16.print("Faktorial nelze spocitat, ale to bychom videt nemeli mame 9ku!\n");
         }
@@ -24,11 +24,15 @@ class Main{
         int temp_result;
         int decremented_n = n - 1;
         if (n < 2) {
+            ifj16.print("return_1\n");
             return 1;
         }
         else {
+            ifj16.print("n="+n);
             temp_result = factorial(decremented_n);
+            ifj16.print("temp_result="+temp_result);
             temp_result = n * temp_result;
+            ifj16.print("temp_result*n="+temp_result);
             return temp_result;
         }
     }

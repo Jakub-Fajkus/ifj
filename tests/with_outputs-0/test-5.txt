@@ -2,7 +2,7 @@
 
 class Main{
 
-    static String neco = "STREJDA HONZA\n";
+    static String neco = "STREJDA HONZA";
 
     static void run(){
 
@@ -13,28 +13,28 @@ class Main{
         int comp;
         comp = ifj16.compare(sort, sort);
 
-        ifj16.print(""+$delka);
+        ifj16.print("\ndelka:"+$delka+"\n");
         ifj16.print(sort);
 
-        if(comp == 0){
-            ifj16.print("\nOK, retezce jsou stejne\n");
-            comp = ifj16.compare("joj", "j");
-
-            if(comp){
-                ifj16.print("OK, retezec \"joj\" je vetsi jak \"j\"\n");
-                comp = ifj16.compare("j", "jajajaj");
-                if(comp == 1-2){
-                    ifj16.print("OK, retezec \"j\" je mensi jak \"jajajaj\"\n");
-                }else{
-                    ifj16.print("Chyba v ifj16.comapre");
-                }
-
-            }else{
-                ifj16.print("Chyba v ifj16.comapre");
-            }
-        }else{
-            ifj16.print("Chyba v ifj16.comapre");
-        }
+//        if(comp == 0){
+//            ifj16.print("\nOK, retezce jsou stejne\n");
+//            comp = ifj16.compare("joj", "j");
+//
+//            if(comp == 0){
+//                ifj16.print("OK, retezec \"joj\" je vetsi jak \"j\"\n");
+//                comp = ifj16.compare("j", "jajajaj");
+//                if(comp == 1-2){
+//                    ifj16.print("OK, retezec \"j\" je mensi jak \"jajajaj\"\n");
+//                }else{
+//                    ifj16.print("Chyba v ifj16.comapre");
+//                }
+//
+//            }else{
+//                ifj16.print("Chyba v ifj16.comapre");
+//            }
+//        }else{
+//            ifj16.print("Chyba v ifj16.comapre");
+//        }
     }
 
 }
