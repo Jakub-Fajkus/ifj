@@ -10,8 +10,7 @@
 /* ************************************************ USED BY INTERPRET *************************************************/
 /* ************************************************ DATA CONSTRUCTORS *************************************************/
 
-/// Constructor of frame stack
-/// \return Ptr to Stack
+// Constructor of frame stack
 struct STACK_STR *createFrameStack() {
     struct STACK_STR *localFrameStack = malloc(sizeof(struct STACK_STR));
     // WARNING: also allocates memory for the array inside!
@@ -20,9 +19,7 @@ struct STACK_STR *createFrameStack() {
     return localFrameStack;
 }
 
-/// Pushes Local frame on the top of the Stack
-/// \param localFrameStack - Ptr to frame stack
-/// \param frame - upcoming frame, already full of variables
+// Pushes Local frame on the top of the Stack
 void pushFrameToStack(struct STACK_STR *localFrameStack, tDLList *frame) {
     STACK_ELEMENT *newLocalFrame = malloc(sizeof(STACK_ELEMENT));
 
@@ -32,18 +29,15 @@ void pushFrameToStack(struct STACK_STR *localFrameStack, tDLList *frame) {
     stackPush(localFrameStack, *newLocalFrame);
 }
 
-/// Constructor of frame (used for global frame once, and for local ones)
-/// \return Ptr to frame
+// Constructor of frame (used for global frame once, and for local ones)
 tDLList *createFrame() {
     tDLList *frame = malloc(sizeof(tDLList));
     ListInit(frame);
     return frame;
 }
 
-/// Fills frame with one variable
-/// \param frame
-/// \param instruction
-void pushToFrame(tDLList *frame, INSTRUCTION *instruction){
+// Fill with one variable.
+void pushToFrame(tDLList *frame, INSTRUCTION *instruction, bool initialized){
     LIST_ELEMENT *listElem = malloc(sizeof(LIST_ELEMENT));
     VARIABLE *var = malloc(sizeof(VARIABLE));
 
@@ -52,6 +46,7 @@ void pushToFrame(tDLList *frame, INSTRUCTION *instruction){
 
     var->name = (char *)instruction->address_dst;
     var->type = *(DATA_TYPE*)instruction->address_src1;
+    var->initialized = initialized;
 
     if (instruction->address_src2 != NULL)  // Instruction is inserting VAR with value
         var->value = *(VARIABLE_VALUE*)instruction->address_src2;

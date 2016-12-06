@@ -25,7 +25,7 @@ class Main
 
     static int funkce1(int a, int b, int c, int d)
     {
-        ifj16.print("\n******a="+a+"\nb="+b+"\n"+"c="+c+ "\nd:"+ d + "********\n\n\n");
-        return a / b;
+        ifj16.print("\n******\na="+a+"\nb="+b+"\n"+"c="+c+ "\nd:"+ d + "\n********\n\n\n");
+        return a + b * c + d;
     }
 }
