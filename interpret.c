@@ -530,7 +530,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                     debugPrintf("Executing built-in function: |%d|\n", Instr->type, dst, src1, src2);
                     int funRetValue = executeInstructionBuiltInFunction(Instr->type, dst, src1, src2);
                     if (funRetValue != 0){
-                        debugPrintf("Built-in function failed.\n");
+                        debugPrintf("Built-in function failed: error [%d]\n", funRetValue);
                         return mathRetValue;
                     }
                     break;
@@ -1088,48 +1088,60 @@ int executeInstructionBuiltInFunction(INSTRUCTION_TYPE instrType, VARIABLE *dst,
             if (dst == NULL || src1 != NULL || src2 != NULL) return 99;
             // int ifj16_readInt();
             dst->value.intValue = ifj16_readInt();
+            dst->initialized = true;
             break;
         case Instruction_Function_readDouble:   debugPrintf("Instruction_Function_readDouble\n");
             ;
             if (dst == NULL || src1 != NULL || src2 != NULL) return 99;
             // double ifj16_readDouble();
             dst->value.doubleValue = ifj16_readDouble();
+            dst->initialized = true;
             break;
         case Instruction_Function_readString:   debugPrintf("Instruction_Function_readString\n");
             ;
             if (dst == NULL || src1 != NULL || src2 != NULL) return 99;
             // char *ifj16_readString();
             dst->value.stringValue = ifj16_readString();
+            dst->initialized = true;
             break;
         case Instruction_Function_Print:    debugPrintf("Instruction_Function_Print\n");
             ;
             if (dst == NULL || src1 != NULL || src2 != NULL) return 99;
             // void ifj16_print(char *s);
+
             ifj16_print(dst->value.stringValue);
             break;
         case Instruction_Function_Length:   debugPrintf("Instruction_Function_Length\n");
             ;
             if (dst == NULL || src1 == NULL || src2 != NULL) return 99;
             // int ifj16_length(char *);
+            if (src1->initialized == false) return 8;
             dst->value.intValue = ifj16_length(src1->value.stringValue);
+            dst->initialized = true;
             break;
         case Instruction_Function_Compare:  debugPrintf("Instruction_Function_Compare\n");
             ;
             if (dst == NULL || src1 == NULL || src2 == NULL) return 99;
             // int ifj16_compare(char *, char *);
+            if (src1->initialized == false || src2->initialized == false) return 8;
             dst->value.intValue = ifj16_compare(src1->value.stringValue, src2->value.stringValue);
+            dst->initialized = true;
             break;
         case Instruction_Function_Find: debugPrintf("Instruction_Function_Find\n");
             ;
             if (dst == NULL || src1 == NULL || src2 == NULL) return 99;
             // int ifj16_find(char *, char *);
+            if (src1->initialized == false || src2->initialized == false) return 8;
             dst->value.intValue = ifj16_find(src1->value.stringValue, src2->value.stringValue);
+            dst->initialized = true;
             break;
         case Instruction_Function_Sort: debugPrintf("Instruction_Function_Sort\n");
             ;
             if (dst == NULL || src1 == NULL || src2 != NULL) return 99;
             // char *ifj16_sort(char *s);
+            if (src1->initialized == false) return 8;
             dst->value.stringValue = ifj16_sort(src1->value.stringValue);
+            dst->initialized = true;
             break;
         case Instruction_Function_Substr:
 
