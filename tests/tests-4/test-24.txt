@@ -3,6 +3,8 @@ class Main {
          String a = "abc";
          if(a){
             a = "bbc";
+         } else {
+
          }
     }
 }

@@ -7,7 +7,9 @@ class Main
     {
 		if (a > 4) {
 			funkce(a, b);
-		}
+		} else {
+
+        }
     }
     static void funkce(int n) // Definice funkce
     {

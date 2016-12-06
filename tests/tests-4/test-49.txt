@@ -4,7 +4,7 @@ class Main
 {
     static void run()
     {
-        int a = ifj16.readDouble();
+        int a = 4e-3;
         ifj16.print(a);
     }
 }

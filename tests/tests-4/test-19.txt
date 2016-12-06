@@ -7,6 +7,8 @@ class Main
          if (a)
          {
             a = "Sematicka chyba";
+         } else {
+
          }
     }
 }
