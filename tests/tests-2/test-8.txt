@@ -3,11 +3,13 @@
 class Main{
 
     static int a = 1;
-    if(a == 0){
 
-    }else{
+    static void run() {
+        if(a == 0){
 
+        }else{
+
+        }
     }
-    static void run() {}
 
 }
