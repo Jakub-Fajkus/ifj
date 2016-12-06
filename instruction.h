@@ -73,7 +73,10 @@ tDLList *createFrame();
 /// Fills frame with one variable
 /// \param frame
 /// \param instruction
-void pushToFrame(tDLList *globalFrame, INSTRUCTION *instruction);
+/// \param initialized - usage:
+///                      create[Local/Global/ActualLocal]Variable - FALSE
+///                      push[Local/Global/ActualLocal]Variable - TRUE
+void pushToFrame(tDLList *globalFrame, INSTRUCTION *instruction, bool initialized);
 
 /// Finds variable with given name
 /// \param frame - global frame or top local frame

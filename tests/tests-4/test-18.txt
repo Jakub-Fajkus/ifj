@@ -1,3 +1,4 @@
+// the exit code can be 8 or 4
 class Main
 {
 	static void run()

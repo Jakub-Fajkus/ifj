@@ -61,7 +61,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 //            }
         }
 
-        // Copy the actual instruction from the list
+        // Copy the actual instruction from the list & repoint
         ListElementCopy(InstructionList, NewPtr);
         Instr = NewPtr->data.instr;
 
@@ -76,49 +76,43 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         }
 
         // Instruction to create both global frame & stack of local frames (the stack will be empty!)
-        if (Instr->type == Instruction_Create_GlobalFrame_And_LocalStack) { debugPrintf("Instruction_Create_GlobalFrame_And_LocalStack\n");
-            globalFrame = createFrame();
-            stackOfLocalFrames = createFrameStack();
-            ListSuccessor(InstructionList);
-            continue; // Jump to next instruction
-        }
+        if (Instr->type == Instruction_Create_GlobalFrame_And_LocalStack || Instr->type == Instruction_Create_Local_Frame) {
 
-        if (Instr->type == Instruction_Create_Local_Frame) { debugPrintf("Instruction_Create_Local_Frame\n");
-            upcomingLocalFrame = createFrame();
+            if (Instr->type == Instruction_Create_GlobalFrame_And_LocalStack) {
+                debugPrintf("Instruction_Create_GlobalFrame_And_LocalStack\n");
+                globalFrame = createFrame();
+                stackOfLocalFrames = createFrameStack();
+            }
+            if (Instr->type == Instruction_Create_Local_Frame) {
+                debugPrintf("Instruction_Create_Local_Frame\n");
+                upcomingLocalFrame = createFrame();
+            }
+
             ListSuccessor(InstructionList);
             continue; // Jump to next instruction
         }
 
         // Inserting variable into global frame (with or without value)
-        if (Instr->type == Instruction_Create_Global_Variable || Instr->type == Instruction_Push_Global_Variable) {
-            debugPrintf("Instruction_Insert_Global_Variable: |%s|\n", (char *)Instr->address_dst);
-            pushToFrame(globalFrame, Instr);
+        if (Instr->type == Instruction_Create_Global_Variable ||
+            Instr->type == Instruction_Push_Global_Variable ||
+            Instr->type == Instruction_Create_Local_Variable ||
+            Instr->type == Instruction_Push_Local_Variable ||
+            Instr->type == Instruction_Push_Actual_Local_Variable ||
+            Instr->type == Instruction_Create_Actual_Local_Variable)
+        {
+
+            if (Instr->type == Instruction_Create_Global_Variable) pushToFrame(globalFrame, Instr, false);
+            if (Instr->type == Instruction_Create_Local_Variable) pushToFrame(upcomingLocalFrame, Instr, false);
+            if (Instr->type == Instruction_Create_Actual_Local_Variable) pushToFrame(actualLocalFrame, Instr, false);
+
+            if (Instr->type == Instruction_Push_Global_Variable) pushToFrame(globalFrame, Instr, true);
+            if (Instr->type == Instruction_Push_Local_Variable) pushToFrame(upcomingLocalFrame, Instr, true);
+            if (Instr->type == Instruction_Push_Actual_Local_Variable) pushToFrame(actualLocalFrame, Instr, true);
+
             ListSuccessor(InstructionList);
             continue; // Jump to next instruction
         }
-        // Inserting variable into UPCOMING local frame (the frame is not in stack)
-        if (Instr->type == Instruction_Create_Local_Variable || Instr->type == Instruction_Push_Local_Variable) {
-            debugPrintf("Instruction_Insert_Local_Variable-UpcomingFrame: |%s|\n", (char *)Instr->address_dst);
-            if (upcomingLocalFrame == NULL) {
-                upcomingLocalFrame = createFrame();
-            }
 
-            pushToFrame(upcomingLocalFrame, Instr);
-            ListSuccessor(InstructionList);
-            continue; // Jump to next instruction
-        }
-
-        // Inserting variable into ACTUAL local frame (the frame is on top of stack)
-        if (Instr->type == Instruction_Push_Actual_Local_Variable || Instr->type == Instruction_Create_Actual_Local_Variable ) {
-            debugPrintf("Instruction_Insert_Local_Variable-ActualFrame: |%s|\n", (char *)Instr->address_dst);
-            if (actualLocalFrame == NULL) {
-                return 99;
-            }
-
-            pushToFrame(actualLocalFrame, Instr);
-            ListSuccessor(InstructionList);
-            continue; // Jump to next instruction
-        }
 
         // Used in sequence before getting CallFunction
         // Finds variable of desired name in two frames: actual local & global.
@@ -143,7 +137,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 return 99;
             }
 
-
+            // Assigning the value. Insert value & set to initialized!
             switch (upcomingFrameVariable->type) {
 
                 case TYPE_INT: upcomingFrameVariable->value.intValue = seekVariable->value.intValue; break;
@@ -155,6 +149,8 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                     break;
                 default:break;
             }
+            upcomingFrameVariable->initialized = true;
+
             ListSuccessor(InstructionList);
             continue; // Jump to next instruction
         }
@@ -224,7 +220,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                     // Executing returning value to a variable
                     VARIABLE *variableFromNewTopFrame = findFrameVariable(stackOfLocalFrames->arr[stackOfLocalFrames->top].data.localFrame, seekName);
 
-
+                    variableFromNewTopFrame->initialized = true;
                     switch (variableFromNewTopFrame->type){
                         case TYPE_INT:  ;
                             variableFromNewTopFrame->value.intValue = poppedIntValue;
@@ -467,6 +463,11 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                         return 99;
                     }
                     debugPrintf("Instruction_Assign\n");
+
+                    if (src1->initialized == false) {
+                        debugPrintf("Newly implemented: working with uninitialised variable.\n");
+                        return 8;
+                    }
                     executeInstructionAssign(dst, src1);
                     break;
 
@@ -481,6 +482,12 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                         return 99;
                     }
 
+                    if (src1->initialized == false || src2->initialized == false) {
+                        debugPrintf("Newly implemented: working with uninitialised variable.\n");
+                        return 8;
+                    }
+                    //TODO: correct? i just want to set the dst as initialised.
+                    dst->initialized = true;
                     int mathRetValue = executeInstructionMathOperation(Instr->type, dst, src1, src2);
                     if ( mathRetValue != 0 ){
                         debugPrintf("Math operation failed.\n");
@@ -496,6 +503,13 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 case Instruction_Bool_LessEqual:
 
                     if ( dst ==NULL || src1 == NULL || src2 == NULL ) return 99;
+
+                    if (src1->initialized == false || src2->initialized == false) {
+                        debugPrintf("Newly implemented: working with uninitialised variable.\n");
+                        return 8;
+                    }
+                    //TODO: correct? i just want to set the dst as initialised.
+                    dst->initialized = true;
                     int evalRetValue = executeInstructionExpressionEvaluation(Instr->type, dst, src1, src2);
                     if ( evalRetValue != 0 ){
                         debugPrintf("Expression evaluation failed.\n");
@@ -516,7 +530,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                     debugPrintf("Executing built-in function: |%d|\n", Instr->type, dst, src1, src2);
                     int funRetValue = executeInstructionBuiltInFunction(Instr->type, dst, src1, src2);
                     if (funRetValue != 0){
-                        debugPrintf("Built-in function failed.\n");
+                        debugPrintf("Built-in function failed: error [%d]\n", funRetValue);
                         return mathRetValue;
                     }
                     break;
@@ -1034,6 +1048,8 @@ int executeInstructionAssign(VARIABLE *dst, VARIABLE *src) {
     int type_dst = dst->type;
     int type_src = src->type;
 
+    dst->initialized = true;
+
     switch (type_dst) {
 
         case TYPE_INT:
@@ -1074,48 +1090,68 @@ int executeInstructionBuiltInFunction(INSTRUCTION_TYPE instrType, VARIABLE *dst,
             if (dst == NULL || src1 != NULL || src2 != NULL) return 99;
             // int ifj16_readInt();
             dst->value.intValue = ifj16_readInt();
+            dst->initialized = true;
             break;
         case Instruction_Function_readDouble:   debugPrintf("Instruction_Function_readDouble\n");
             ;
             if (dst == NULL || src1 != NULL || src2 != NULL) return 99;
             // double ifj16_readDouble();
             dst->value.doubleValue = ifj16_readDouble();
+            dst->initialized = true;
             break;
         case Instruction_Function_readString:   debugPrintf("Instruction_Function_readString\n");
             ;
             if (dst == NULL || src1 != NULL || src2 != NULL) return 99;
             // char *ifj16_readString();
             dst->value.stringValue = ifj16_readString();
+            dst->initialized = true;
             break;
         case Instruction_Function_Print:    debugPrintf("Instruction_Function_Print\n");
             ;
             if (dst == NULL || src1 != NULL || src2 != NULL) return 99;
             // void ifj16_print(char *s);
+
             ifj16_print(dst->value.stringValue);
             break;
         case Instruction_Function_Length:   debugPrintf("Instruction_Function_Length\n");
             ;
             if (dst == NULL || src1 == NULL || src2 != NULL) return 99;
             // int ifj16_length(char *);
+            if (src1->initialized == false) {
+                return 8;
+            }
             dst->value.intValue = ifj16_length(src1->value.stringValue);
+            dst->initialized = true;
             break;
         case Instruction_Function_Compare:  debugPrintf("Instruction_Function_Compare\n");
             ;
             if (dst == NULL || src1 == NULL || src2 == NULL) return 99;
             // int ifj16_compare(char *, char *);
+            if (src1->initialized == false || src2->initialized == false) {
+                return 8;
+            }
             dst->value.intValue = ifj16_compare(src1->value.stringValue, src2->value.stringValue);
+            dst->initialized = true;
             break;
         case Instruction_Function_Find: debugPrintf("Instruction_Function_Find\n");
             ;
             if (dst == NULL || src1 == NULL || src2 == NULL) return 99;
             // int ifj16_find(char *, char *);
+            if (src1->initialized == false || src2->initialized == false){
+                return 8;
+            }
             dst->value.intValue = ifj16_find(src1->value.stringValue, src2->value.stringValue);
+            dst->initialized = true;
             break;
         case Instruction_Function_Sort: debugPrintf("Instruction_Function_Sort\n");
             ;
             if (dst == NULL || src1 == NULL || src2 != NULL) return 99;
             // char *ifj16_sort(char *s);
+            if (src1->initialized == false) {
+                return 8;
+            }
             dst->value.stringValue = ifj16_sort(src1->value.stringValue);
+            dst->initialized = true;
             break;
         case Instruction_Function_Substr:
 

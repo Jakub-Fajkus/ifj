@@ -4,7 +4,9 @@ class Main {
          String b = "bbb";
 
          if(a < b) {
-            a = b;
+//            a = b;
+         } else {
+
          }
     }
 }
