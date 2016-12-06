@@ -5,6 +5,8 @@
 #ifndef IFJ_BASICSTRUCTURES_H
 #define IFJ_BASICSTRUCTURES_H
 
+#include <stdbool.h>
+
 typedef enum{
     TYPE_INT = 1000,
     TYPE_DOUBLE = 1001,
@@ -33,6 +35,7 @@ typedef struct {
     char *name;
     DATA_TYPE type;
     VARIABLE_VALUE value;
+    bool initialized;
 } VARIABLE;
 
 #endif //IFJ_BASICSTRUCTURES_H
