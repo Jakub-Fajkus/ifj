@@ -1,4 +1,5 @@
 /* Test na mezeru v zadani doublu */
+//Vstup 4. 7
 
 class Main 
 {

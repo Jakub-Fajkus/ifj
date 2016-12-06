@@ -1,4 +1,5 @@
 // Testovanie ifj16 funkcie readInt
+// Vstup "c"
 
 class Main
 {
