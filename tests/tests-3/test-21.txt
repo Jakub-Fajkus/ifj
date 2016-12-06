@@ -1,4 +1,4 @@
-/* nedefinovan static */
+
 class Main
 {
 	static int a = 42;
