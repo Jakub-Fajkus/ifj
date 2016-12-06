@@ -1,4 +1,4 @@
-// Testy retazovych literalov
+7// Testy retazovych literalov
 // Chyba 1, \ddd <001, 377>
 
 class Main

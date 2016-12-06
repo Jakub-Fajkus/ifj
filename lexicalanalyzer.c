@@ -246,6 +246,12 @@ void string1(TOKEN *token) {
                     } else {
                         int c2 = str[i+1], c3 = str[i+2];
                         if(c >= '0' && c<='3' && c2>= '0' && c2 <= '7' && c3 >= '0' && c3 <= '7' ){
+                            if(c=='0' && c2 == '0' && c3 == '0'){
+                                free(str);
+                                free(newStr);
+                                token->type = LEX_ERROR;
+                                return;
+                            }
                             newStr[j] = (char)((c-'0')*8*8 + (c2-'0')*8 + (c3-'0'));
                             i+=2;
                             j++;
@@ -368,6 +374,7 @@ void doubleNum(TOKEN *token, char *str, int i) {
             i++;
             str = realloc(str, sizeof(char) * (i + 1));
             doubleNumE(token, str, i);
+            return;
         } else if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '$' || c == '_' || c == '.') {
             free(str);
             token->type = LEX_ERROR;
@@ -399,9 +406,12 @@ void doubleNumE(TOKEN *token, char *str, int i) {
     while (true) {
         c = getc(fp);
         if (c == '+' || c == '-') {
-            if (canOperator)
+            if (canOperator) {
                 canOperator = false;
-            else {
+                str[i] = (char) c;
+                i++;
+                str = realloc(str, sizeof(char) * (i + 1));
+            } else {
                 free(str);
                 token->type = LEX_ERROR;
                 return;
