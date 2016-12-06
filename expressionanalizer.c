@@ -623,7 +623,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                 stackElement2.type == EA_TERMINAL &&
                 stackElement3.type == EA_NOT_TERMINAL) {
 
-                if(stackElement1.data.notTerminalData.type == TYPE_STRING || stackElement2.data.notTerminalData.type == TYPE_STRING){
+                if(stackElement1.data.notTerminalData.type == TYPE_STRING || stackElement3.data.notTerminalData.type == TYPE_STRING){
                     return 4;
                 }
                 if (!firstPass) {
