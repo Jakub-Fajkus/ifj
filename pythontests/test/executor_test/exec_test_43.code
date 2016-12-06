@@ -1,0 +1,16 @@
+// Funkcia s navratovou hodnotou int
+// bez navratovej hodnoty
+// 8
+
+class Main
+{
+	static void run()
+	{
+		int a = test();
+	}
+
+	static void test()
+	{
+		return;
+	}
+}

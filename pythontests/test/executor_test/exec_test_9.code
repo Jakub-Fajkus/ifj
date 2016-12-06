@@ -1,0 +1,10 @@
+// Test Nedelenie nulou
+
+class Main
+{
+	static void run()
+	{
+		double a = 0.158;
+		double b = 5 / a;
+	}
+}

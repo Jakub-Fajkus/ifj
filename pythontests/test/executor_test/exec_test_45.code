@@ -1,0 +1,18 @@
+// Test funkcie run v inej triede
+
+class Main
+{
+	static void run()
+	{
+		Dva.run();
+		ifj16.print("ANO");
+	}
+}
+
+class Dva
+{
+	static void run()
+	{
+		return;
+	}
+}

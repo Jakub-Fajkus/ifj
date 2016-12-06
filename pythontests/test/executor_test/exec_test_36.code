@@ -1,0 +1,10 @@
+// Testovanie funkcie ifj16 find
+
+class Main
+{
+	static void run()
+	{
+		int a = ifj16.find("Dlhy test", "text");
+		ifj16.print(a + "\n");
+	}
+}

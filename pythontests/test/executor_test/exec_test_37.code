@@ -1,0 +1,33 @@
+// Testovanie funkcie ifj16 compare
+
+class Main
+{
+	static void run()
+	{
+		int a;
+
+		a = ifj16.compare("ape", "zebra");	// -1
+		ifj16.print(a + "\n");
+
+		a = ifj16.compare("zebra", "ape");	// +1
+		ifj16.print(a + "\n");
+
+		a = ifj16.compare("ape", "ape");	// 0
+		ifj16.print(a + "\n");
+
+		a = ifj16.compare("ape", "apple");	// -1
+		ifj16.print(a + "\n");
+
+		a = ifj16.compare("cat", "catfish");	// -1
+		ifj16.print(a + "\n");
+
+		a = ifj16.compare("Ape", "ape");	// -1
+		ifj16.print(a + "\n");
+
+		a = ifj16.compare("1ape", "Ape");	// -1
+		ifj16.print(a + "\n");
+
+		a = ifj16.compare(" ape", "Ape");	// -1
+		ifj16.print(a + "\n");
+	}
+}

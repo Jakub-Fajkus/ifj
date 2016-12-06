@@ -1,0 +1,14 @@
+// Definicia funkcie ako meno triedy
+
+class Main
+{
+	static void run()
+	{
+		
+	}
+
+	static int Main()
+	{
+		return 5;
+	}
+}

@@ -1,0 +1,11 @@
+// Pristup k premennej
+
+class Main
+{
+	static int a = 5;
+	static void run()
+	{
+		int a = 10;
+		ifj16.print("a: " + a + " Main.a: " + Main.a + "\n");
+	}
+}

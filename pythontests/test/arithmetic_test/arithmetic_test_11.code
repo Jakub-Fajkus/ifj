@@ -1,0 +1,11 @@
+// Nepovolene pretypovanie z double na int
+// 4
+
+class Main
+{
+	static void run()
+	{
+		int a = 2.589;
+		ifj16.print(a + "\n");
+	}
+}

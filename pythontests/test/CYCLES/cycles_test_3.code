@@ -1,0 +1,58 @@
+// Rozsirenie CYCLES
+
+class Main
+{
+	static void run()
+	{
+		ifj16.print("---- START ----" + "\n");
+
+		Tri.test();
+
+		ifj16.print("---- KONIEC ----" + "\n");
+	}
+}
+
+class Tri
+{
+	static void test()
+	{
+		double v;
+		for (int i = 5; i < 10; i = i + 1)
+		{
+			Dva.setA();
+			ifj16.print("A set: " + Dva.a + "\n");
+			
+			v = Dva.rekurz();
+			ifj16.print(i + ". Vysledok: " + v + "\n");
+		}
+
+		ifj16.print("Idem do Main.run()" + "\n");
+
+		return;
+	}
+}
+
+class Dva
+{
+	static int a = 5;
+
+	static void setA()
+	{
+		a = 5;
+	}
+
+	static int rekurz()
+	{
+		int c;
+		if (a > 0)
+		{
+			ifj16.print("R: " + a + "\n");
+			a = Dva.a - 1;
+			
+			c = rekurz();
+			return c;
+		}
+
+		return 128;
+	}
+}

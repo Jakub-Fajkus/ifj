@@ -1,0 +1,70 @@
+// Rozsirenie CYCLES
+
+class Main
+{
+	static int called = 0;
+	static void test()
+	{
+		int a = 10;
+		double xyz;
+
+		do
+		{
+			ifj16.print("While --> Rekurz" + "\n");
+			class2.rekuz();
+
+			if (called < 2)
+				a = 1;
+			else
+				a = 5;
+
+			called = called + 1;
+		} while (a != 5);
+
+		ifj16.print("Skoro koniec" + "\n");
+	}
+
+	static void run()
+	{
+		ifj16.print("---- START ----" + "\n");
+		
+		double vys;
+		for (int i = 1; i < 5; i = i + 1)
+		{
+			for (int j = 10; j > 6; j = j - 2)
+				ifj16.print("i: " + i + " j: " + j + "\n");
+
+			vys = class2.rekuz();
+			ifj16.print("Vysledok: " + vys + "\n");
+		}
+
+		ifj16.print("--------- Idem do TEST ---------" + "\n");
+		test();
+
+		ifj16.print("---- KONIEC ----" + "\n");
+	}
+}
+
+class class2
+{
+	static double c = 6;
+	static double dec = 0.1;
+
+	static double rekuz()
+	{
+		ifj16.print("*****Rekurz*****" + "\n");
+
+		double v;
+		if (c > 1.28)
+		{
+			ifj16.print("C: " + c + "\n");
+			dec = dec * 2;
+			c = c - dec;
+
+			v = rekuz();
+			return v;
+		}
+
+		return 2.2E2;
+	}
+}

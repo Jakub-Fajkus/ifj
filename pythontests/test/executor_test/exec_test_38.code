@@ -1,0 +1,17 @@
+// Test funkcie ifj16 length
+
+class Main
+{
+	static void run()
+	{
+		int b = ifj16.length("x\nz");
+		if (b == 3)
+		{
+			ifj16.print("Spravne" + "\n");
+		}
+		else
+		{
+			ifj16.print("Nespravne" + "\n");
+		}
+	}
+}

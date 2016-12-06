@@ -1,0 +1,18 @@
+// Neinicializovana premenna
+// 8
+
+class Main
+{
+	static void run()
+	{
+		int b;
+		if (b != 2)
+		{
+			
+		}
+		else
+		{
+
+		}
+	}
+}

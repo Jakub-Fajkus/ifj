@@ -1,0 +1,38 @@
+---- START ----
+A set: 5
+R: 5
+R: 4
+R: 3
+R: 2
+R: 1
+5. Vysledok: 128
+A set: 5
+R: 5
+R: 4
+R: 3
+R: 2
+R: 1
+6. Vysledok: 128
+A set: 5
+R: 5
+R: 4
+R: 3
+R: 2
+R: 1
+7. Vysledok: 128
+A set: 5
+R: 5
+R: 4
+R: 3
+R: 2
+R: 1
+8. Vysledok: 128
+A set: 5
+R: 5
+R: 4
+R: 3
+R: 2
+R: 1
+9. Vysledok: 128
+Idem do Main.run()
+---- KONIEC ----

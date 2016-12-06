@@ -1,0 +1,36 @@
+---- START ----
+i: 1 j: 10
+i: 1 j: 8
+*****Rekurz*****
+C: 6
+*****Rekurz*****
+C: 5.8
+*****Rekurz*****
+C: 5.4
+*****Rekurz*****
+C: 4.6
+*****Rekurz*****
+C: 3
+*****Rekurz*****
+Vysledok: 220
+i: 2 j: 10
+i: 2 j: 8
+*****Rekurz*****
+Vysledok: 220
+i: 3 j: 10
+i: 3 j: 8
+*****Rekurz*****
+Vysledok: 220
+i: 4 j: 10
+i: 4 j: 8
+*****Rekurz*****
+Vysledok: 220
+--------- Idem do TEST ---------
+While --> Rekurz
+*****Rekurz*****
+While --> Rekurz
+*****Rekurz*****
+While --> Rekurz
+*****Rekurz*****
+Skoro koniec
+---- KONIEC ----

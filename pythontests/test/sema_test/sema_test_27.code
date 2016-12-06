@@ -1,0 +1,18 @@
+// Definicia premennej ako meno triedy
+
+class Main
+{
+	static void run()
+	{
+		int c = Dva.Dva();
+		ifj16.print(c + "\n");
+	}
+}
+
+class Dva
+{
+	static int Dva()
+	{
+		return 5;
+	}
+}

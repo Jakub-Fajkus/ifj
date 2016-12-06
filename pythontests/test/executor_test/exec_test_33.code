@@ -1,0 +1,13 @@
+// Praca s neinicliazovanou premennou
+// v ifj16 funkcii
+// 8
+
+class Main
+{
+	static void run()
+	{
+		String s1;
+		String s2 = "bla";
+		ifj16.compare(s1, s2);
+	}
+}

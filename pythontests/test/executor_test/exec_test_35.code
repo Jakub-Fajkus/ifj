@@ -1,0 +1,10 @@
+// Test funkcie ifj16 sort
+
+class Main
+{
+	static void run()
+	{
+		String a = ifj16.sort("aB1Ab2");
+		ifj16.print(a + "\n");
+	}
+}

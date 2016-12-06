@@ -1,0 +1,10 @@
+// Zle kvalifikovany idenfikator
+// 3
+
+class Main
+{
+	static void run()
+	{
+		int identi.fikator = 5;
+	}
+}

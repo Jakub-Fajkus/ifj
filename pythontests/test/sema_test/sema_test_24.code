@@ -1,0 +1,9 @@
+// Definovanie premennej ako meno triedy
+
+class Main
+{
+	static void run()
+	{
+		int Main = 5;
+	}
+}

@@ -1,0 +1,17 @@
+// Definicia funkcie run v inej triede
+
+class Main
+{
+	static void run()
+	{
+		
+	}
+}
+
+class Dva
+{
+	static void run()
+	{
+
+	}
+}

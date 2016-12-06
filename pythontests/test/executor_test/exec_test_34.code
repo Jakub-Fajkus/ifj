@@ -1,0 +1,12 @@
+// Praca s neinicliazovanou premennou
+// v ifj16 funkcii
+// 8
+
+class Main
+{
+	static void run()
+	{
+		String s;
+		ifj16.length(s);
+	}
+}

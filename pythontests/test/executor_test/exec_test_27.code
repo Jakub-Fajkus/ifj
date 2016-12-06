@@ -1,0 +1,14 @@
+// Praca s neinicliazovanou premennou
+// v ifj16 funkcii
+// 8
+
+class Main
+{
+	static void run()
+	{
+		String s;
+		int a = 1;
+		int b = 2;
+		ifj16.substr(s, a, b);
+	}
+}

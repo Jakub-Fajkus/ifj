@@ -1,0 +1,36 @@
+// Rozsirenie SIMPLE
+
+class Main
+{
+	static void run()
+	{
+		test.run(2);
+	}
+}
+class test
+{
+	static void run(int q)
+	{
+		int i = 2;
+
+		do
+		{
+			i = i - 1;
+
+			for(int j = 0; j < 2; j = j + 1)
+			{
+				for(int a = 0; a < 2; a = a + 1)
+					ifj16.print(i + "\t" + j +"\t" + a + "\n");
+			}
+
+		}
+
+		while(i > 0);
+			q = q - 1;
+
+		if(q > 0)
+			run(q);
+		else
+			return;
+	}
+}

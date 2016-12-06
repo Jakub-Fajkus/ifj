@@ -1,0 +1,182 @@
+#
+# Zoznam testov, ktore sa maju vykonat
+# Prazdne riadky a riadky zacinajuce '#' budu ignorovane
+# Pred novy test je idealne pridat jeho kratky popis ako komentar
+# Format suboru je :
+# [NAME]\t[FILES_NAME]\t[RETURN_CODE]
+#     *[NAME]        -> Meno testu
+#     *[FILE_NAME]  -> Zaklad nazvov suborov (ak sa moje subory volaju
+#                                              test1.code a tes1.out,
+#                                              FILES_NAME je test1)
+#     *[RETURN_CODE] -> Navratova hodnota programu
+
+
+# Testy na testovanie chyby 1: chyba v programu v ramci lexikalni
+#                              analyzy (chybna struktura aktualniho lexemu).)
+# NAME	FILE_NAME	RETURN_CODE
+#
+Lexikalny test 1	lex_test/lex_test_1	1
+Lexikalny test 2	lex_test/lex_test_2	1
+Lexikalny test 3	lex_test/lex_test_3	1
+Lexikalny test 4	lex_test/lex_test_4	1
+Lexikalny test 5	lex_test/lex_test_5	1
+Lexikalny test 6	lex_test/lex_test_6	0
+Lexikalny test 7	lex_test/lex_test_7	0
+Lexikalny test 8	lex_test/lex_test_8	0
+Lexikalny test 9	lex_test/lex_test_9	1
+Lexikalny test 10	lex_test/lex_test_10	1
+
+# Syntax testy
+#
+Syntakticky test 1	syna_test/syna_test_1	2
+Syntakticky test 2	syna_test/syna_test_2	4
+Syntakticky test 3	syna_test/syna_test_3	2
+Syntakticky test 4	syna_test/syna_test_4	2
+Syntakticky test 5	syna_test/syna_test_5	2
+Syntakticky test 6	syna_test/syna_test_6	2
+Syntakticky test 7	syna_test/syna_test_7	2
+Syntakticky test 8	syna_test/syna_test_8	2
+Syntakticky test 9	syna_test/syna_test_9	2
+Syntakticky test 10	syna_test/syna_test_10	2
+Syntakticky test 11	syna_test/syna_test_11	2
+
+# Sematicke testy
+#
+Sematicky test 1	sema_test/sema_test_1	3
+Sematicky test 2	sema_test/sema_test_2	3
+Sematicky test 3	sema_test/sema_test_3	3
+Sematicky test 4	sema_test/sema_test_4	3
+Sematicky test 5	sema_test/sema_test_5	4
+Sematicky test 6	sema_test/sema_test_6	4
+Sematicky test 7	sema_test/sema_test_7	4
+Sematicky test 8	sema_test/sema_test_8	4
+Sematicky test 9	sema_test/sema_test_9	4
+Sematicky test 10	sema_test/sema_test_10	4
+Sematicky test 11	sema_test/sema_test_11	3
+Sematicky test 12	sema_test/sema_test_12	0
+Sematicky test 13	sema_test/sema_test_13	4
+Sematicky test 14	sema_test/sema_test_14	0
+Sematicky test 15	sema_test/sema_test_15	3
+Sematicky test 16	sema_test/sema_test_16	3
+Sematicky test 17	sema_test/sema_test_17	3
+Sematicky test 18	sema_test/sema_test_18	3
+Sematicky test 19	sema_test/sema_test_19	3
+Sematicky test 20	sema_test/sema_test_20	4
+Sematicky test 21	sema_test/sema_test_21	4
+Sematicky test 22	sema_test/sema_test_22	0
+Sematicky test 23	sema_test/sema_test_23	3
+Sematicky test 24	sema_test/sema_test_24	0
+Sematicky test 25	sema_test/sema_test_25	0
+Sematicky test 26	sema_test/sema_test_26	0
+Sematicky test 27	sema_test/sema_test_27	0
+Sematicky test 28	sema_test/sema_test_28	0
+
+# Exekutor testy
+#
+Executor test 1	executor_test/exec_test_1	8
+Executor test 2	executor_test/exec_test_2	8
+Executor test 3	executor_test/exec_test_3	10
+Executor test 5	executor_test/exec_test_5	10
+Executor test 7	executor_test/exec_test_7	7
+Executor test 8	executor_test/exec_test_8	9
+Executor test 9	executor_test/exec_test_9	0
+Executor test 10	executor_test/exec_test_10	9
+Executor test 11	executor_test/exec_test_11	8
+Executor test 12	executor_test/exec_test_12	0
+Executor test 13	executor_test/exec_test_13	0
+Executor test 14	executor_test/exec_test_14	0
+Executor test 15	executor_test/exec_test_15	0
+Executor test 16	executor_test/exec_test_16	8
+Executor test 17	executor_test/exec_test_17	0
+Executor test 18	executor_test/exec_test_18	0
+Executor test 19	executor_test/exec_test_19	0
+Executor test 20	executor_test/exec_test_20	0
+Executor test 21	executor_test/exec_test_21	0
+Executor test 22	executor_test/exec_test_22	0
+Executor test 23	executor_test/exec_test_23	8
+Executor test 24	executor_test/exec_test_24	8
+Executor test 25	executor_test/exec_test_25	8
+Executor test 26	executor_test/exec_test_26	8
+Executor test 27	executor_test/exec_test_27	8
+Executor test 28	executor_test/exec_test_28	8
+Executor test 29	executor_test/exec_test_29	8
+Executor test 30	executor_test/exec_test_30	8
+Executor test 31	executor_test/exec_test_31	8
+Executor test 32	executor_test/exec_test_32	0
+Executor test 33	executor_test/exec_test_33	8
+Executor test 34	executor_test/exec_test_34	8
+Executor test 35	executor_test/exec_test_35	0
+Executor test 36	executor_test/exec_test_36	0
+Executor test 37	executor_test/exec_test_37	0
+Executor test 38	executor_test/exec_test_38	0
+Executor test 39	executor_test/exec_test_39	8
+Executor test 40	executor_test/exec_test_40	8
+Executor test 41	executor_test/exec_test_41	8
+Executor test 42	executor_test/exec_test_42	4
+Executor test 43	executor_test/exec_test_43	8
+Executor test 44	executor_test/exec_test_44	4
+Executor test 45	executor_test/exec_test_45	0
+
+# Testy zo zadanie
+Zadanie test 1	executor_test/exec_zadanie_1	0
+Zadanie test 2	executor_test/exec_zadanie_2	0
+Zadanie test 3	executor_test/exec_zadanie_3	0
+
+# String testy
+#
+Long string test	string_test/long_string	0
+Input string test	string_test/input_string	0
+String test 1	string_test/string_test_1	0
+String test 2	string_test/string_test_2	0
+String test 3	string_test/string_test_3	0
+String test 4	string_test/string_test_4	0
+String test 5	string_test/string_test_5	0
+String test 6	string_test/string_test_6	0
+String test 7	string_test/string_test_7	0
+
+# Aritmeticke testy
+# +, -, *, / s double, integer, string
+# testy vypisov tychto hodnot
+#
+Arithmetic test 1	arithmetic_test/arithmetic_test_1	0
+Arithmetic test 2	arithmetic_test/arithmetic_test_2	0
+Arithmetic test 3	arithmetic_test/arithmetic_test_3	0
+Arithmetic test 4	arithmetic_test/arithmetic_test_4	0
+Arithmetic test 5	arithmetic_test/arithmetic_test_5	9
+Arithmetic test 6	arithmetic_test/arithmetic_test_6	8
+Arithmetic test 7	arithmetic_test/arithmetic_test_7	0
+Arithmetic test 8	arithmetic_test/arithmetic_test_8	8
+Arithmetic test 10	arithmetic_test/arithmetic_test_10	7
+Arithmetic test 11	arithmetic_test/arithmetic_test_11	4
+
+# Complexne testy
+#
+Complexny test 1	complex_test/complex_test_1	0
+Complexny test 2	complex_test/complex_test_2	0
+Complexny test 3	complex_test/complex_test_3	0
+Complexny test 4	complex_test/complex_test_4	0
+Complexny test 5	complex_test/complex_test_5	0
+IFJ master test	complex_test/zlaty_bludistak	0
+
+##########################################################
+###################### ROZSIRENIA ########################
+##########################################################
+
+# Rozsirenie UNARI
+#
+#Arithmetic test 9	arithmetic_test/arithmetic_test_9	0
+#Executor test 4	executor_test/exec_test_4	10
+#Executor test 6	executor_test/exec_test_6	10
+
+# Rozsirenie SIMPLE
+#
+SIMPLE - test 1	SIMPLE/simple_test_1	0
+SIMPLE - test 2	SIMPLE/simple_test_2	0
+
+# Rozsirenie CYCLES
+#
+CYCLES - test 1	CYCLES/cycles_test_1	0
+CYCLES - test 2	CYCLES/cycles_test_2	0
+CYCLES - test 3	CYCLES/cycles_test_3	0
+CYCLES - test 4	CYCLES/cycles_test_4	0
+CYCLES - test 5	CYCLES/cycles_test_5	0

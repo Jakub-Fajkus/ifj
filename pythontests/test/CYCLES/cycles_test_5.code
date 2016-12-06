@@ -1,0 +1,16 @@
+// Rozsirenie CYCLES
+
+class Main
+{
+	static void run()
+	{
+		for (int i = 0; i < 5; i = i + 1)
+		{
+			for (int j = 5; j > 0; j = j - 1)
+				for (int k = 10; k > 0; k = k - 2)
+					ifj16.print(i + " " + j + " " + k + "\n");
+		}
+
+		ifj16.print("Koniec" + "\n");
+	}
+}

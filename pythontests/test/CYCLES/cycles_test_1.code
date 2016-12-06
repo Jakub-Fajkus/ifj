@@ -1,0 +1,47 @@
+// Rozsirenie CYCLES
+
+class Main
+{
+	static void run()
+	{
+		int x = 5;
+		int k = 0;
+
+		for (int i = 0; i < 5; i = i + 1)
+		{
+			ifj16.print(k + ". Iteracia" + "\n");
+
+			if (k == 0)
+			{
+				do
+				{
+					ifj16.print("Aspon raz" + "\n");
+				} while (x != 5);
+
+				x = x - 5;
+
+				do
+				{
+					x = x + 1;
+					ifj16.print("Pred continue" + "\n");
+					continue;
+
+					ifj16.print("Tu nemam byt" + "\n");
+				} while (x < 5);
+			}
+
+			ifj16.print("Koniec?" + "\n");
+
+			if (x == 25)
+				break;
+			else
+			{
+				x = 25;
+				k = 1;
+				continue;
+
+				ifj16.print("Tu nemam byt" + "\n");
+			}
+		}
+	}
+}

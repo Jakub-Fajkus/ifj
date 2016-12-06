@@ -1,0 +1,17 @@
+// Volanie funkcie s neinicializovanou
+// premenou
+// 8
+
+class Main
+{
+	static void run()
+	{
+		int b;
+		func(b);
+	}
+
+	static void func(int a)
+	{
+
+	}
+}

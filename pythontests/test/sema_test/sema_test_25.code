@@ -1,0 +1,15 @@
+// Definovanie premennej rovnakeho
+// mena ako meno triedy
+
+class Main
+{
+	static void run()
+	{
+		
+	}
+}
+
+class Test
+{
+	static String Test = "sdf";
+}

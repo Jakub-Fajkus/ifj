@@ -1,0 +1,11 @@
+// Neinicializovana premenna
+// 8
+
+class Main
+{
+	static void run()
+	{
+		int b;
+		ifj16.print(b + "\n");
+	}
+}
