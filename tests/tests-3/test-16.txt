@@ -4,6 +4,5 @@ class Main
 
     static void run()
     {
-        int b = 5.5;
     }
 }
