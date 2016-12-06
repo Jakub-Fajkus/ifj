@@ -1,6 +1,6 @@
 class Main {
     static void run() {
-        String x = "";
+        int x = "";
 
     }
 }

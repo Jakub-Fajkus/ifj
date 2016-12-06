@@ -14,7 +14,7 @@ class Main
 
 	    ifj16.print("Type something again: \n");
 //		b = ifj16.readString();
-		b = neco;
+		b = a;
 
 		ifj16.print(a);
 		ifj16.print(b);
