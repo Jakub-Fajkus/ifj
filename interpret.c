@@ -52,13 +52,13 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
     while ( 1 ) {   // The great cycle
         //check if the list is not empty
         if(InstructionList->Act == NULL) {
-            if ( activeFunction->type != TYPE_VOID ) {
-                // This user function is not VOID AND DOES NOT include return X.
-                return 8;
-            } else {
+//            if ( activeFunction->type != TYPE_VOID ) {
+//                // This user function is not VOID AND DOES NOT include return X.
+//                return 8;
+//            } else {
                 //the function is void and it's body is empty
                 return 0;
-            }
+//            }
         }
 
         // Copy the actual instruction from the list
@@ -169,7 +169,11 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             // Here we come! Calling interpret with new instruction tape, passing itself the same frames
             // !!! new addition: pointer to symbol table and bool value, if we are inside function (main.run or some kind of user function)
             returnedFromFunction = (SYMBOL_TABLE_FUNCTION *)Instr->address_src1;
+
+            tDLElemPtr instructionListBackup = InstructionList->Act;
+
             interpretRetVal = Interpret( (tDLList *)Instr->address_dst, globalFrame, stackOfLocalFrames, (SYMBOL_TABLE_FUNCTION *)Instr->address_src1, true );
+            InstructionList->Act = instructionListBackup;
             if ( interpretRetVal != 0 ) {
                 debugPrintf("Previous instance of interpret has failed. #CallFunctionError\n");
                 return interpretRetVal;
@@ -526,12 +530,12 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
         // break condition
         if (InstructionList->Last->element.data.instr == Instr) {
-            if ( checkReturn && activeFunction->type != TYPE_VOID ) {
-                if (Instr->type != Instruction_ReturnFunction) {
-                    // This user function is not VOID AND DOES NOT include return X.
-                    return 8;
-                }
-            }
+//            if ( checkReturn && activeFunction->type != TYPE_VOID ) {
+//                if (Instr->type != Instruction_ReturnFunction) {
+//                    // This user function is not VOID AND DOES NOT include return X.
+//                    return 8;
+//                }
+//            }
             break;
         }
         ListSuccessor(InstructionList);
