@@ -1,4 +1,4 @@
-/* Substring test */
+nazev promenne zacinajic/* Substring test */
 
 class Main 
 {
