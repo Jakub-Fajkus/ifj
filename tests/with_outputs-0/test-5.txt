@@ -11,7 +11,8 @@ class Main{
         String sort;
         sort = ifj16.sort(Main.neco);
         int comp;
-        comp = ifj16.compare(sort, sort);
+        comp = ifj16.compare("asb", "asb");
+        ifj16.print("SORT!:"+sort);
 
         ifj16.print(""+$delka);
         ifj16.print(sort);
@@ -19,21 +20,21 @@ class Main{
         if(comp == 0){
             ifj16.print("\nOK, retezce jsou stejne\n");
             comp = ifj16.compare("joj", "j");
-
-            if(comp){
+            ifj16.print("COMP:" + comp + "ENDCOMP");
+            if(comp == 1){
                 ifj16.print("OK, retezec \"joj\" je vetsi jak \"j\"\n");
                 comp = ifj16.compare("j", "jajajaj");
                 if(comp == 1-2){
                     ifj16.print("OK, retezec \"j\" je mensi jak \"jajajaj\"\n");
                 }else{
-                    ifj16.print("Chyba v ifj16.comapre");
+                    ifj16.print("Chyba v ifj16.comapre tady");
                 }
 
             }else{
-                ifj16.print("Chyba v ifj16.comapre");
+                ifj16.print("Chyba v ifj16.comapre tu");
             }
         }else{
-            ifj16.print("Chyba v ifj16.comapre");
+            ifj16.print("Chyba v ifj16.comapre dole");
         }
     }
 

@@ -143,7 +143,18 @@ char *ifj16_substr(char *s, int i, int n) {
 }
 
 int ifj16_compare(char *s1, char *s2) {
-    return 0;
+    if (s1 == NULL || s2 == NULL) {
+        exit(99);
+    }
+    int ret = strcmp(s1, s2);
+
+    if(ret > 0) {
+        return 1;
+    } else if (ret < 0) {
+        return -1;
+    } else {
+        return 0;
+    }
 }
 
 int ifj16_find(char *s, char *search) {
