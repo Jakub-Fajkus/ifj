@@ -197,6 +197,9 @@ bool isFunctionFromIfj16(char *name) {
 void createInstructionsToCallIfj16Function(char *functionName, tDLList *instructions, tDLList *givenParameters, char *returnValueToVariable) {
     //do not call DLFirst!
     INSTRUCTION *instruction = malloc(sizeof(INSTRUCTION));
+    instruction->address_dst = NULL;
+    instruction->address_src1 = NULL;
+    instruction->address_src2 = NULL;
 
     if(stringEquals("ifj16.readInt", functionName)) {
         instruction->type = Instruction_Function_readInt;

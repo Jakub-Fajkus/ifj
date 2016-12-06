@@ -163,6 +163,7 @@ void printInstruction(INSTRUCTION *instruction) {
         case Instruction_Function_readString:               debugPrintf("Instruction_Function_readString returnTo %s\n", (char*)instruction->address_dst); break;
         case Instruction_Function_Print:                    debugPrintf("Instruction_Function_Print: %s\n", (char*)instruction->address_dst); break;
         case Instruction_Function_Length:                   debugPrintf("Instruction_Function_Length: %s returnTo %s\n", (char*)instruction->address_dst, (char*)instruction->address_dst); break;
+        case Instruction_Function_Sort:                     debugPrintf("Instruction_Function_Sort: %s returnTo %s\n", (char*)instruction->address_dst, (char*)instruction->address_dst); break;
         case Instruction_Function_Substr:                   debugPrintf("Instruction_Function_Substr:  returnTo %s\n", (char*)instruction->address_dst); break;
         case Instruction_Function_Compare:                  debugPrintf("Instruction_Function_Compare: %s %s returnTo %s\n", (char*)instruction->address_dst, (char*)instruction->address_dst, (char*)instruction->address_src1); break;
         case Instruction_Function_Find:                     debugPrintf("Instruction_Function_Find: %s %s returnTo %s\n", (char*)instruction->address_dst, (char*)instruction->address_dst, (char*)instruction->address_src1); break;
@@ -171,7 +172,7 @@ void printInstruction(INSTRUCTION *instruction) {
         case Instruction_Create_Actual_Local_Variable: debugPrintf("Instruction_Create_Actual_Local_Variable: %s\n", (char*)instruction->address_dst);break;
         case Instruction_Copy_From_Actual_To_Upcoming_Frame: debugPrintf("Instruction_Copy_From_Actual_To_Upcoming_Frame: %s <= %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1);break;
 
-        default: debugPrintf("UNKNOWN INSTRUCTION");
+        default: debugPrintf("UNKNOWN INSTRUCTION %d", instruction->type);
     }
 }
 
