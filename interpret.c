@@ -1048,6 +1048,8 @@ int executeInstructionAssign(VARIABLE *dst, VARIABLE *src) {
     int type_dst = dst->type;
     int type_src = src->type;
 
+    dst->initialized = true;
+
     switch (type_dst) {
 
         case TYPE_INT:
@@ -1115,7 +1117,9 @@ int executeInstructionBuiltInFunction(INSTRUCTION_TYPE instrType, VARIABLE *dst,
             ;
             if (dst == NULL || src1 == NULL || src2 != NULL) return 99;
             // int ifj16_length(char *);
-            if (src1->initialized == false) return 8;
+            if (src1->initialized == false) {
+                return 8;
+            }
             dst->value.intValue = ifj16_length(src1->value.stringValue);
             dst->initialized = true;
             break;
@@ -1123,7 +1127,9 @@ int executeInstructionBuiltInFunction(INSTRUCTION_TYPE instrType, VARIABLE *dst,
             ;
             if (dst == NULL || src1 == NULL || src2 == NULL) return 99;
             // int ifj16_compare(char *, char *);
-            if (src1->initialized == false || src2->initialized == false) return 8;
+            if (src1->initialized == false || src2->initialized == false) {
+                return 8;
+            }
             dst->value.intValue = ifj16_compare(src1->value.stringValue, src2->value.stringValue);
             dst->initialized = true;
             break;
@@ -1131,7 +1137,9 @@ int executeInstructionBuiltInFunction(INSTRUCTION_TYPE instrType, VARIABLE *dst,
             ;
             if (dst == NULL || src1 == NULL || src2 == NULL) return 99;
             // int ifj16_find(char *, char *);
-            if (src1->initialized == false || src2->initialized == false) return 8;
+            if (src1->initialized == false || src2->initialized == false){
+                return 8;
+            }
             dst->value.intValue = ifj16_find(src1->value.stringValue, src2->value.stringValue);
             dst->initialized = true;
             break;
@@ -1139,7 +1147,9 @@ int executeInstructionBuiltInFunction(INSTRUCTION_TYPE instrType, VARIABLE *dst,
             ;
             if (dst == NULL || src1 == NULL || src2 != NULL) return 99;
             // char *ifj16_sort(char *s);
-            if (src1->initialized == false) return 8;
+            if (src1->initialized == false) {
+                return 8;
+            }
             dst->value.stringValue = ifj16_sort(src1->value.stringValue);
             dst->initialized = true;
             break;
