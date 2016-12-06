@@ -505,6 +505,11 @@ bool ruleDecl(DATA_TYPE declaredType, char *variableName){
                     createAndInsertVariable(&actualFunction->localSymbolTable, variableName, declaredType, true);
                     ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createActualLocalVariable(variableName, declaredType)));
                 } else {
+                    if(!canConvertTypes(declaredType, resultVariableType)) {
+                        debugPrintf("Incompatible types for assigned");
+                        exit(4);
+                    }
+
                     //create instruction to assign the temporal variable created by expAnalyzer to the local variable which was defined right now
                     ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrAssign(variableName, resultVariableName)));
                     //todo: check type of the result variable with variable declaration resultVariableType == declaredType or is convertible to type
