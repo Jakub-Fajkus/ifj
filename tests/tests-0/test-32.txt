@@ -5,8 +5,8 @@ class Main
 
 	static void run()
 	{
-		a = ifj16.readString();
-		b = ifj16.readString();
+		a = "ddd";
+		b = "eee";
 
 		ifj16.print(a);
 		ifj16.print(b);

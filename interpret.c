@@ -18,6 +18,8 @@
 int GLOBAL = 0;
 int instrCounter = 0;
 
+bool returningPromFunction = false;
+
 //TODO: solve execution of insertVar into ActualLocalFrame, and the new CopyToUpcomingFrame instruction
 VARIABLE *getVariableFromFrames(tDLList *actualFrame, tDLList *globalFrame, SYMBOL_TABLE_FUNCTION *activeFunction, char *variableName);
 
@@ -160,7 +162,6 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         // Pushing upcoming local frame into stack of local frames
         // THINGS TO KEEP: global frame, stack of local frames
         if (Instr->type == Instruction_CallFunction) { debugPrintf("Instruction_CallFunction: |%s|\n", ((SYMBOL_TABLE_FUNCTION *)Instr->address_src1)->name);
-
             if(upcomingLocalFrame == NULL) upcomingLocalFrame = createFrame();
             pushFrameToStack(stackOfLocalFrames, upcomingLocalFrame);
 
@@ -170,7 +171,9 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
             tDLElemPtr instructionListBackup = InstructionList->Act;
 
+            returningPromFunction = false;
             interpretRetVal = Interpret( (tDLList *)Instr->address_dst, globalFrame, stackOfLocalFrames, (SYMBOL_TABLE_FUNCTION *)Instr->address_src1, true );
+            returningPromFunction = false;
             InstructionList->Act = instructionListBackup;
             if ( interpretRetVal != 0 ) {
                 debugPrintf("Previous instance of interpret has failed. #CallFunctionError\n");
@@ -253,6 +256,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
         if (Instr->type == Instruction_ReturnFunction) {    debugPrintf("Instruction_ReturnFunction\n");
             // It feels to be kinda important.
+            returningPromFunction = true;
             return 0;
         }
 
@@ -271,12 +275,18 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                     debugPrintf("Previous instance of interpret has failed. #IfTrueErr\n");
                     return interpretRetVal;
                 }
+                if(returningPromFunction == true) {
+                    return 0;
+                }
             }
             else if (booleanValue->value.intValue == 0) {
                 interpretRetVal = Interpret( (tDLList *)Instr->address_src2, globalFrame, stackOfLocalFrames, activeFunction, false );
                 if ( interpretRetVal != 0 ) {
                     debugPrintf("Previous instance of interpret has failed. #IfFalseErr\n");
                     return interpretRetVal;
+                }
+                if(returningPromFunction == true) {
+                    return 0;
                 }
             }
             ListSuccessor(InstructionList);
@@ -309,6 +319,10 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 if ( interpretRetVal != 0 ) {
                     debugPrintf("Previous instance of interpret has failed. #WhileCycleErr\n");
                     return interpretRetVal;
+                }
+
+                if(returningPromFunction == true) {
+                    return 0;
                 }
 
                 // Set new values
@@ -513,7 +527,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                         return 8;
                     }
                     //TODO: correct? i just want to set the dst as initialised.
-                    dst->initialized = true;
+//                    dst->initialized = true;
                     int evalRetValue = executeInstructionExpressionEvaluation(Instr->type, dst, src1, src2);
                     if ( evalRetValue != 0 ){
                         debugPrintf("Expression evaluation failed.\n");
@@ -838,13 +852,17 @@ int executeInstructionExpressionEvaluation(INSTRUCTION_TYPE instrType, VARIABLE 
                 case TYPE_INT:
                     ;
                     if (src2->type==TYPE_INT){ // src1->int != src2->int
-                        if (src1->value.intValue != src2->value.intValue) dst->value.intValue = 1;
-                        else dst->value.intValue = 0;
+                        if (src1->value.intValue != src2->value.intValue)
+                            dst->value.intValue = 1;
+                        else
+                            dst->value.intValue = 0;
 
                     } else if (src2->type==TYPE_DOUBLE) { // src1->int != src2->double
                         src1->value.doubleValue = (double) src1->value.intValue;
-                        if (src1->value.doubleValue != src2->value.doubleValue) dst->value.intValue = 1;
-                        else dst->value.intValue = 0;
+                        if (src1->value.doubleValue != src2->value.doubleValue)
+                            dst->value.intValue = 1;
+                        else
+                            dst->value.intValue = 0;
                     } else {
                         // error: unsupported format
                         return 10;
@@ -854,13 +872,17 @@ int executeInstructionExpressionEvaluation(INSTRUCTION_TYPE instrType, VARIABLE 
                 case TYPE_DOUBLE:
                     ;
                     if (src2->type==TYPE_DOUBLE){ // src1->double != src2->double
-                        if (src1->value.doubleValue == src2->value.doubleValue) dst->value.intValue = 1;
-                        else dst->value.intValue = 0;
+                        if (src1->value.doubleValue != src2->value.doubleValue)
+                            dst->value.intValue = 1;
+                        else
+                            dst->value.intValue = 0;
 
                     } else if (src2->type==TYPE_INT) { // src1->double != src2->int
                         src2->value.doubleValue = (double) src2->value.intValue;
-                        if (src1->value.doubleValue == src2->value.doubleValue) dst->value.intValue = 1;
-                        else dst->value.intValue = 0;
+                        if (src1->value.doubleValue != src2->value.doubleValue)
+                            dst->value.intValue = 1;
+                        else
+                            dst->value.intValue = 0;
                     } else {
                         // error: unsupported format
                         return 10;
@@ -881,13 +903,17 @@ int executeInstructionExpressionEvaluation(INSTRUCTION_TYPE instrType, VARIABLE 
                 case TYPE_INT:
                     ;
                     if (src2->type==TYPE_INT){ // src1->int > src2->int
-                        if (src1->value.intValue > src2->value.intValue) dst->value.intValue = 1;
-                        else dst->value.intValue = 0;
+                        if (src1->value.intValue > src2->value.intValue)
+                            dst->value.intValue = 1;
+                        else
+                            dst->value.intValue = 0;
 
                     } else if (src2->type==TYPE_DOUBLE) { // src1->int > src2->double
                         src1->value.doubleValue = (double) src1->value.intValue;
-                        if (src1->value.doubleValue > src2->value.doubleValue) dst->value.intValue = 1;
-                        else dst->value.intValue = 0;
+                        if (src1->value.doubleValue > src2->value.doubleValue)
+                            dst->value.intValue = 1;
+                        else
+                            dst->value.intValue = 0;
                     } else {
                         // error: unsupported format
                         return 10;
@@ -897,13 +923,17 @@ int executeInstructionExpressionEvaluation(INSTRUCTION_TYPE instrType, VARIABLE 
                 case TYPE_DOUBLE:
                     ;
                     if (src2->type==TYPE_DOUBLE){ // src1->double > src2->double
-                        if (src1->value.doubleValue > src2->value.doubleValue) dst->value.intValue = 1;
-                        else dst->value.intValue = 0;
+                        if (src1->value.doubleValue > src2->value.doubleValue)
+                            dst->value.intValue = 1;
+                        else
+                            dst->value.intValue = 0;
 
                     } else if (src2->type==TYPE_INT) { // src1->double > src2->int
                         src2->value.doubleValue = (double) src2->value.intValue;
-                        if (src1->value.doubleValue > src2->value.doubleValue) dst->value.intValue = 1;
-                        else dst->value.intValue = 0;
+                        if (src1->value.doubleValue > src2->value.doubleValue)
+                            dst->value.intValue = 1;
+                        else
+                            dst->value.intValue = 0;
                     } else {
                         // error: unsupported format
                         return 10;
@@ -923,13 +953,17 @@ int executeInstructionExpressionEvaluation(INSTRUCTION_TYPE instrType, VARIABLE 
                 case TYPE_INT:
                     ;
                     if (src2->type==TYPE_INT){ // src1->int < src2->int
-                        if (src1->value.intValue < src2->value.intValue) dst->value.intValue = 1;
-                        else dst->value.intValue = 0;
+                        if (src1->value.intValue < src2->value.intValue)
+                            dst->value.intValue = 1;
+                        else
+                            dst->value.intValue = 0;
 
                     } else if (src2->type==TYPE_DOUBLE) { // src1->int < src2->double
                         src1->value.doubleValue = (double) src1->value.intValue;
-                        if (src1->value.doubleValue < src2->value.doubleValue) dst->value.intValue = 1;
-                        else dst->value.intValue = 0;
+                        if (src1->value.doubleValue < src2->value.doubleValue)
+                            dst->value.intValue = 1;
+                        else
+                            dst->value.intValue = 0;
                     } else {
                         // error: unsupported format
                         return 10;
@@ -939,13 +973,17 @@ int executeInstructionExpressionEvaluation(INSTRUCTION_TYPE instrType, VARIABLE 
                 case TYPE_DOUBLE:
                     ;
                     if (src2->type==TYPE_DOUBLE){ // src1->double < src2->double
-                        if (src1->value.doubleValue < src2->value.doubleValue) dst->value.intValue = 1;
-                        else dst->value.intValue = 0;
+                        if (src1->value.doubleValue < src2->value.doubleValue)
+                            dst->value.intValue = 1;
+                        else
+                            dst->value.intValue = 0;
 
                     } else if (src2->type==TYPE_INT) { // src1->double < src2->int
                         src2->value.doubleValue = (double) src2->value.intValue;
-                        if (src1->value.doubleValue < src2->value.doubleValue) dst->value.intValue = 1;
-                        else dst->value.intValue = 0;
+                        if (src1->value.doubleValue < src2->value.doubleValue)
+                            dst->value.intValue = 1;
+                        else
+                            dst->value.intValue = 0;
                     } else {
                         // error: unsupported format
                         return 10;
@@ -965,13 +1003,17 @@ int executeInstructionExpressionEvaluation(INSTRUCTION_TYPE instrType, VARIABLE 
                 case TYPE_INT:
                     ;
                     if (src2->type==TYPE_INT){ // src1->int >= src2->int
-                        if (src1->value.intValue >= src2->value.intValue) dst->value.intValue = 1;
-                        else dst->value.intValue = 0;
+                        if (src1->value.intValue >= src2->value.intValue)
+                            dst->value.intValue = 1;
+                        else
+                            dst->value.intValue = 0;
 
                     } else if (src2->type==TYPE_DOUBLE) { // src1->int >= src2->double
                         src1->value.doubleValue = (double) src1->value.intValue;
-                        if (src1->value.doubleValue >= src2->value.doubleValue) dst->value.intValue = 1;
-                        else dst->value.intValue = 0;
+                        if (src1->value.doubleValue >= src2->value.doubleValue)
+                            dst->value.intValue = 1;
+                        else
+                            dst->value.intValue = 0;
                     } else {
                         // error: unsupported format
                         return 10;
@@ -981,13 +1023,17 @@ int executeInstructionExpressionEvaluation(INSTRUCTION_TYPE instrType, VARIABLE 
                 case TYPE_DOUBLE:
                     ;
                     if (src2->type==TYPE_DOUBLE){ // src1->double >= src2->double
-                        if (src1->value.doubleValue >= src2->value.doubleValue) dst->value.intValue = 1;
-                        else dst->value.intValue = 0;
+                        if (src1->value.doubleValue >= src2->value.doubleValue)
+                            dst->value.intValue = 1;
+                        else
+                            dst->value.intValue = 0;
 
                     } else if (src2->type==TYPE_INT) { // src1->double >= src2->int
                         src2->value.doubleValue = (double) src2->value.intValue;
-                        if (src1->value.doubleValue >= src2->value.doubleValue) dst->value.intValue = 1;
-                        else dst->value.intValue = 0;
+                        if (src1->value.doubleValue >= src2->value.doubleValue)
+                            dst->value.intValue = 1;
+                        else
+                            dst->value.intValue = 0;
                     } else {
                         // error: unsupported format
                         return 10;
@@ -1007,13 +1053,16 @@ int executeInstructionExpressionEvaluation(INSTRUCTION_TYPE instrType, VARIABLE 
                 case TYPE_INT:
                     ;
                     if (src2->type==TYPE_INT){ // src1->int <= src2->int
-                        if (src1->value.intValue <= src2->value.intValue) dst->value.intValue = 1;
+                        if (src1->value.intValue <= src2->value.intValue)
+                            dst->value.intValue = 1;
                         else dst->value.intValue = 0;
 
                     } else if (src2->type==TYPE_DOUBLE) { // src1->int <= src2->double
                         src1->value.doubleValue = (double) src1->value.intValue;
-                        if (src1->value.doubleValue <= src2->value.doubleValue) dst->value.intValue = 1;
-                        else dst->value.intValue = 0;
+                        if (src1->value.doubleValue <= src2->value.doubleValue)
+                            dst->value.intValue = 1;
+                        else
+                            dst->value.intValue = 0;
                     } else {
                         // error: unsupported format
                         return 10;
@@ -1023,13 +1072,17 @@ int executeInstructionExpressionEvaluation(INSTRUCTION_TYPE instrType, VARIABLE 
                 case TYPE_DOUBLE:
                     ;
                     if (src2->type==TYPE_DOUBLE){ // src1->double >= src2->double
-                        if (src1->value.doubleValue <= src2->value.doubleValue) dst->value.intValue = 1;
-                        else dst->value.intValue = 0;
+                        if (src1->value.doubleValue <= src2->value.doubleValue)
+                            dst->value.intValue = 1;
+                        else
+                            dst->value.intValue = 0;
 
                     } else if (src2->type==TYPE_INT) { // src1->double >= src2->int
                         src2->value.doubleValue = (double) src2->value.intValue;
-                        if (src1->value.doubleValue <= src2->value.doubleValue) dst->value.intValue = 1;
-                        else dst->value.intValue = 0;
+                        if (src1->value.doubleValue <= src2->value.doubleValue)
+                            dst->value.intValue = 1;
+                        else
+                            dst->value.intValue = 0;
                     } else {
                         // error: unsupported format
                         return 10;
