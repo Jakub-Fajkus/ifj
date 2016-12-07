@@ -31,7 +31,9 @@ VARIABLE *getVariableFromFrames(tDLList *actualFrame, tDLList *globalFrame, SYMB
  * @return
  */
 int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames, struct SYMBOL_TABLE_FUNCTION_STR *activeFunction, bool checkReturn ){
-    if (InstructionList == NULL) return 99;
+    if (InstructionList == NULL) {
+        return 99;
+    }
     int interpretRetVal;
     debugPrintf("\n----- Interpret call No.%d\n",GLOBAL++);
 
@@ -502,7 +504,9 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 case Instruction_Bool_MoreEqual:
                 case Instruction_Bool_LessEqual:
 
-                    if ( dst ==NULL || src1 == NULL || src2 == NULL ) return 99;
+                    if ( dst ==NULL || src1 == NULL || src2 == NULL ) {
+                        return 99;
+                    }
 
                     if (src1->initialized == false || src2->initialized == false) {
                         debugPrintf("Newly implemented: working with uninitialised variable.\n");
@@ -1087,35 +1091,45 @@ int executeInstructionBuiltInFunction(INSTRUCTION_TYPE instrType, VARIABLE *dst,
 
         case Instruction_Function_readInt:  debugPrintf("Instruction_Function_readInt\n");
             ;
-            if (dst == NULL || src1 != NULL || src2 != NULL) return 99;
+            if (dst == NULL || src1 != NULL || src2 != NULL) {
+                return 99;
+            }
             // int ifj16_readInt();
             dst->value.intValue = ifj16_readInt();
             dst->initialized = true;
             break;
         case Instruction_Function_readDouble:   debugPrintf("Instruction_Function_readDouble\n");
             ;
-            if (dst == NULL || src1 != NULL || src2 != NULL) return 99;
+            if (dst == NULL || src1 != NULL || src2 != NULL) {
+                return 99;
+            }
             // double ifj16_readDouble();
             dst->value.doubleValue = ifj16_readDouble();
             dst->initialized = true;
             break;
         case Instruction_Function_readString:   debugPrintf("Instruction_Function_readString\n");
             ;
-            if (dst == NULL || src1 != NULL || src2 != NULL) return 99;
+            if (dst == NULL || src1 != NULL || src2 != NULL) {
+                return 99;
+            }
             // char *ifj16_readString();
             dst->value.stringValue = ifj16_readString();
             dst->initialized = true;
             break;
         case Instruction_Function_Print:    debugPrintf("Instruction_Function_Print\n");
             ;
-            if (dst == NULL || src1 != NULL || src2 != NULL) return 99;
+            if (dst == NULL || src1 != NULL || src2 != NULL) {
+                return 99;
+            }
             // void ifj16_print(char *s);
 
             ifj16_print(dst->value.stringValue);
             break;
         case Instruction_Function_Length:   debugPrintf("Instruction_Function_Length\n");
             ;
-            if (dst == NULL || src1 == NULL || src2 != NULL) return 99;
+            if (dst == NULL || src1 == NULL || src2 != NULL) {
+                return 99;
+            }
             // int ifj16_length(char *);
             if (src1->initialized == false) {
                 return 8;
@@ -1125,7 +1139,9 @@ int executeInstructionBuiltInFunction(INSTRUCTION_TYPE instrType, VARIABLE *dst,
             break;
         case Instruction_Function_Compare:  debugPrintf("Instruction_Function_Compare\n");
             ;
-            if (dst == NULL || src1 == NULL || src2 == NULL) return 99;
+            if (dst == NULL || src1 == NULL || src2 == NULL) {
+                return 99;
+            }
             // int ifj16_compare(char *, char *);
             if (src1->initialized == false || src2->initialized == false) {
                 return 8;
@@ -1135,7 +1151,9 @@ int executeInstructionBuiltInFunction(INSTRUCTION_TYPE instrType, VARIABLE *dst,
             break;
         case Instruction_Function_Find: debugPrintf("Instruction_Function_Find\n");
             ;
-            if (dst == NULL || src1 == NULL || src2 == NULL) return 99;
+            if (dst == NULL || src1 == NULL || src2 == NULL) {
+                return 99;
+            }
             // int ifj16_find(char *, char *);
             if (src1->initialized == false || src2->initialized == false){
                 return 8;
@@ -1145,7 +1163,9 @@ int executeInstructionBuiltInFunction(INSTRUCTION_TYPE instrType, VARIABLE *dst,
             break;
         case Instruction_Function_Sort: debugPrintf("Instruction_Function_Sort\n");
             ;
-            if (dst == NULL || src1 == NULL || src2 != NULL) return 99;
+            if (dst == NULL || src1 == NULL || src2 != NULL) {
+                return 99;
+            }
             // char *ifj16_sort(char *s);
             if (src1->initialized == false) {
                 return 8;

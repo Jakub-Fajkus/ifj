@@ -24,10 +24,6 @@ void stackInit ( struct STACK_STR* s) {
 void increaseStackSize(struct STACK_STR* s) {
     s->maxSize += 100;
 
-    if (s->maxSize > STACK_SIZE_LIMIT) {
-        exit(99);
-    }
-
     s->arr = realloc(s->arr, s->maxSize * sizeof(struct STACK_ELEMENT));
 }
 

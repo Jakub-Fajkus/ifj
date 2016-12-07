@@ -20,9 +20,10 @@ void semanticCheckForFunctionRun() {
         printf("semanticCheckForFunctionRun: function %s not found", "Main.run");
         exit(3);
     }
+
     if(function->type != TYPE_VOID){
         printf("semanticCheckForFunctionRun: function Main.Run is not void");
-        exit(8);
+        exit(3);
     }
 }
 
