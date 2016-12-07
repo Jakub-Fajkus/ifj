@@ -27,6 +27,7 @@ typedef struct {
     DATA_TYPE type; //type of the variable
     unsigned int usages; //number of usages of the variable
     bool initialized; //whether the variable ahs been initialized(has value)
+    bool isMissingStaticVar; // when variable used in static declaration but not found
 } SYMBOL_TABLE_VARIABLE;
 
 // forward declaration of the structure SYMBOL_TABLE_NODE

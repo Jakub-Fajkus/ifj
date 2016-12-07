@@ -100,11 +100,25 @@ SYMBOL_TABLE_VARIABLE *semantic_getInitializedVariable(char * name) {
 }
 
 void semantic_firstPass_testStaticVariable(char * name) {
+    char *fullName;
+    if (-1 == ifj16_find(name, ".")) {
+        char *nameWithDot = stringConcat(actualClass, ".");
+        fullName = stringConcat(nameWithDot, name);
+        free(nameWithDot);
+    }else {
+        fullName = name;
+    }
     if(actualFunction == NULL){
-        if(getVariable(NULL, &globalSymbolTable, actualClass, name) == NULL){
-            exit(6);
+        if(getVariable(NULL, &globalSymbolTable, actualClass, fullName) == NULL){
+            SYMBOL_TABLE_VARIABLE *variable = malloc(sizeof(SYMBOL_TABLE_VARIABLE));
+            variable->name = fullName;
+            variable->isMissingStaticVar =true;
+
+            TREE_NODE_DATA *treeData = createVariableData(variable);
+            BSTInsert(&globalSymbolTable, variable->name, *treeData);
         }
     }
+
 }
 
 void checkFunctionParametersType(char *functionName, tDLList *parameters){
