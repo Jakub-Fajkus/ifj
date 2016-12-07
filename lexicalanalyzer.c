@@ -234,6 +234,7 @@ void string1(TOKEN *token) {
                     noEscape = true;
                     if (c == '\\') {
                         newStr[j] = (char) c;
+                        j++;
                     } else if (c == 'n'){
                         newStr[j] = '\n';
                         j++;
@@ -385,12 +386,12 @@ void doubleNum(TOKEN *token, char *str, int i) {
             token->type = LITERAL_DOUBLE;
             long double le;
             sscanf(str, "%Le", &le);
-            if(le<=DBL_MAX && le>=DBL_MIN){
+//            if(le<=DBL_MAX && le>=DBL_MIN){
                 token->data.numberDouble.value = (double)le;
-            }else{
-                free(str);
-                token->type = LEX_ERROR;
-            }
+//            }else{
+//                free(str);
+//                token->type = LEX_ERROR;
+//            }
             return;
         } else {
             free(str);

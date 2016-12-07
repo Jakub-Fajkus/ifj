@@ -99,6 +99,14 @@ SYMBOL_TABLE_VARIABLE *semantic_getInitializedVariable(char * name) {
     return variable;
 }
 
+void semantic_firstPass_testStaticVariable(char * name) {
+    if(actualFunction == NULL){
+        if(getVariable(NULL, &globalSymbolTable, actualClass, name) == NULL){
+            exit(6);
+        }
+    }
+}
+
 void checkFunctionParametersType(char *functionName, tDLList *parameters){
     struct SYMBOL_TABLE_FUNCTION_STR *function = semantic_getFunction(functionName);
     ListFirst(parameters);

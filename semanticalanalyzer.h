@@ -17,6 +17,7 @@ void semantical_ExistAndCorrectTypeOfReturns(SYMBOL_TABLE_NODEPtr *symbolTable);
 bool isFunctionFromIfj16(char *name);
 void initializeVariable(char *name);
 bool canConvertTypes(DATA_TYPE destination, DATA_TYPE source);
+void semantic_firstPass_testStaticVariable(char * name);
 /**
  *
  * @param functionName

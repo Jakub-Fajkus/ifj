@@ -112,7 +112,6 @@ char *ifj16_readString() { // nepoužívám scanf abych měl vždycky přesně n
 }
 
 void ifj16_print(char *s) {
-    for(int i = 0; i<strlen(s); i++){}
     printf("%s", s);
 }
 

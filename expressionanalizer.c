@@ -554,6 +554,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                         SYMBOL_TABLE_VARIABLE *symbolTableVariable= semantic_getInitializedVariable(stackElement2.data.notTerminalData.name);
                         stackElement2.data.notTerminalData.type = symbolTableVariable->type;
                     } else {
+                        semantic_firstPass_testStaticVariable(stackElement2.data.notTerminalData.name);
                         stackElement2.data.notTerminalData.type = TYPE_INT;
                     }
 
@@ -561,26 +562,27 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
 
                     setReturnType(stackElement2.data.notTerminalData.type);
                 } else if (stackElement1.data.terminalData.token.type == IDENTIFIER_FULL) {
+                    char *tempName = (char *) malloc(
+                            sizeof(char) * (1
+                                            +
+                                            strlen(stackElement1.data.terminalData.token.data.identifierFull.class)
+                                            +
+                                            strlen(stackElement1.data.terminalData.token.data.identifierFull.class)
+                            )
+                    );
+                    sprintf(
+                            tempName,
+                            "%s.%s",
+                            stackElement1.data.terminalData.token.data.identifierFull.class,
+                            stackElement1.data.terminalData.token.data.identifierFull.name
+                    );
+                    stackElement2.data.notTerminalData.name = tempName;
                     if (!firstPass) {
-                        char *tempName = (char *) malloc(
-                                sizeof(char) * (1
-                                                +
-                                                strlen(stackElement1.data.terminalData.token.data.identifierFull.class)
-                                                +
-                                                strlen(stackElement1.data.terminalData.token.data.identifierFull.class)
-                                )
-                        );
-                        sprintf(
-                                tempName,
-                                "%s.%s",
-                                stackElement1.data.terminalData.token.data.identifierFull.class,
-                                stackElement1.data.terminalData.token.data.identifierFull.name
-                        );
                         setVarName(tempName);
-                        stackElement2.data.notTerminalData.name = tempName;
                         SYMBOL_TABLE_VARIABLE *symbolTableVariable= semantic_getInitializedVariable(tempName);
                         stackElement2.data.notTerminalData.type = symbolTableVariable->type;
                     } else {
+                        semantic_firstPass_testStaticVariable(stackElement2.data.notTerminalData.name);
                         stackElement2.data.notTerminalData.type = TYPE_INT;
                         stackElement2.data.notTerminalData.name = "tepName";
                     }
