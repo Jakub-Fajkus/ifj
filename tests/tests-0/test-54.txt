@@ -1,0 +1,11 @@
+class Main {
+    static void run() {
+        String neco = "This is string.";
+        String necoIne;
+
+        necoIne = ifj16.substr(neco, 5,2);
+
+        ifj16.print(necoIne+"\n");
+
+    }
+}

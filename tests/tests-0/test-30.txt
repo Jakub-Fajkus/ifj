@@ -4,10 +4,10 @@ class Main
 	static void run()
 	{
 		int Rfib;
-		Rfib = math.Rfib(10);
+		Rfib = math.Rfib(2);
 		ifj16.print("Fib recursively: " + Rfib + "\n");
 		int Ifib;
-		Ifib = math.Ifib(10);
+		Ifib = math.Ifib(2);
 
 		ifj16.print("Fib iteratively: " + Ifib + "\n");
 		if(Ifib != Rfib)
@@ -197,121 +197,121 @@ class drawer
 		system.printLine(row);
 
 		int i;
-
+//		ifj16.print("jsem tady!\n\n\n\n\n\n\n\n\n\n\n");
 		i = 2;
-//		while(i > 0)
-//		{
-//			i = i - 1;
-//			row = system.generate("*",10);
-//			system.print(row);
-//			row = system.generate(" ",10);
-//			system.print(row);
-//			row = system.generate("*",10);
-//			system.print(row);
-//			row = system.generate(" ",20);
-//			system.print(row);
-//			row = system.generate("*",10);
-//			system.print(row);
-//			row = system.generate(" ",10);
-//			system.print(row);
-//			row = system.generate("*",10);
-//			system.printLine(row);
-//		}
-//		i = 2;
-//		while(i > 0)
-//		{
-//			i = i - 1;
-//			row = system.generate("*",10);
-//			system.print(row);
-//			row = system.generate(" ",10);
-//			system.print(row);
-//			row = system.generate("*",10);
-//			system.print(row);
-//			row = system.generate(" ",10);
-//			system.print(row);
-//			row = system.generate("*",20);
-//			system.print(row);
-//			row = system.generate(" ",10);
-//			system.print(row);
-//			row = system.generate("*",10);
-//			system.printLine(row);
-//		}
-//		i = 2;
-//		while(i > 0)
-//		{
-//			i = i - 1;
-//			row = system.generate("*",10);
-//			system.print(row);
-//			row = system.generate(" ",10);
-//			system.print(row);
-//			row = system.generate("*",10);
-//			system.print(row);
-//			row = system.generate(" ",15);
-//			system.print(row);
-//			row = system.generate("*",15);
-//			system.print(row);
-//			row = system.generate(" ",10);
-//			system.print(row);
-//			row = system.generate("*",10);
-//			system.printLine(row);
-//		}
-//		i = 2;
-//		while(i > 0)
-//		{
-//			i = i - 1;
-//			row = system.generate("*",10);
-//			system.print(row);
-//			row = system.generate(" ",10);
-//			system.print(row);
-//			row = system.generate("*",10);
-//			system.print(row);
-//			row = system.generate(" ",10);
-//			system.print(row);
-//			row = system.generate("*",20);
-//			system.print(row);
-//			row = system.generate(" ",10);
-//			system.print(row);
-//			row = system.generate("*",10);
-//			system.printLine(row);
-//		}
-//		row = system.generate("*",10);
-//		system.print(row);
-//		row = system.generate(" ",10);
-//		system.print(row);
-//		row = system.generate("*",10);
-//		system.print(row);
-//		row = system.generate(" ",10);
-//		system.print(row);
-//		row = system.generate("*",14);
-//		system.print(row);
-//		row = system.generate(" ",13);
-//		system.print(row);
-//		row = system.generate("*",13);
-//		system.printLine(row);
-//
-//		row = system.generate("*",10);
-//		system.print(row);
-//		row = system.generate(" ",10);
-//		system.print(row);
-//		row = system.generate("*",10);
-//		system.print(row);
-//		row = system.generate(" ",10);
-//		system.print(row);
-//		row = system.generate("*",14);
-//		system.print(row);
-//		row = system.generate(" ",10);
-//		system.print(row);
-//		row = system.generate("*",16);
-//		system.printLine(row);
-//		row = system.generate("*",80);
-//		system.printLine(row);
-//
-//		row = system.generate("*",31);
-//		row = string.join(row, " SsYoloSwag41.Inc ");
-//		String tmp;
-//		tmp = system.generate("*",31);
-//		row = string.join(row, tmp);
-//		system.printLine(row);
-//		system.testPattern(row);
+		while(i > 0)
+		{
+			i = i - 1;
+			row = system.generate("*",10);
+			system.print(row);
+			row = system.generate(" ",10);
+			system.print(row);
+			row = system.generate("*",10);
+			system.print(row);
+			row = system.generate(" ",20);
+			system.print(row);
+			row = system.generate("*",10);
+			system.print(row);
+			row = system.generate(" ",10);
+			system.print(row);
+			row = system.generate("*",10);
+			system.printLine(row);
+		}
+		i = 2;
+		while(i > 0)
+		{
+			i = i - 1;
+			row = system.generate("*",10);
+			system.print(row);
+			row = system.generate(" ",10);
+			system.print(row);
+			row = system.generate("*",10);
+			system.print(row);
+			row = system.generate(" ",10);
+			system.print(row);
+			row = system.generate("*",20);
+			system.print(row);
+			row = system.generate(" ",10);
+			system.print(row);
+			row = system.generate("*",10);
+			system.printLine(row);
+		}
+		i = 2;
+		while(i > 0)
+		{
+			i = i - 1;
+			row = system.generate("*",10);
+			system.print(row);
+			row = system.generate(" ",10);
+			system.print(row);
+			row = system.generate("*",10);
+			system.print(row);
+			row = system.generate(" ",15);
+			system.print(row);
+			row = system.generate("*",15);
+			system.print(row);
+			row = system.generate(" ",10);
+			system.print(row);
+			row = system.generate("*",10);
+			system.printLine(row);
+		}
+		i = 2;
+		while(i > 0)
+		{
+			i = i - 1;
+			row = system.generate("*",10);
+			system.print(row);
+			row = system.generate(" ",10);
+			system.print(row);
+			row = system.generate("*",10);
+			system.print(row);
+			row = system.generate(" ",10);
+			system.print(row);
+			row = system.generate("*",20);
+			system.print(row);
+			row = system.generate(" ",10);
+			system.print(row);
+			row = system.generate("*",10);
+			system.printLine(row);
+		}
+		row = system.generate("*",10);
+		system.print(row);
+		row = system.generate(" ",10);
+		system.print(row);
+		row = system.generate("*",10);
+		system.print(row);
+		row = system.generate(" ",10);
+		system.print(row);
+		row = system.generate("*",14);
+		system.print(row);
+		row = system.generate(" ",13);
+		system.print(row);
+		row = system.generate("*",13);
+		system.printLine(row);
+
+		row = system.generate("*",10);
+		system.print(row);
+		row = system.generate(" ",10);
+		system.print(row);
+		row = system.generate("*",10);
+		system.print(row);
+		row = system.generate(" ",10);
+		system.print(row);
+		row = system.generate("*",14);
+		system.print(row);
+		row = system.generate(" ",10);
+		system.print(row);
+		row = system.generate("*",16);
+		system.printLine(row);
+		row = system.generate("*",80);
+		system.printLine(row);
+
+		row = system.generate("*",31);
+		row = string.join(row, " SsYoloSwag41.Inc ");
+		String tmp;
+		tmp = system.generate("*",31);
+		row = string.join(row, tmp);
+		system.printLine(row);
+		system.testPattern(row);
 	}
 }

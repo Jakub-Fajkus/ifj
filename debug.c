@@ -123,7 +123,7 @@ void printInstruction(INSTRUCTION *instruction) {
         case Instruction_Create_Local_Frame:                debugPrintf("Instruction_Create_Local_Frame: \n"); break;
         case Instruction_Push_Local_Variable:               debugPrintf("Instruction_Push_Local_Variable: %s\n", (char*)instruction->address_dst); break;
         case Instruction_Create_Local_Variable:             debugPrintf("Instruction_Create_Local_Variable: %s\n", (char*)instruction->address_dst); break;
-        case Instruction_CallFunction:                      debugPrintf("Instruction_CallFunction: \n"); break;
+        case Instruction_CallFunction:                      debugPrintf("Instruction_CallFunction: %s\n", ((SYMBOL_TABLE_FUNCTION*)instruction->address_src1)->name); break;
         case Instruction_ReturnFunction:                    debugPrintf("Instruction_ReturnFunction\n"); break;
         case Instruction_Assign:                            debugPrintf("Instruction_Assign: %s = %s\n", (char*)instruction->address_dst, (char*)instruction->address_src1); break;
         case Instruction_Addition:                          debugPrintf("Instruction_Addition %s = %s + %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;
@@ -133,23 +133,23 @@ void printInstruction(INSTRUCTION *instruction) {
         case Instruction_IF:                                {
 
             debugPrintf("\nInstruction_IF: ridiciProm:%s\n", (char*)instruction->address_dst);
-            debugPrintf("     *****Instructions for true branch:\n");
-            printInstructions((tDLList*)instruction->address_src1);
-            debugPrintf("     *****End of true branch:\n\n");
-            debugPrintf("     *****Instructions for false branch:\n");
-            printInstructions((tDLList*)instruction->address_src2);
-            debugPrintf("     *****End of false branch:\n\n");
+//            debugPrintf("     *****Instructions for true branch:\n");
+//            printInstructions((tDLList*)instruction->address_src1);
+//            debugPrintf("     *****End of true branch:\n\n");
+//            debugPrintf("     *****Instructions for false branch:\n");
+//            printInstructions((tDLList*)instruction->address_src2);
+//            debugPrintf("     *****End of false branch:\n\n");
             break;
         } ;
         case Instruction_WHILE:                             {
             debugPrintf("\nInstruction_WHILE, result in var: %s\n", (char*)instruction->address_dst);
-            debugPrintf("     *****Instructions for condition:\n");
-            printInstructions((tDLList*)instruction->address_src1);
-            debugPrintf("     *****End of instructions for condition:\n");
-
-            debugPrintf("     *****Instructions for body:\n");
-            printInstructions((tDLList*)instruction->address_src2);
-            debugPrintf("     *****End of instructions for body:\n\n");
+//            debugPrintf("     *****Instructions for condition:\n");
+//            printInstructions((tDLList*)instruction->address_src1);
+//            debugPrintf("     *****End of instructions for condition:\n");
+//
+//            debugPrintf("     *****Instructions for body:\n");
+//            printInstructions((tDLList*)instruction->address_src2);
+//            debugPrintf("     *****End of instructions for body:\n\n");
             break;
         }
         case Instruction_Bool_Equals:                       debugPrintf("Instruction_Bool_Equals: %s = %s == %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;

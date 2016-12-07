@@ -132,7 +132,7 @@ char *ifj16_substr(char *s, int i, int n) {
         Error10();
     }
 
-    char *newSubstr = malloc( CHAR_SIZE * (n-i+1) );
+    char *newSubstr = malloc( CHAR_SIZE * (n+1) );
     if (newSubstr == NULL){
         Error10();
     }

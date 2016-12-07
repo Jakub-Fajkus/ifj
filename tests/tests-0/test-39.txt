@@ -6,7 +6,8 @@ class Main
 
 	static void run()
 	{
-		int v = Druha.rekurz();
+		int v;
+		v = Druha.rekurz();
 		ifj16.print("Vysledok: " + v + "\n");
 	}
 }
@@ -23,6 +24,8 @@ class Druha
 			ifj16.print("b: " + b + "\n");
 			c = rekurz();
 			return c;
+		} else {
+
 		}
 
 		return 258;

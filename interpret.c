@@ -129,14 +129,9 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             // expecting: dst = (char *) name of variable inside upcoming frame
             // expecting: src1 =(char *) name of variable inside actual local frame
 
-            VARIABLE *upcomingFrameVariable = NULL;
-            VARIABLE *seekVariable = NULL;
+            VARIABLE *upcomingFrameVariable = findFrameVariable(upcomingLocalFrame, Instr->address_dst);
+            VARIABLE *seekVariable = getVariableFromFrames(actualLocalFrame, globalFrame, activeFunction, (char*)Instr->address_src1);
 
-            upcomingFrameVariable = findFrameVariable(upcomingLocalFrame, Instr->address_dst);
-            seekVariable = findFrameVariable(actualLocalFrame, Instr->address_src1);
-            if(seekVariable == NULL) {
-                seekVariable = findFrameVariable(globalFrame, Instr->address_src1);
-            }
             if(seekVariable == NULL) {
                 return 99;
             }
@@ -244,6 +239,9 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 } // end of case where we have non-void function returning
                 else {
                     debugPrintf("Maybe this helps?\n");
+
+                    // DISCARDING TOP-OF-STACK
+                    stackPop(stackOfLocalFrames);   // removal of top-local-frame
                 }
             }
             else {
@@ -356,13 +354,14 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             ListSuccessor(params);
             VARIABLE *param3 = getVariableFromFrames(actualLocalFrame,globalFrame,activeFunction, params->Act->element.data.parameter->name);
 
-            debugPrintf("PARAMS:%d %d \n\n\n\n\n\n\n\n\n\n\n", param2->value.intValue, param3->value.intValue);
+            //debugPrintf("PARAMS: %s %d %d \n\n\n\n\n\n\n\n\n\n\n", param1->value.stringValue ,param2->value.intValue, param3->value.intValue);
 
             if(param1 == NULL || param2 == NULL || param3 == NULL) {
                 debugPrintf("one of substr parameters was not found in frames\n");
             }
 
-            dst->value.stringValue = ifj16_substr(param1->value.stringValue, param2->value.intValue, param3->value.intValue);
+            dst->value.stringValue = ifj16_substr(param1->value.stringValue, param3->value.intValue, param2->value.intValue);
+            dst->initialized = true;
 
             ListSuccessor(InstructionList);
             continue; // Jump to next instruction
@@ -473,17 +472,22 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
             switch (Instr->type) {
                 case Instruction_Assign:    // expecting DST & SRC variable name
-                    ;
+                    if(dst == NULL) {
+                        break;
+                    }
+
                     if (!(dst != NULL && src1 != NULL && src2 == NULL)){
                         //TODO: free?
                         return 99;
                     }
                     debugPrintf("Instruction_Assign\n");
 
+
                     if (src1->initialized == false) {
-                        debugPrintf("Newly implemented: working with uninitialised variable.\n");
+                        debugPrintf("Newly implemented: working with uninitialised variable.name: %s in function %s\n", src1->name, activeFunction->name);
                         return 8;
                     }
+
                     executeInstructionAssign(dst, src1);
                     break;
 
@@ -499,7 +503,8 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                     }
 
                     if (src1->initialized == false || src2->initialized == false) {
-                        debugPrintf("Newly implemented: working with uninitialised variable.\n");
+
+                        debugPrintf("Newly implemented: working with uninitialised variable.name: %s %s\n", src1->name, src2->name);
                         return 8;
                     }
                     //TODO: correct? i just want to set the dst as initialised.
@@ -519,11 +524,17 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 case Instruction_Bool_LessEqual:
 
                     if ( dst ==NULL || src1 == NULL || src2 == NULL ) {
+                        for (int i = 85; i >= 0; --i) {
+                            printf("\ni-ty:%d!\n", i);
+                            printFrame(stackOfLocalFrames->arr[i].data.localFrame);
+
+                        }
+
                         return 99;
                     }
 
                     if (src1->initialized == false || src2->initialized == false) {
-                        debugPrintf("Newly implemented: working with uninitialised variable.\n");
+                        debugPrintf("Newly implemented: working with uninitialised variable.name: %s %s\n", src1->name, src2->name);
                         return 8;
                     }
                     //TODO: correct? i just want to set the dst as initialised.
@@ -845,8 +856,9 @@ int executeInstructionExpressionEvaluation(INSTRUCTION_TYPE instrType, VARIABLE 
         case Instruction_Bool_EqualsNot:    // if ( src1 != src2 ) dst=TRUE else dst=FALSE;
             debugPrintf("Instruction_Bool_EqualsNot\n");
             ;
-            if (src1->type == TYPE_STRING || src2->type == TYPE_STRING)
+            if (src1->type == TYPE_STRING || src2->type == TYPE_STRING){
                 return 10;
+            }
 
             switch (src1->type){
                 case TYPE_INT:

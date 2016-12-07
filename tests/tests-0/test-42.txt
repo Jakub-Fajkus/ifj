@@ -4,7 +4,8 @@ class Main
 {
 	static void run()
 	{
-		double d = func();
+		double d;
+		d = func();
 		ifj16.print("Vysledok: " + d + "\n");
 	}
 
