@@ -1,7 +1,9 @@
 class Main {
+    static int a;
+
     static void run() {
         int viktorNeumiCist;
-        viktorNeumiCist = test(42);
+        viktorNeumiCist = test(a);
     }
 
     static void test(int a){
