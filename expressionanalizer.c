@@ -509,7 +509,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                 if (!firstPass) {
                     concatenateString();
 
-                    if (outputType == TYPE_STRING) return 4; else outputType = TYPE_DOUBLE;
+                    if (outputType == TYPE_STRING) return 4;
 
                     char *tempName = (char *) malloc(sizeof(char) * 30);
                     strcpy(tempName, varName);
