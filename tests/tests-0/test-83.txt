@@ -4,9 +4,11 @@ class Main
     static void run()
     {
     	int x;
-    	x = funkce(3) + 1;
+    	x = funkce(3);
+        x = x + 1;
     	ifj16.print(x + "\n");
     }
+
     static int funkce(int n) // Definice funkce
     {
         int a = n;

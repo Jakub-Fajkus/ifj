@@ -8,7 +8,9 @@ class Main
     String str = "123456789abcdefghijklmnabcd";
     
     ifj16.print("hledam "+ search +" v retezci "+ str +"\n");
-    
-	ifj16.print("pozice: "+ ifj16.find(str, search) +"\n");
+
+    int neco;
+    neco = ifj16.find(str, search);
+	ifj16.print("pozice: "+ neco +"\n");
    }
 }
