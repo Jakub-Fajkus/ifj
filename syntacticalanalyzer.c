@@ -324,7 +324,6 @@ bool rulePropDef(bool *variableInitialized, DATA_TYPE variableType, char *variab
                         exit(4);
                     }
 
-                    //todo: check type of the result variable with variable declaration
                     ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createInstrAssign(fullyQualifiedVariableName, resultVariableName)));
                 }
                 return true;
@@ -422,6 +421,7 @@ bool ruleStListDecl(){
         //<ST_LIST_DECL> -> { <ST_LIST> }
         if (token->type == BRACKET && token->data.bracket.name == '{') {
             if (ruleStList()) {
+                token = getCachedToken();
                 if (token->type == BRACKET && token->data.bracket.name == '}') {
                     return true;
                 }
@@ -503,9 +503,7 @@ bool ruleDecl(DATA_TYPE declaredType, char *variableName){
 
             //<DECL> -> ;
             if (token->type == SEMICOLON) {
-                if (firstPass) {
-
-                } else {
+                if (!firstPass) {
                     //insert the local variable to the symbol table
                     semanticCreateAndInsertVariable(&actualFunction->localSymbolTable, variableName, declaredType, true);
                     ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createActualLocalVariable(variableName, declaredType)));
@@ -550,10 +548,14 @@ bool ruleStat(){
 
 
     //<STAT> -> <ID><STAT_BEGINNING_ID>;
-    if (ruleId(&functionOrVariableName) && ruleStatBeginningId(functionOrVariableName)) {
-        TOKEN *token = getCachedToken();
-        if(token->type == SEMICOLON) {
-            return true;
+    if (ruleId(&functionOrVariableName)) {
+        //neco?
+        //char *calle
+        if(ruleStatBeginningId(functionOrVariableName)){
+            TOKEN *token = getCachedToken();
+            if(token->type == SEMICOLON) {
+                return true;
+            }
         }
     } else {
         TOKEN *token = getCachedToken();
@@ -784,6 +786,7 @@ bool ruleFuncCall(char *calledFunctionName, char *assignReturnValueToVariable){
                     ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrCallFunction(functionToCall->instructions, functionToCall)));
                     //do not assign to local variable for void function
                     if(functionToCall->type != TYPE_VOID) {
+                        //tady!
                         ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrAssign(assignReturnValueToVariable, stringConcat("#", functionToCall->name))));
                     }
                 }
