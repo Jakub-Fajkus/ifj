@@ -1130,7 +1130,7 @@ int executeInstructionAssign(VARIABLE *dst, VARIABLE *src) {
             if (type_src==TYPE_INT) {
                 dst->value.intValue = src->value.intValue;
             }
-            else return 6; // Incompatibile assign
+            else return 4; // Incompatibile assign
             break;
 
         case TYPE_DOUBLE:
@@ -1140,12 +1140,12 @@ int executeInstructionAssign(VARIABLE *dst, VARIABLE *src) {
             else if (type_src==TYPE_INT) { // Type cast INT->DOUBLE & assign
                 dst->value.doubleValue = (double)src->value.intValue;
             }
-            else return 6; // Incompatibile assign
+            else return 4; // Incompatibile assign
             break;
 
         case TYPE_STRING:
             if (type_src==TYPE_STRING) dst->value.stringValue = src->value.stringValue;
-            else return 6;
+            else return 4; // Incompatibile assign
             break;
 
         default: ;
