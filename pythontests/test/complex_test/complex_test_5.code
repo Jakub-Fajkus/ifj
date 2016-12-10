@@ -5,15 +5,14 @@ class Main
 	static void run()
 	{
 		double d;
-		b = func();
+		d = func();
 		ifj16.print("Vysledok: " + d + "\n");
 	}
 
 	static double func()
 	{
-		int a;
-		 b= 10;
-		double b; b = 2.5;
+		int a = 10;
+		double b = 2.5;
 
 		while (a > 5)
 		{

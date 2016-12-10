@@ -162,7 +162,7 @@ class drawer
 	{
 		String row = system.generate("*", 80);
 		system.printLine(row);
-		
+
 		int i;
 
 		i = 2;

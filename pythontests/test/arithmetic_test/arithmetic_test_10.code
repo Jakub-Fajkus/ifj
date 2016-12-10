@@ -4,7 +4,8 @@ class Main
 {
 	static void run()
 	{
-		int a = ifj16.readInt();
+		int a;
+		a = ifj16.readInt();
 		ifj16.print(a + "\n");
 	}
 }

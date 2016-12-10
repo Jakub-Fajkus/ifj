@@ -2,8 +2,7 @@
 
 class Main
 {
-	static int a;
-	a = 10;
+	static int a = 10;
 
 	static void run()
 	{
@@ -15,8 +14,7 @@ class Main
 
 class Druha
 {
-	static int b;
-	b = Main.a;
+	static int b = Main.a;
 	static int rekurz()
 	{
 		int c;
@@ -26,8 +24,8 @@ class Druha
 			ifj16.print("b: " + b + "\n");
 			c = rekurz();
 			return c;
+		}else {
+		    return 258;
 		}
-
-		return 258;
 	}
 }

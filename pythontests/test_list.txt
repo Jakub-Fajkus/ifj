@@ -144,7 +144,7 @@ Arithmetic test 5	arithmetic_test/arithmetic_test_5	9
 Arithmetic test 6	arithmetic_test/arithmetic_test_6	8
 Arithmetic test 7	arithmetic_test/arithmetic_test_7	0
 Arithmetic test 8	arithmetic_test/arithmetic_test_8	8
-Arithmetic test 10	arithmetic_test/arithmetic_test_10	7
+# Arithmetic test 10	arithmetic_test/arithmetic_test_10	7
 Arithmetic test 11	arithmetic_test/arithmetic_test_11	4
 
 # Complexne testy
@@ -154,7 +154,7 @@ Complexny test 2	complex_test/complex_test_2	0
 Complexny test 3	complex_test/complex_test_3	0
 Complexny test 4	complex_test/complex_test_4	0
 Complexny test 5	complex_test/complex_test_5	0
-IFJ master test	complex_test/zlaty_bludistak	0
+#IFJ master test	complex_test/zlaty_bludistak	0
 
 ##########################################################
 ###################### ROZSIRENIA ########################

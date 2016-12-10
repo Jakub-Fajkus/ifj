@@ -4,9 +4,11 @@ class Main
 {
 	static void run()
 	{
-		String input; input = "Ahoj Svet";
+		String input;
+		input = "Ahoj Svet";
 
-		String output = ifj16.substr(input, 5, 4);
+		String output;
+		output = ifj16.substr(input, 5, 4);
 		ifj16.print("Vystup je: " + output);
 	}
 }
