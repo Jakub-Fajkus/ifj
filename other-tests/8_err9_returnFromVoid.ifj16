@@ -1,9 +1,0 @@
-class Main {
-    static void run() {
-        int viktorNeumiCist = test(42);
-    }
-
-    static void test(int a){
-        return 42;
-    }
-}
