@@ -1201,7 +1201,7 @@ int analyzeExpression(tDLList *instructionList, char **resultVariableName, DATA_
 //                continue;
 //            }
 //        } else {
-//            printf("function name: %s\n", actualElement.data.symbolTableNode->data->item->function->name);
+//            fprintf(stderr, "function name: %s\n", actualElement.data.symbolTableNode->data->item->function->name);
 //        }
 //
 ////        DLPostInsert(mainInstructionList, wrapInstructionIntoListElement(createGlobalVariable(actualElement.data.symbolTableNode->data->item->variable->name, actualElement.data.symbolTableNode->data->item->variable->type)));

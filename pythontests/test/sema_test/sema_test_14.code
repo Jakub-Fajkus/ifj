@@ -5,7 +5,7 @@ class Main
 {
     static void run()
     {
-         int i = 25;
+         int i; i = 25;
          calculate(i);
     }
     

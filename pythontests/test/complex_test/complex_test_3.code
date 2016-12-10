@@ -4,13 +4,15 @@ class Main
 {
 	static void run()
 	{
-		double d = whileFunc();
+		double d;
+		d = whileFunc();
 		ifj16.print("Vysledok: " + d + "\n");
 	}
 
 	static double whileFunc()
 	{
-		int a = 10;
+		int a;
+		a = 10;
 		int b;
 
 		while (a > 5)

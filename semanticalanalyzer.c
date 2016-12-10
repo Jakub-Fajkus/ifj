@@ -17,12 +17,12 @@ void semanticCheckForFunctionRun() {
     // get function Main.run
     SYMBOL_TABLE_FUNCTION *function = getFunctionFromTable(&globalSymbolTable, "Main.run");
     if (function == NULL) {
-        printf("semanticCheckForFunctionRun: function %s not found", "Main.run");
+        fprintf(stderr, "semanticCheckForFunctionRun: function %s not found", "Main.run");
         exit(3);
     }
 
     if(function->type != TYPE_VOID){
-        printf("semanticCheckForFunctionRun: function Main.Run is not void");
+        fprintf(stderr, "semanticCheckForFunctionRun: function Main.Run is not void");
         exit(3);
     }
 }
@@ -44,7 +44,7 @@ SYMBOL_TABLE_FUNCTION *semantic_getFunction(char * functionName) {
         function = getFunctionFromTable(&globalSymbolTable, functionName);
     }
     if(function == NULL){
-        printf("semantic_getFunction: function %s not found", functionName);
+        fprintf(stderr, "semantic_getFunction: function %s not found", functionName);
         exit(3);
     }
     return function;
@@ -93,7 +93,7 @@ SYMBOL_TABLE_VARIABLE *semantic_getVariable(char * name) {
 SYMBOL_TABLE_VARIABLE *semantic_getInitializedVariable(char * name) {
     SYMBOL_TABLE_VARIABLE *variable = semantic_getVariable(name);
     if (variable->initialized == false) {
-        printf("variable %s is not initialized", name);
+        fprintf(stderr, "variable %s is not initialized", name);
         exit(8);
     }
     return variable;
@@ -129,7 +129,7 @@ void checkFunctionParametersType(char *functionName, tDLList *parameters){
             break;
         }else if((function->parameters->Act == function->parameters->Last && parameters->Act != parameters->Last) ||
                 (function->parameters->Act != function->parameters->Last && parameters->Act == parameters->Last)){
-            printf("Wrong number of Parameters");
+            fprintf(stderr, "Wrong number of Parameters");
             exit(4);
         }
     }
@@ -155,7 +155,7 @@ void semantical_ExistAndCorrectTypeOfReturns(SYMBOL_TABLE_NODEPtr *symbolTable) 
 
         if (actualEL != NULL && actualEL->data->type == TREE_NODE_FUNCTION && actualEL->data->item->function->type != TYPE_VOID) {
             if(actualEL->data->item->function->hasReturn == 0){
-                printf("Incompatible type of return value or missing return of non-void function");
+                fprintf(stderr, "Incompatible type of return value or missing return of non-void function");
                 exit(8);
             }
         }
@@ -191,13 +191,13 @@ bool semantical_checkFunctionCall(tDLList *declaredParameters, tDLList *usedPara
     ListFirst(declaredParameters);
 
     if(DLSize(declaredParameters) != DLSize(usedParameters)) {
-        printf("the number of arguments does not match");
+        fprintf(stderr, "the number of arguments does not match");
         exit(4);
     }
 
     while(DLActive(declaredParameters) ) {
         if(!canConvertTypes(declaredParameters->Act->element.data.parameter->type, usedParameters->Act->element.data.parameter->type)) {
-            printf("can not convert %d to %d", usedParameters->Act->element.data.parameter->type, declaredParameters->Act->element.data.parameter->type);
+            fprintf(stderr, "can not convert %d to %d", usedParameters->Act->element.data.parameter->type, declaredParameters->Act->element.data.parameter->type);
             exit(4);
         }
 
@@ -238,7 +238,7 @@ void createInstructionsToCallIfj16Function(char *functionName, tDLList *instruct
         ListInsertLast(instructions, wrapInstructionIntoListElement(instruction));
     }else if(stringEquals("ifj16.print", functionName)) {
         if (returnValueToVariable != NULL) {
-            printf("cannot use return value of void function %s\n", functionName);
+            fprintf(stderr, "cannot use return value of void function %s\n", functionName);
             exit(8);
         }
 
@@ -332,7 +332,7 @@ void createInstructionsToCallIfj16Function(char *functionName, tDLList *instruct
         ListInsertLast(instructions, wrapInstructionIntoListElement(instruction));
 
     } else {
-        printf("unknown function %s\n", functionName);
+        fprintf(stderr, "unknown function %s\n", functionName);
         exit(3);
     }
 }

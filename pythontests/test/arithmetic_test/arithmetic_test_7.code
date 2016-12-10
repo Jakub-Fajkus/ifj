@@ -1,4 +1,4 @@
-// Komplexny program pre aritmeticke operacia
+// Komplexny program pre aritmeticke operaciare
 //
 
 class Main
@@ -7,8 +7,10 @@ class Main
 
 	static void run()
 	{
-		double d = ifj16.readDouble();
-		int i = ifj16.readInt();
+		double d;
+		d = ifj16.readDouble();
+		int i;
+		i = ifj16.readInt();
 
 		ifj16.print("Nacital som: " + d + " , " + i + "\n");
 		ifj16.print("Zavolam funkciu Add" + "\n");
@@ -20,7 +22,8 @@ class Main
 	static double Add(int a, double b)
 	{
 		ifj16.print(a + " " + b + " " + s + "\n");
-		double c = (a * 2) - 5 + (b * s);
+		double c;
+		c = (a * 2) - 5 + (b * s);
 
 		ifj16.print(c + "\n");
 		return c;

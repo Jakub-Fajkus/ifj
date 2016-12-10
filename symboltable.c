@@ -49,7 +49,7 @@ void BSTInsert (SYMBOL_TABLE_NODEPtr* RootPtr, char* K, TREE_NODE_DATA Content)	
     //the key is the root
     if (K == (*RootPtr)->key) {
         //aktalizacni semantika...
-        printf("redeclaration of %s", K);
+        fprintf(stderr,"redeclaration of %s", K);
         exit(3);
 
     } else if (strcmp(K, (*RootPtr)->key) == -1) {
@@ -276,7 +276,7 @@ TREE_NODE_DATA* createVariableData(SYMBOL_TABLE_VARIABLE *variable) {
 SYMBOL_TABLE_VARIABLE* createAndInsertVariable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, bool initialized) {
     //if the variable already exists
     if (NULL != getVariableFromTable(symbolTable, name)) {
-        printf("redeclaration of variable %s\n", name);
+        fprintf(stderr,"redeclaration of variable %s\n", name);
         exit(3);
     }
 
@@ -388,7 +388,7 @@ void checkIfVariableIsInitialized(SYMBOL_TABLE_NODEPtr *symbolTable, char *name)
     }
 
     if (foundVariable->initialized == false) {
-        printf("variable %s is not initialized", name);
+        fprintf(stderr, "variable %s is not initialized", name);
         exit(8);
     }
 }

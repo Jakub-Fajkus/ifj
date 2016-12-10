@@ -524,12 +524,6 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 case Instruction_Bool_LessEqual:
 
                     if ( dst ==NULL || src1 == NULL || src2 == NULL ) {
-                        for (int i = 85; i >= 0; --i) {
-                            printf("\ni-ty:%d!\n", i);
-                            printFrame(stackOfLocalFrames->arr[i].data.localFrame);
-
-                        }
-
                         return 99;
                     }
 

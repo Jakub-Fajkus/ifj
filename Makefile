@@ -1,8 +1,8 @@
 SRC=$(wildcard *.c)
-CFLAGS=-std=c99
+CFLAGS=-std=c99 -DNOT_DEBUG
 
 all: $(SRC)
-	gcc -o ifj16 $^ $(CFLAGS) -DNOT_DEBUG
+	gcc -o ifj16 $^ $(CFLAGS)
 
 
 testScript:

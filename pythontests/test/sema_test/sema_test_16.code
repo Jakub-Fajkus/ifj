@@ -4,7 +4,7 @@
 
 class Main
 {
-	static double a = 5.0;
+	static double a; a = 5.0;
 	static void run()
 	{
 		
@@ -13,7 +13,7 @@ class Main
 
 class Test
 {
-	static double b = a;
+	static double b; b = a;
 	static void func()
 	{
 

@@ -9,6 +9,6 @@ class Main
 
     static void run()
     {
-        int a = test(a);
+        int a; a = test(a);
     }
 }

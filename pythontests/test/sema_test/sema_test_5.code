@@ -4,7 +4,7 @@ class Main
 {
     static void run()
     {
-         String a = "retazec";
+         String a; a = "retazec";
 
          if (a)
          {

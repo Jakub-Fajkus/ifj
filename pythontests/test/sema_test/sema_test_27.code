@@ -4,7 +4,7 @@ class Main
 {
 	static void run()
 	{
-		int c = Dva.Dva();
+		int c; c = Dva.Dva();
 		ifj16.print(c + "\n");
 	}
 }

@@ -167,16 +167,3 @@ IFJ master test	complex_test/zlaty_bludistak	0
 #Arithmetic test 9	arithmetic_test/arithmetic_test_9	0
 #Executor test 4	executor_test/exec_test_4	10
 #Executor test 6	executor_test/exec_test_6	10
-
-# Rozsirenie SIMPLE
-#
-SIMPLE - test 1	SIMPLE/simple_test_1	0
-SIMPLE - test 2	SIMPLE/simple_test_2	0
-
-# Rozsirenie CYCLES
-#
-CYCLES - test 1	CYCLES/cycles_test_1	0
-CYCLES - test 2	CYCLES/cycles_test_2	0
-CYCLES - test 3	CYCLES/cycles_test_3	0
-CYCLES - test 4	CYCLES/cycles_test_4	0
-CYCLES - test 5	CYCLES/cycles_test_5	0

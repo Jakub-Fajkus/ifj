@@ -2,18 +2,21 @@
 
 class Main
 {
-	static int a = 10;
+	static int a;
+	a = 10;
 
 	static void run()
 	{
-		int v = Druha.rekurz();
+		int v;
+	    v = Druha.rekurz();
 		ifj16.print("Vysledok: " + v + "\n");
 	}
 }
 
 class Druha
 {
-	static int b = Main.a;
+	static int b;
+	b = Main.a;
 	static int rekurz()
 	{
 		int c;
