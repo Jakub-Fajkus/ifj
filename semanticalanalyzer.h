@@ -19,6 +19,8 @@ void initializeVariable(char *name);
 bool canConvertTypes(DATA_TYPE destination, DATA_TYPE source);
 void semantic_firstPass_testStaticVariable(char * name);
 void semanticCheckForMissingStaticVar();
+SYMBOL_TABLE_FUNCTION* semanticCreateAndInsertFunction(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, unsigned int usages, tDLList *parameters, tDLList *instructions, bool hasReturn);
+SYMBOL_TABLE_VARIABLE* semanticCreateAndInsertVariable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, bool initialized);
 /**
  *
  * @param functionName

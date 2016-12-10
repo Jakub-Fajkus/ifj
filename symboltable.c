@@ -7,6 +7,8 @@
 #include "debug.h"
 #include "stack.h"
 
+extern char* actualClass;
+
 void BSTInit (SYMBOL_TABLE_NODEPtr *RootPtr) {
     *RootPtr = NULL;
 }
@@ -282,7 +284,7 @@ SYMBOL_TABLE_VARIABLE* createAndInsertVariable(SYMBOL_TABLE_NODEPtr *symbolTable
 
     SYMBOL_TABLE_VARIABLE *variable = createVariable(name, type, initialized);
     TREE_NODE_DATA *treeData = createVariableData(variable);
-    debugPrintf("inserting variable %s", variable->name);
+    debugPrintf("inserting variable %s\n", variable->name);
     BSTInsert(symbolTable, variable->name, *treeData);
 
     return variable;
@@ -324,6 +326,7 @@ TREE_NODE_DATA* createFunctionData(SYMBOL_TABLE_FUNCTION *function) {
 
 SYMBOL_TABLE_FUNCTION* createAndInsertFunction(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, unsigned int usages, tDLList *parameters, tDLList *instructions, bool hasReturn) {
     //if the function already exists
+    debugPrintf("inserting a function %s\n", name);
 
     if (NULL != getNodeDataFromTable(symbolTable, name)) {
         debugPrintf("redeclaration of function or variable %s", name);

@@ -270,7 +270,7 @@ bool ruleDefinition(char *className, DATA_TYPE type, char *functionOrPropertyNam
         struct SYMBOL_TABLE_FUNCTION_STR *function = NULL;
 
         if(firstPass) {
-            function = createAndInsertFunction(&globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), type, 0, NULL, NULL, 0);
+            function = semanticCreateAndInsertFunction(&globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), type, 0, NULL, NULL, 0);
 
         } else {
             function = semantic_getFunction(stringConcat(classNameWithDot, functionOrPropertyName));
@@ -317,7 +317,7 @@ bool rulePropDef(bool *variableInitialized, DATA_TYPE variableType, char *variab
                 *variableInitialized = true;
                 if(firstPass) {
                     ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createGlobalVariable(fullyQualifiedVariableName, variableType)));
-                    createAndInsertVariable(&globalSymbolTable, fullyQualifiedVariableName, variableType, true);
+                    semanticCreateAndInsertVariable(&globalSymbolTable, fullyQualifiedVariableName, variableType, true);
                 } else{
                     if(!canConvertTypes(variableType, resultVariableType)) {
                         debugPrintf("Incompatible types for assigned");
@@ -482,8 +482,8 @@ bool ruleDecl(DATA_TYPE declaredType, char *variableName){
     TOKEN *token = getCachedToken();
 
     if (token->type == SEMICOLON) {
-        if (firstPass) {
-            createAndInsertVariable(&actualFunction->localSymbolTable, variableName, declaredType, false);
+        if (!firstPass) {
+            semanticCreateAndInsertVariable(&actualFunction->localSymbolTable, variableName, declaredType, false);
             //no need to check types
             ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createActualLocalVariable(variableName, declaredType)));
         }
@@ -504,10 +504,12 @@ bool ruleDecl(DATA_TYPE declaredType, char *variableName){
             //<DECL> -> ;
             if (token->type == SEMICOLON) {
                 if (firstPass) {
-                    //insert the local variable to the symbol table
-                    createAndInsertVariable(&actualFunction->localSymbolTable, variableName, declaredType, true);
-                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createActualLocalVariable(variableName, declaredType)));
+
                 } else {
+                    //insert the local variable to the symbol table
+                    semanticCreateAndInsertVariable(&actualFunction->localSymbolTable, variableName, declaredType, true);
+                    ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createActualLocalVariable(variableName, declaredType)));
+
                     if(!canConvertTypes(declaredType, resultVariableType)) {
                         debugPrintf("Incompatible types for assigned");
                         exit(4);
@@ -964,7 +966,7 @@ bool ruleDefinitionStart(char *className) {
             ListInit(params);
             struct SYMBOL_TABLE_FUNCTION_STR *function = NULL;
             if(firstPass) {
-                function = createAndInsertFunction(&globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), TYPE_VOID, 0, NULL, NULL, 0);
+                function = semanticCreateAndInsertFunction(&globalSymbolTable, stringConcat(classNameWithDot, functionOrPropertyName), TYPE_VOID, 0, NULL, NULL, 0);
             } else {
                 function = semantic_getFunction(stringConcat(classNameWithDot, functionOrPropertyName));
             }

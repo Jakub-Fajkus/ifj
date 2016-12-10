@@ -7,6 +7,7 @@
 #include "ifj16.h"
 #include "basicstructures.h"
 #include "symboltable.h"
+#include "debug.h"
 
 struct SYMBOL_TABLE_NODE *globalSymbolTable;
 extern SYMBOL_TABLE_FUNCTION *actualFunction;
@@ -373,4 +374,63 @@ void semanticCheckForMissingStaticVar(){
 void initializeVariable(char *name) {
     SYMBOL_TABLE_VARIABLE *var = semantic_getVariable(name);
     var->initialized = true;
+}
+
+SYMBOL_TABLE_VARIABLE* semanticCreateAndInsertVariable(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, bool initialized) {
+    //1. inserting static var with name as static func
+    //2. inserting local var with name as static func
+
+    //covers the 1. case
+    //find function with name actualClass.name
+    TREE_NODE_DATA *node;
+    int indexOfDot = ifj16_find(name, ".");
+    if (indexOfDot != -1) {
+    //there is a dot
+        node = getNodeDataFromTable(symbolTable, name);
+
+        if(node != NULL && node->type != TREE_NODE_VARIABLE) {
+            debugPrintf("this is brand new stuff for variables! top\n");
+            exit(3);
+        }
+        //covers the 2. case
+    } else {
+        char *newName = stringConcat(stringConcat(actualClass, "."), name);
+        node = getNodeDataFromTable(&globalSymbolTable, newName);
+
+        if(node != NULL && node->type != TREE_NODE_VARIABLE) {
+            debugPrintf("this is brand new stuff for variables! bottom\n");
+            exit(3);
+        }
+    }
+
+    return createAndInsertVariable(symbolTable, name, type, initialized);
+}
+
+SYMBOL_TABLE_FUNCTION* semanticCreateAndInsertFunction(SYMBOL_TABLE_NODEPtr *symbolTable, char *name, DATA_TYPE type, unsigned int usages, tDLList *parameters, tDLList *instructions, bool hasReturn) {
+    //1. inserting static func with name as static var
+
+    //covers the 1.
+    //find function with name actualClass.name
+    TREE_NODE_DATA *node;
+    int indexOfDot = ifj16_find(name, ".");
+    if (indexOfDot != -1) {
+        //there is a dot
+        node = getNodeDataFromTable(symbolTable, name);
+
+        if(node != NULL) {
+            exit(3);
+        }
+
+        //find the name without the dot
+        char *substring = ifj16_substr(name, indexOfDot+1, strlen(name) - indexOfDot - 1);
+        node = getNodeDataFromTable(symbolTable, substring);
+    } else {
+        node = getNodeDataFromTable(symbolTable, name);
+    }
+
+    if(node != NULL) {
+        exit(3);
+    }
+
+    return createAndInsertFunction(symbolTable, name, type, usages, parameters, instructions, hasReturn);
 }
