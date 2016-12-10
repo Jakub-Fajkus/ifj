@@ -4,7 +4,8 @@ class Main
 {
     static void run()
     {
-        double v; v = voidFunction(2.589);
+        double v;
+        v = voidFunction(2.589);
     }
 
     static void voidFunction(double d)

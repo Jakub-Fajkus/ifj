@@ -5,6 +5,6 @@ class Main
 {
 	static void run()
 	{
-		int identi.fikator; identi.fikator = 5;
+		int identi.fikator = 5;
 	}
 }

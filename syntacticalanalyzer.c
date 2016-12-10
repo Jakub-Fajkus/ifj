@@ -402,6 +402,9 @@ bool ruleStListDecl(){
 
     if (ruleTypeDouble(&type) || ruleTypeInt(&type) || ruleTypeString(&type)) {
         if (ruleId(&name)) {
+            if(ifj16_find(name, ".") != -1) {
+                exit(3);
+            }
             if (ruleDecl(type, name)) {
                 //recursive call
                 if (ruleStListDecl()) {

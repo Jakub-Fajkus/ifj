@@ -73,7 +73,6 @@ Sematicky test 28	sema_test/sema_test_28	0
 # Exekutor testy
 #
 Executor test 1	executor_test/exec_test_1	8
-Executor test 2	executor_test/exec_test_2	8
 Executor test 3	executor_test/exec_test_3	10
 Executor test 5	executor_test/exec_test_5	10
 Executor test 7	executor_test/exec_test_7	7

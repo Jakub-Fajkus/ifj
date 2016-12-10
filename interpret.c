@@ -140,7 +140,14 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             switch (upcomingFrameVariable->type) {
 
                 case TYPE_INT: upcomingFrameVariable->value.intValue = seekVariable->value.intValue; break;
-                case TYPE_DOUBLE: upcomingFrameVariable->value.doubleValue = seekVariable->value.doubleValue; break;
+                case TYPE_DOUBLE: {
+                    if(seekVariable->type == TYPE_INT) {
+                        upcomingFrameVariable->value.doubleValue = (double)seekVariable->value.intValue;
+                    } else {
+                        upcomingFrameVariable->value.doubleValue = seekVariable->value.doubleValue;
+                    }
+
+                } break;
                 case TYPE_STRING:   ;
                     char *temp = malloc(sizeof(char) * (int)strlen(seekVariable->value.stringValue) + 1 );
                     strcpy(temp, seekVariable->value.stringValue);
@@ -488,7 +495,11 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                         return 8;
                     }
 
-                    executeInstructionAssign(dst, src1);
+                    int returned = executeInstructionAssign(dst, src1);
+                    if(returned != 0) {
+                        return returned;
+                    }
+
                     break;
 
                 case Instruction_Addition:
