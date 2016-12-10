@@ -2,9 +2,9 @@ class Main
 {
 	static void run()
 	{
-		int Rfib = math.Rfib(16);
+		int Rfib; Rfib = math.Rfib(16);
 		ifj16.print("Fib recursively: " + Rfib + "\n");
-		int Ifib = math.Ifib(16);
+		int Ifib; Ifib = math.Ifib(16);
 		ifj16.print("Fib iteratively: " + Ifib + "\n");
 		if(Ifib != Rfib)
 		{

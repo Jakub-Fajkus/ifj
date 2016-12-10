@@ -5,7 +5,7 @@ class Main
     static void run()
     {
     	int v;
-        int c = Second.variable(v);
+        int c; c = Second.variable(v);
     }
 }
 

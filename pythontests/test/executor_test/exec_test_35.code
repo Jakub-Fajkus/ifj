@@ -4,7 +4,7 @@ class Main
 {
 	static void run()
 	{
-		String a = ifj16.sort("aB1Ab2");
+		String a; a = ifj16.sort("aB1Ab2");
 		ifj16.print(a + "\n");
 	}
 }

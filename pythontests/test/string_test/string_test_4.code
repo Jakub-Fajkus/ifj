@@ -13,12 +13,12 @@ class Main
 
 class StringClass
 {
-	static String vzor = "abcdef";
+	static String vzor; vzor = "abcdef";
 	static void Citaj()
 	{
 		ifj16.print("Napis retazec abc" + "\n");
-		String nacitaj = ifj16.readString();
-		int cmp = ifj16.compare(vzor, nacitaj);
+		String nacitaj; nacitaj = ifj16.readString();
+		int cmp; cmp = ifj16.compare(vzor, nacitaj);
 		
 		while (cmp != 0)
 		{

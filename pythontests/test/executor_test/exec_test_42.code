@@ -6,7 +6,7 @@ class Main
 {
 	static void run()
 	{
-		int a = test();
+		int a; a = test();
 	}
 
 	static String test()

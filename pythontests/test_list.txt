@@ -43,7 +43,6 @@ Syntakticky test 11	syna_test/syna_test_11	2
 # Sematicke testy
 #
 Sematicky test 1	sema_test/sema_test_1	3
-Sematicky test 2	sema_test/sema_test_2	3
 Sematicky test 3	sema_test/sema_test_3	3
 Sematicky test 4	sema_test/sema_test_4	3
 Sematicky test 5	sema_test/sema_test_5	4

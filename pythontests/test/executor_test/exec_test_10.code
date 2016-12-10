@@ -4,7 +4,7 @@ class Main
 {
 	static void run()
 	{
-		double a = 0;
-		int b = 5.0 / a;
+		double a; a = 0;
+		int b; b = 5.0 / a;
 	}
 }

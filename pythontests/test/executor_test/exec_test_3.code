@@ -4,7 +4,7 @@ class Main
 {
     static void run()
     {
-        String input = "aa";
-        String output = ifj16.substr(input, 5, 2);
+        String input; input = "aa";
+        String output; output = ifj16.substr(input, 5, 2);
     }
 }

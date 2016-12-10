@@ -26,7 +26,8 @@ class Game
         ifj16.print("pricemz se pismena nesmeji v posloupnosti opakovat:");
         str = ifj16.readString();
         str = ifj16.sort(str);
-        int cmp = ifj16.compare(str, "abcdefgh");
+        int cmp;
+        cmp= ifj16.compare(str, "abcdefgh");
 
         if (cmp != 0)
         {

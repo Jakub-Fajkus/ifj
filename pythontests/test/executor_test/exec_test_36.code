@@ -4,7 +4,7 @@ class Main
 {
 	static void run()
 	{
-		int a = ifj16.find("Dlhy test", "text");
+		int a; a = ifj16.find("Dlhy test", "text");
 		ifj16.print(a + "\n");
 	}
 }
