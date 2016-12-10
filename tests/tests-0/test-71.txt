@@ -10,7 +10,8 @@ class Main
 
 		String vys = prvy + druhy + " koniec.";
 
-		int vysledok = vyhladaj(vys);
+		int vysledok;
+		vysledok = vyhladaj(vys);
 
 		// Vypis retazec a kde si to nasiel
 		ifj16.print(vys + "\n" + vysledok);
@@ -18,7 +19,8 @@ class Main
 
 	static int vyhladaj(String vstup)
 	{
-		int result = ifj16.find(vstup, "text");
+		int result;
+		result = ifj16.find(vstup, "text");
 		return result;
 	}
 }

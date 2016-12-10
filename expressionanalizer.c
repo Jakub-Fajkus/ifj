@@ -591,7 +591,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                 } else {
                     if (!firstPass) {
                         concatenateString();
-                        char *tempName = (char *) malloc(sizeof(char) * 30);
+                        char *tempName = (char *) malloc(sizeof(char) * (actualClass != NULL)? strlen(actualClass)+30 : 30);
                         strcpy(tempName, varName);
                         VARIABLE_VALUE *varVal = (VARIABLE_VALUE*)malloc(sizeof(VARIABLE_VALUE));
                         DATA_TYPE *varType = (DATA_TYPE*)malloc(sizeof(DATA_TYPE));

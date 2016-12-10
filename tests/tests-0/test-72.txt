@@ -17,13 +17,14 @@ class StringClass
 	static void Citaj()
 	{
 		ifj16.print("Napis retazec abc" + "\n");
-		String nacitaj = ifj16.readString();
-		int cmp = ifj16.compare(vzor, nacitaj);
+		String nacitaj = "abc";
+		int cmp;
+		cmp = ifj16.compare(vzor, nacitaj);
 		
 		while (cmp != 0)
 		{
 			ifj16.print("Teraz napis abcdef" + "\n");
-			nacitaj = ifj16.readString();
+			nacitaj = "abcdef";
 			cmp = ifj16.compare(vzor, nacitaj);
 		}
 	}
