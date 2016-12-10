@@ -1,6 +1,6 @@
 //to bude trochu slozitejsi upravit...
 class Main {
-    static double a = b + 5;
+    static double a = C.b + 5;
     static void run() {}
 }
 

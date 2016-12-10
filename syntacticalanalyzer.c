@@ -1136,6 +1136,7 @@ void makeFirstPass() {
     }
 
     semanticCheckForFunctionRun();
+    semanticCheckForMissingStaticVar();
 }
 
 void makeSecondPass() {

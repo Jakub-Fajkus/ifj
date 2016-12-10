@@ -109,13 +109,9 @@ void semantic_firstPass_testStaticVariable(char * name) {
         fullName = name;
     }
     if(actualFunction == NULL){
-        if(getVariable(NULL, &globalSymbolTable, actualClass, fullName) == NULL){
-            SYMBOL_TABLE_VARIABLE *variable = malloc(sizeof(SYMBOL_TABLE_VARIABLE));
-            variable->name = fullName;
-            variable->isMissingStaticVar =true;
-
-            TREE_NODE_DATA *treeData = createVariableData(variable);
-            BSTInsert(&globalSymbolTable, variable->name, *treeData);
+        if (getVariable(NULL, &globalSymbolTable, actualClass, fullName) == NULL) {
+            SYMBOL_TABLE_VARIABLE *variable = createAndInsertVariable(&globalSymbolTable, stringConcat("-!-!-", fullName), TYPE_INT, true);
+            variable->isMissingStaticVar = true;
         }
     }
 
@@ -338,6 +334,39 @@ void createInstructionsToCallIfj16Function(char *functionName, tDLList *instruct
     } else {
         printf("unknown function %s\n", functionName);
         exit(3);
+    }
+}
+
+void semanticCheckForMissingStaticVar(){
+    struct SYMBOL_TABLE_NODE *actualEL = NULL;
+
+    //new stack for checking all functions
+    tStack *MujStack = malloc(sizeof(tStack));
+    stackInit(MujStack);
+
+    //put all there
+    MujStack = BTInorder(globalSymbolTable);
+
+    STACK_ELEMENT *elem = malloc(sizeof(STACK_ELEMENT));
+
+    while(!stackEmpty(MujStack)){
+
+        stackTop(MujStack, elem);
+        actualEL = elem->data.symbolTableNode;
+
+        //check for errors 6
+        if (actualEL != NULL && actualEL->data->type == TREE_NODE_VARIABLE && actualEL->data->item->variable->isMissingStaticVar == true) {
+            SYMBOL_TABLE_VARIABLE *var = actualEL->data->item->variable;
+            char *variableName = ifj16_substr(var->name, strlen("-!-!-"), strlen(var->name) - strlen("-!-!-"));
+
+            SYMBOL_TABLE_VARIABLE *foundVar = getVariableFromTable(&globalSymbolTable, variableName);
+            if (foundVar != NULL) {
+                exit(6);
+            }
+        }
+
+        //pop top element
+        stackPop(MujStack);
     }
 }
 

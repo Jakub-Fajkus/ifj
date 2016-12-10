@@ -5,10 +5,14 @@ class Main
     {
         int redefine = 2;
 
+        redefine = redefine(3);
+        ifj16.print("redefine="+redefine);
+
     }
 
-    static void redefine(int a)
+    static int redefine(int a)
     {
-    	// prazdna
+    	ifj16.print("ahojte");
+        return 3;
     }
 }
