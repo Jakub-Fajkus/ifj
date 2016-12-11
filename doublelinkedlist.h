@@ -1,6 +1,8 @@
-//
-// Created by Jakub Fajkus on 14.11.16.
-//
+/**
+ * Implementace interpretu imperativního jazyka IFJ16.
+ *
+ * Jakub Fajkus
+ */
 
 #ifndef IFJ_DOUBLELINKEDLIST_H
 #define IFJ_DOUBLELINKEDLIST_H

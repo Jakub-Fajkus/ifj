@@ -1,6 +1,9 @@
-//
-// Created by rockuo on 19.11.16.
-//
+/**
+ * Implementace interpretu imperativního jazyka IFJ16.
+ *
+ * Jakub Fajkus
+ * Richard Bureš
+ */
 
 #include "expressionanalizer.h"
 #include "lexicalanalyzerstructures.h"

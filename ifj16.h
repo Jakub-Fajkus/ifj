@@ -1,3 +1,10 @@
+/**
+ * Implementace interpretu imperativního jazyka IFJ16.
+ *
+ * Jakub Fajkus
+ * Richard Bureš
+ */
+
 #ifndef	_IFJ16_H_
 #define	_IFJ16_H_
 

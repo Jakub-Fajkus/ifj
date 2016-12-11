@@ -1,9 +1,14 @@
-//
-// Created by Jakub Fajkus on 13.11.16.
-//
+/**
+ * Implementace interpretu imperativního jazyka IFJ16.
+ *
+ * Jakub Fajkus
+ * Richard Bureš
+ * Andrej Hučko
+ */
 
 #include "syntacticalanalyzer.h"
 #include "debug.h"
+
 int main(int argc, char *argv[])
 {
     if (argc != 2) {

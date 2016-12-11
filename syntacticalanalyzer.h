@@ -1,6 +1,11 @@
-//
-// Created by Jakub Fajkus on 12.11.16.
-//
+/**
+ * Implementace interpretu imperativního jazyka IFJ16.
+ *
+ * Jakub Fajkus
+ * Richard Bureš
+ * Andrej Hučko
+ * David Czernin
+ */
 
 #ifndef IFJ_SYNTACTICANALYZER_H
 #define IFJ_SYNTACTICANALYZER_H

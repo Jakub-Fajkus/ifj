@@ -1,3 +1,12 @@
+/**
+ * Implementace interpretu imperativního jazyka IFJ16.
+ *
+ * Jakub Fajkus
+ * Richard Bureš
+ * Andrej Hučko
+ * David Czernin
+ */
+
 #include <stdint.h>
 #include <stdlib.h>
 

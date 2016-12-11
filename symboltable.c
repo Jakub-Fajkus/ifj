@@ -1,6 +1,10 @@
-//
-// Created by Jakub Fajkus on 14.11.16.
-//
+/**
+ * Implementace interpretu imperativního jazyka IFJ16.
+ *
+ * Jakub Fajkus
+ * Richard Bureš
+ * David Czernin
+ */
 
 #include "symboltable.h"
 #include "ifj16.h"

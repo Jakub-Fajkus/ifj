@@ -1,6 +1,10 @@
-//
-// Created by Andrej on 19.11.2016.
-//
+/**
+ * Implementace interpretu imperativního jazyka IFJ16.
+ *
+ * Jakub Fajkus
+ * Richard Bureš
+ * Andrej Hučko
+ */
 
 #ifndef IFJ_INTERPRET_H
 #define IFJ_INTERPRET_H

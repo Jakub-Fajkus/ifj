@@ -1,14 +1,11 @@
-//
-// Created by Andrej on 19.11.2016.
-//
+/**
+ * Implementace interpretu imperativního jazyka IFJ16.
+ *
+ * Jakub Fajkus
+ * Richard Bureš
+ * Andrej Hučko
+ */
 
-// contains:
-/*    #include<stdio.h>
-      #include<stdlib.h>
-      #include<string.h>
-      #include<stdarg.h>
-      #include<stdbool.h>
-*/
 #include "ifj16.h"  // Built-in functions & most libraries
 #include "stack.h"
 #include "interpret.h"

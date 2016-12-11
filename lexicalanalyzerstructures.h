@@ -1,6 +1,9 @@
-//
-// Created by Jakub Fajkus on 14.11.16.
-//
+/**
+ * Implementace interpretu imperativního jazyka IFJ16.
+ *
+ * Jakub Fajkus
+ * Richard Bureš
+ */
 
 #ifndef IFJ_LEXICALANALYZERSTRUCTURES_H
 #define IFJ_LEXICALANALYZERSTRUCTURES_H

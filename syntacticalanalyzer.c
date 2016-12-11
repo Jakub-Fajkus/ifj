@@ -1,15 +1,16 @@
-//
-// Created by Jakub Fajkus on 12.11.16.
-//
+/**
+ * Implementace interpretu imperativního jazyka IFJ16.
+ *
+ * Jakub Fajkus
+ * Richard Bureš
+ * Andrej Hučko
+ * David Czernin
+ */
+
 #include "syntacticalanalyzer.h"
 #include "ifj16.h"
 #include "debug.h"
 #include "semanticalanalyzer.h"
-#include "lexicalanalyzerstructures.h"
-#include "basicstructures.h"
-#include "symboltable.h"
-#include <stdbool.h>
-#include "debug.h"
 #include "interpret.h"
 
 tDLList *globalTokens;

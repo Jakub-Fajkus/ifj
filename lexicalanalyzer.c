@@ -1,7 +1,8 @@
-//
-// Created by rockuo on 9.10.16.
-// This is library for implementation of IFJ16 class
-//
+/**
+ * Implementace interpretu imperativního jazyka IFJ16.
+ *
+ * Richard Bureš
+ */
 
 
 #include <limits.h>

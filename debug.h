@@ -1,6 +1,9 @@
-//
-// Created by Jakub Fajkus on 17.11.16.
-//
+/**
+ * Implementace interpretu imperativního jazyka IFJ16.
+ *
+ * Jakub Fajkus
+ * Richard Bureš
+ */
 
 #ifndef IFJ_DEBUG_H
 #define IFJ_DEBUG_H

@@ -1,6 +1,8 @@
-//
-// Created by rockuo on 9.10.16.
-//
+/**
+ * Implementace interpretu imperativního jazyka IFJ16.
+ *
+ * Richard Bureš
+ */
 
 #ifndef IFJ_LEXICALANALYZER_H
 #define IFJ_LEXICALANALYZER_H
