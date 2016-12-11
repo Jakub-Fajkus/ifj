@@ -34,4 +34,9 @@ char *ifj16_sort(char *s);
 
 char *stringConcat(char *str1, char *str2);
 
+void quickSort(char *arr, int left, int right);
+
+void swap(char *arr, int left, int right);
+
+char* quickSortWrapper(char *s);
 #endif

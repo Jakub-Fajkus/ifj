@@ -10,7 +10,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "ial.h"
 #include "ifj16.h"
 #include "symboltable.h"
 #include "debug.h"
