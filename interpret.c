@@ -19,15 +19,6 @@ bool returningPromFunction = false;
 
 VARIABLE *getVariableFromFrames(tDLList *actualFrame, tDLList *globalFrame, SYMBOL_TABLE_FUNCTION *activeFunction, char *variableName);
 
-/**
- *
- * @param InstructionList
- * @param globalFrame
- * @param stackOfLocalFrames
- * @param activeFunction
- * @param checkReturn - whether to check if i should ask for return function
- * @return
- */
 int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLocalFrames, struct SYMBOL_TABLE_FUNCTION_STR *activeFunction, bool checkReturn ){
     if (InstructionList == NULL) {
         return 99;
@@ -40,7 +31,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
     INSTRUCTION *Instr;
 
     struct SYMBOL_TABLE_FUNCTION_STR *returnedFromFunction;
-    tDLList *upcomingLocalFrame = NULL; // creating the pointer, yet not using it
+    tDLList *upcomingLocalFrame = NULL;
     tDLList *actualLocalFrame = NULL;
     if (stackOfLocalFrames != NULL) {
         actualLocalFrame = getActualLocalFrame(stackOfLocalFrames);    // can be Null
@@ -52,13 +43,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
     while ( 1 ) {   // The great cycle
         //check if the list is not empty
         if(InstructionList->Act == NULL) {
-//            if ( activeFunction->type != TYPE_VOID ) {
-//                // This user function is not VOID AND DOES NOT include return X.
-//                return 8;
-//            } else {
-                //the function is void and it's body is empty
                 return 0;
-//            }
         }
 
         // Copy the actual instruction from the list & repoint
@@ -177,18 +162,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             }
             // ended recursion
 
-            // v tomto momente mame ukoncenu instance vykonavania funkcie, treba popnut stack a
-            // .... technicky "Instruction_Copy_From_Popped_Frame_To_Actual"
-
-            //but first, let me pop the stack, in order to work with 3 frames... i really wanna find it
-
             if ( returnedFromFunction != NULL ) {
-
-//                for (int i = 0; i < stackOfLocalFrames->actualSize; ++i) {
-//                    debugPrintf("---printing stack with index %d\n", i);
-//                    printFrame(stackOfLocalFrames->arr[i].data.localFrame);
-//                    debugPrintf("---end of printing stack with index %d\n", i);
-//                }
 
                 debugPrintf("What is the active function? |%s|", returnedFromFunction->name);
                 if ( returnedFromFunction->type != TYPE_VOID ) {
@@ -216,7 +190,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                     }
 
                     // DISCARDING TOP-OF-STACK
-                    stackPop(stackOfLocalFrames);   // removal of top-local-frame
+                    stackPop(stackOfLocalFrames);
 
                     // Executing returning value to a variable
                     VARIABLE *variableFromNewTopFrame = findFrameVariable(stackOfLocalFrames->arr[stackOfLocalFrames->top].data.localFrame, seekName);
@@ -239,10 +213,8 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
                 } // end of case where we have non-void function returning
                 else {
-                    debugPrintf("Maybe this helps?\n");
-
                     // DISCARDING TOP-OF-STACK
-                    stackPop(stackOfLocalFrames);   // removal of top-local-frame
+                    stackPop(stackOfLocalFrames);
                 }
             }
             else {
@@ -354,8 +326,6 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
             VARIABLE *param2 = getVariableFromFrames(actualLocalFrame,globalFrame,activeFunction, params->Act->element.data.parameter->name);
             ListSuccessor(params);
             VARIABLE *param3 = getVariableFromFrames(actualLocalFrame,globalFrame,activeFunction, params->Act->element.data.parameter->name);
-
-            //debugPrintf("PARAMS: %s %d %d \n\n\n\n\n\n\n\n\n\n\n", param1->value.stringValue ,param2->value.intValue, param3->value.intValue);
 
             if(param1 == NULL || param2 == NULL || param3 == NULL) {
                 debugPrintf("one of substr parameters was not found in frames\n");
@@ -567,12 +537,6 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
 
         // break condition
         if (InstructionList->Last->element.data.instr == Instr) {
-//            if ( checkReturn && activeFunction->type != TYPE_VOID ) {
-//                if (Instr->type != Instruction_ReturnFunction) {
-//                    // This user function is not VOID AND DOES NOT include return X.
-//                    return 8;
-//                }
-//            }
             break;
         }
         ListSuccessor(InstructionList);
@@ -581,7 +545,7 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
     return 0; // I had no idea what have I done
 }   // end of the magical interpret
 
-//...
+
 
 int executeInstructionMathOperation(INSTRUCTION_TYPE instrType, VARIABLE *dst, VARIABLE *src1, VARIABLE *src2) {
 
@@ -799,7 +763,7 @@ int executeInstructionMathOperation(INSTRUCTION_TYPE instrType, VARIABLE *dst, V
     return 0;
 }   // end of Executing
 
-//...
+
 
 int executeInstructionExpressionEvaluation(INSTRUCTION_TYPE instrType, VARIABLE *dst, VARIABLE *src1, VARIABLE *src2) {
 
@@ -1105,7 +1069,7 @@ int executeInstructionExpressionEvaluation(INSTRUCTION_TYPE instrType, VARIABLE 
     return 0;
 }
 
-//...
+
 
 int executeInstructionAssign(VARIABLE *dst, VARIABLE *src) {
     int type_dst = dst->type;
@@ -1142,7 +1106,7 @@ int executeInstructionAssign(VARIABLE *dst, VARIABLE *src) {
     return 0;
 }   // end of Assign instruction
 
-//...
+
 
 int executeInstructionBuiltInFunction(INSTRUCTION_TYPE instrType, VARIABLE *dst, VARIABLE *src1, VARIABLE *src2) {
 

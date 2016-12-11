@@ -2,6 +2,17 @@ class Main
 {
     static void run()
     {
+        String x;
+        ifj16.print();
+    }
+}
+
+
+/*
+class Main
+{
+    static void run()
+    {
         int a;
         ifj16.print("Zadejte cislo pro vypocet faktorialu: ");
         //a = ifj16.readInt();
@@ -29,3 +40,4 @@ class Main
         return a + b * c + d;
     }
 }
+*/
