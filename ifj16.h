@@ -39,4 +39,6 @@ void quickSort(char *arr, int left, int right);
 void swap(char *arr, int left, int right);
 
 char* quickSortWrapper(char *s);
+
+int boyer_moore (unsigned char *string, unsigned int stringlen,unsigned char *pat, unsigned int patlen);
 #endif
