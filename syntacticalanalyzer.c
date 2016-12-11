@@ -19,7 +19,6 @@ struct SYMBOL_TABLE_NODE *globalSymbolTable;
 struct SYMBOL_TABLE_FUNCTION_STR *actualFunction;
 struct tDLListStruct *mainInstructionList;
 struct tDLListStruct *actualInstructionList;
-struct STACK_STR *returnToVariables;
 char* actualClass;
 
 bool firstPass = true;
@@ -43,7 +42,6 @@ void returnCachedTokens(unsigned int count);
  * @return
  */
 tDLList* getAllTokens(char *fileName);
-void testTokens();
 void makeFirstPass();
 void makeSecondPass();
 void addIfj16Functions();
@@ -244,7 +242,6 @@ bool ruleClassDefinition(char *className){
     } else {
         //rule prog was not applied, but it has an epsilon rule... so check if the token is '}'(in this particular case...)
         //if so, the class definition ended and rule is applied
-//        token = getCachedToken();
         if (token->type == BRACKET && token->data.bracket.name == '}') {
             returnCachedTokens(1);
             return true;
@@ -539,12 +536,6 @@ bool ruleStat(){
     tDLElemPtr activeElementRuleApplication = globalTokens->Act;
     char *functionOrVariableName = NULL;
 
-//    tDLList *listOfInsTrue = malloc(sizeof(tDLList));
-//    tDLList *listOfInsFalse = malloc(sizeof(tDLList));
-//    ListInit(listOfInsTrue);
-//    ListInit(listOfInsFalse);
-
-
     //<STAT> -> <ID><STAT_BEGINNING_ID>;
     if (ruleId(&functionOrVariableName)) {
         //neco?
@@ -610,7 +601,6 @@ bool ruleStat(){
             ListInit(trueList);
             tDLList *falseList = malloc(sizeof(tDLList));
             ListInit(falseList);
-//            INSTRUCTION *whileInstruction = createInstrWhile()
 
             token = getCachedToken();
             if (token->type == BRACKET && token->data.bracket.name == '(') {
@@ -673,9 +663,6 @@ bool ruleStat(){
             DATA_TYPE tempVariableType;
 
             if (ruleExpSemicolon(&tempVariableName, &tempVariableType)) {
-                STACK_ELEMENT *stackElement = (STACK_ELEMENT*)malloc(sizeof(STACK_ELEMENT));
-                stackTop(returnToVariables,stackElement);
-                stackPop(returnToVariables);
                 if(!firstPass) {
                     if(tempVariableName != NULL) {
                         if (actualFunction->type != tempVariableType) {
@@ -727,9 +714,6 @@ bool ruleExpSemicolon(char **tempVariableName, DATA_TYPE *tempVariableType) {
     return false;
 }
 
-/**
- *
- */
 bool ruleFuncCall(char *calledFunctionName, char *assignReturnValueToVariable){
     tDLElemPtr activeElementRuleApplication = globalTokens->Act;
 
@@ -1045,19 +1029,11 @@ bool ruleStatBeginningId(char *functionOrPropertyName) {
                                 exit(8);
                             }
 
-
                             initializeVariable(functionOrPropertyName);
-
-                            //add functionOrPropertyName
-//                            ListInsertLast(actualFunction->instructions, wrapInstructionIntoListElement(createInstrAssign(functionOrPropertyName, resultVariableName)));
                         }
 
                         return true;
-                    }else{
-                        //pop if function Not called
-                        stackPop(returnToVariables);
                     }
-
                 }
                 //
             } else if (code == 1) {
@@ -1075,23 +1051,6 @@ bool ruleStatBeginningId(char *functionOrPropertyName) {
 
     globalTokens->Act = activeElementRuleApplication;
     return false;
-}
-
-void testTokens() {
-    tDLList *tokens = getAllTokens("test1-0.txt");
-    TOKEN *actualToken;
-
-    actualToken = getCachedToken(); //1.
-    printToken(actualToken);
-    actualToken = getCachedToken(); //2.
-    printToken(actualToken);
-    actualToken = getCachedToken(); //3.
-    printToken(actualToken);
-    actualToken = getCachedToken(); //4.
-    printToken(actualToken);
-    returnCachedTokens(1); //return to 3. and 2.
-    actualToken = getCachedToken(); //2.
-    printToken(actualToken);
 }
 
 void runSyntacticalAnalysis(char *fileName) {
@@ -1129,8 +1088,6 @@ void makeFirstPass() {
     ListFirst(mainInstructionList);
     ListInsertLast(mainInstructionList, wrapInstructionIntoListElement(createFirstInstruction()));
 
-    returnToVariables = malloc(sizeof(struct STACK_STR));
-    stackInit(returnToVariables);
     bool result = ruleProg();
 
     if(result == false) {
@@ -1152,6 +1109,7 @@ void makeSecondPass() {
     if(result == 0) {
         exit(2);
     }
+
     semantical_ExistAndCorrectTypeOfReturns(&globalSymbolTable);
 }
 
@@ -1177,41 +1135,6 @@ int analyzeExpression(tDLList *instructionList, char **resultVariableName, DATA_
         exit(code);
     }
 }
-
-
-//void createInstructionsForGlobalVariables(struct tDLListStruct *mainInstructionList) {
-//    struct STACK_STR *symbolTableStacked = BTInorder(*globalSymbolTable);
-//
-////    Create_GlobalFrame_And_LocalStack
-//    INSTRUCTION *createGlobalFrameInstruction = createFirstInstruction();
-//    ListFirst(mainInstructionList); //just in case
-//
-//    //insert the first instruction
-//    DLPostInsert(mainInstructionList, wrapInstructionIntoListElement(createGlobalFrameInstruction));
-//
-//    //insert global variables
-//    while (!stackEmpty(symbolTableStacked)) {
-//        struct STACK_ELEMENT actualElement;
-//        stackTop(symbolTableStacked, &actualElement);
-//
-//        //filter all records for classe itself
-//        if (actualElement.data.symbolTableNode->data->type == TREE_NODE_VARIABLE) {
-//            printf("variable name: %s\n", actualElement.data.symbolTableNode->data->item->variable->name);
-//            if (ifj16_find(actualElement.data.symbolTableNode->data->item->variable->name, ".*")) {
-//
-//                stackPop(symbolTableStacked);
-//                continue;
-//            }
-//        } else {
-//            fprintf(stderr, "function name: %s\n", actualElement.data.symbolTableNode->data->item->function->name);
-//        }
-//
-////        DLPostInsert(mainInstructionList, wrapInstructionIntoListElement(createGlobalVariable(actualElement.data.symbolTableNode->data->item->variable->name, actualElement.data.symbolTableNode->data->item->variable->type)));
-//
-//
-//        stackPop(symbolTableStacked);
-//    }
-//}
 
 
 LIST_ELEMENT wrapInstructionIntoListElement(INSTRUCTION *instr) {
