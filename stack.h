@@ -9,7 +9,7 @@
 #define IFJ_STACK_H
 
 #include "symboltable.h"
-#include "expressionanalizer.h"
+#include "expressionanalyzer.h"
 #include <stdbool.h>
 
 #define STACK_SIZE_LIMIT 100000

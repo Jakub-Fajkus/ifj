@@ -26,7 +26,7 @@ void start(TOKEN *);
 
 void exclamationMark(TOKEN *);
 
-void logical1(TOKEN *, int);
+void logical(TOKEN *, int);
 
 void slash(TOKEN *);
 
@@ -34,7 +34,7 @@ void inLineComment(TOKEN *);
 
 void multiLineComment(TOKEN *);
 
-void string1(TOKEN *);
+void stringfn(TOKEN *);
 
 void num(TOKEN *, int);
 
@@ -74,7 +74,7 @@ TOKEN *getToken() {
     return token;
 }
 
-void start(TOKEN *token) {
+void start(TOKEN *token) { // public function to get token
     int c = getc(fp);
     if (c == EOF) {
         token->type = END_OF_FILE;
@@ -83,7 +83,7 @@ void start(TOKEN *token) {
     } else if (c >= '0' && c <= '9') {
         num(token, c);
     } else if (c == '"') {
-        string1(token);
+        stringfn(token);
     } else if (c == '\t' || c == '\n' || c == ' ') {
         start(token);
     } else if (c == '/') {
@@ -92,7 +92,7 @@ void start(TOKEN *token) {
         token->type = OPERATOR_ARITHMETIC;
         token->data.operatorArithmetic.name = (char) c;
     } else if (c == '<' || c == '>') {
-        logical1(token, c);
+        logical(token, c);
     } else if (c == '=') {
         equating(token);
     } else if (c == '!') {
@@ -136,7 +136,7 @@ void equating(TOKEN *token) {
     }
 }
 
-void logical1(TOKEN *token, int c1) {
+void logical(TOKEN *token, int c1) {
     int c2 = getc(fp);
     char *str = (char *) malloc(sizeof(char) * 3);
     str[0] = (char) c1;
@@ -202,7 +202,7 @@ void multiLineComment(TOKEN *token) {
 }
 
 
-void string1(TOKEN *token) {
+void stringfn(TOKEN *token) {
     int c, i=0, j = 0;
     bool noEscape = true;
     int strSize = 100;

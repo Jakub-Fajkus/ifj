@@ -5,7 +5,7 @@
  * Richard Bureš
  */
 
-#include "expressionanalizer.h"
+#include "expressionanalyzer.h"
 #include "lexicalanalyzerstructures.h"
 #include "symboltable.h"
 #include "stack.h"
@@ -26,12 +26,13 @@ DATA_TYPE returnType;
 char *varName = NULL;
 int generate3AddressCode(tDLList *threeAddressCode,tStack *stack, tStack *backStack, bool firstPass);
 char *convertShortNameToFullName(char *name);
-INSTRUCTION *createInstrMathWithUpdatedNames(INSTRUCTION_TYPE instType, char *nameDst, char *nameSrc1, char *nameSrc2);
 
+
+INSTRUCTION *createInstrMathWithUpdatedNames(INSTRUCTION_TYPE instType, char *nameDst, char *nameSrc1, char *nameSrc2);
 INSTRUCTION *createLocalOrGlobalVariable(char *name, DATA_TYPE type);
 INSTRUCTION *pushLocalOrGlobalVariable(char *name, DATA_TYPE type, VARIABLE_VALUE value);
 
-void setVarName(char *name){
+void setVarName(char *name){ // sets name for return
     if(varName != NULL)
         varName = (char*)realloc(varName,sizeof(char)*(strlen(name)+1));
     else
@@ -39,7 +40,7 @@ void setVarName(char *name){
     strcpy(varName,name);
 }
 
-void setReturnType(DATA_TYPE type){
+void setReturnType(DATA_TYPE type){ // sets type for return
     if(type == TYPE_BOOL){
         returnType = TYPE_BOOL;
         return;
@@ -64,7 +65,7 @@ void setReturnType(DATA_TYPE type){
 
 bool stopNow = false;
 
-static char terminalTable[14][14] = {
+static char terminalTable[14][14] = { // precedent table to 2 dimensional table
            /*+*/ /*-*//***//*(*//*)*//*I*//*/*//*<*//*>*//*>=*//*>=*//*==*//*!=*//*$*/
         /*+*/{'>', '>', '<', '<', '>', '<', '<', '>', '>', '>', '>', '>', '>', '>'},
         /*-*/
@@ -95,7 +96,7 @@ static char terminalTable[14][14] = {
              {'<', '<', '<', '<', 'X', '<', '<', '<', '<', '<', '<', '<', '<', 'S'}
 };
 
-DATA_TYPE getOutputType(DATA_TYPE type1, DATA_TYPE type2) {
+DATA_TYPE getOutputType(DATA_TYPE type1, DATA_TYPE type2) { // get output type by given operands
     if (type1 == TYPE_STRING || type2 == TYPE_STRING) {
         return TYPE_STRING;
     } else if (type1 == TYPE_DOUBLE || type2 == TYPE_DOUBLE) {
@@ -105,7 +106,7 @@ DATA_TYPE getOutputType(DATA_TYPE type1, DATA_TYPE type2) {
     }
 }
 
-EA_TERMINAL_TYPE getTerminalDataType(TOKEN token) {
+EA_TERMINAL_TYPE getTerminalDataType(TOKEN token) { // get key for precedent
     switch (token.type) {
         case KEYWORD:
         case OPERATOR_ASSIGN:
@@ -173,7 +174,7 @@ EA_TERMINAL_TYPE getTerminalDataType(TOKEN token) {
     return EA_UNKNOWN;
 }
 
-int parseExpression(tDLList *threeAddressCode, char **returnValName, DATA_TYPE *returnValType,bool firstPass) {
+int parseExpression(tDLList *threeAddressCode, char **returnValName, DATA_TYPE *returnValType,bool firstPass) { // public function/ interface of expression analyzer
     debugPrintf("\nDEBUG expression START\n");
     returnType = TYPE_INT;
     bool lookingForTerminal = true;
@@ -189,6 +190,7 @@ int parseExpression(tDLList *threeAddressCode, char **returnValName, DATA_TYPE *
 
     stackPush(stack, stackElement);
 
+    // return error when first token is part of expression
     TOKEN *token = getCachedToken();
     if ((token->type == BRACKET && token->data.bracket.name == ')') ||
         token->type == KEYWORD || token->type == OPERATOR_ASSIGN ||
@@ -215,7 +217,7 @@ int parseExpression(tDLList *threeAddressCode, char **returnValName, DATA_TYPE *
             case EA_TERMINAL: {
                 if (lookingForTerminal) {
                     char action = terminalTable[stackElement.data.terminalData.type][terminalData.type];
-                    if (stopNow && action != 'S') {
+                    if (stopNow && action != 'S') { // return error when expression continues after logical expression
                         return 2;
                     }
                     switch (action) {
@@ -254,7 +256,7 @@ int parseExpression(tDLList *threeAddressCode, char **returnValName, DATA_TYPE *
                         case 'X':
                             fprintf(stderr, "Invalid expression");
                             return 2;
-                        case 'S':
+                        case 'S': // $E$ expression
                             returnCachedTokens(1);
                             debugPrintf("\nDEBUG expression END\n");
                             //reset globals
@@ -264,7 +266,7 @@ int parseExpression(tDLList *threeAddressCode, char **returnValName, DATA_TYPE *
                                 (*returnValType) = returnType;
                             }
                             return 0;
-                        case 'F':
+                        case 'F': // function call founded
                             if (!stackEmpty(stack)) {
                                 stackTop(stack, &stackElement);
                                 stackPop(stack);
@@ -285,12 +287,11 @@ int parseExpression(tDLList *threeAddressCode, char **returnValName, DATA_TYPE *
                             returnCachedTokens(2);
                             return -1;
                         default:
-                            debugPrintf("DEBUG END ");
                             exit(99);
                     }
                     break;
                 }
-            } //NO BREAL
+            } //NO BREAK
             case EA_NOT_TERMINAL:
                 stackPop(stack);
                 stackPush(backStack, stackElement);
@@ -310,7 +311,7 @@ int parseExpression(tDLList *threeAddressCode, char **returnValName, DATA_TYPE *
 
 }
 
-INSTRUCTION_TYPE actionToLogicInstruction(EA_TERMINAL_TYPE actionType) {
+INSTRUCTION_TYPE actionToLogicInstruction(EA_TERMINAL_TYPE actionType) { // translate Expression Analyzer action instruction for interpret
     switch (actionType) {
         case EA_IS_LESS:
             return Instruction_Bool_Less;
@@ -357,7 +358,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
     EA_TERMINAL_TYPE actionType = stackElement1.data.actionType;
     stackElement2.type = EA_TERMINAL_ACTION; // fake value
 
-    switch (actionType) {
+    switch (actionType) { // calidate input
         case EA_IS_LESS:
         case EA_IS_MORE:
         case EA_IS_MORE_EQUAL:
@@ -548,7 +549,6 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
         case EA_I:
             if (stackElement1.type == EA_TERMINAL &&
                 stackElement1.data.terminalData.type == EA_I) {
-//                stackElement2 = temp :)
 
                 if (stackElement1.data.terminalData.token.type == IDENTIFIER) {
                     stackElement2.data.notTerminalData.name = stackElement1.data.terminalData.token.data.identifier.name;
@@ -680,7 +680,7 @@ INSTRUCTION *pushLocalOrGlobalVariable(char *name, DATA_TYPE type, VARIABLE_VALU
 }
 
 
-void concatenateString() {
+void concatenateString() { // "generate" variable for return
     if(varName != NULL)
         varName = (char*)realloc(varName,sizeof(char)*100);
     else
