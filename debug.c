@@ -2,8 +2,6 @@
 // Created by Jakub Fajkus on 17.11.16.
 //
 #include "debug.h"
-#include "stack.h"
-#include "basicstructures.h"
 
 void printAllTokens(tDLList *list) {
     LIST_ELEMENT *actualElement = malloc(sizeof(LIST_ELEMENT));
@@ -34,6 +32,8 @@ void printEnumValue(int value) {
         case SEMICOLON: debugPrintf("SEMICOLON\n"); break;
         case END_OF_FILE: debugPrintf("END_OF_FILE\n"); break;
         case LEX_ERROR: debugPrintf("LEX_ERROR\n"); break;
+
+        default: return;
     }
 }
 
@@ -53,6 +53,7 @@ void printToken(TOKEN *token) {
         case SEMICOLON: debugPrintf("SEMICOLON: %c\n", ';'); break;
         case END_OF_FILE: debugPrintf("END_OF_FILE:\n"); break;
         case LEX_ERROR: debugPrintf("LEX_ERROR: \n"); break;
+        default: return;
     }
 }
 
@@ -133,23 +134,10 @@ void printInstruction(INSTRUCTION *instruction) {
         case Instruction_IF:                                {
 
             debugPrintf("\nInstruction_IF: ridiciProm:%s\n", (char*)instruction->address_dst);
-//            debugPrintf("     *****Instructions for true branch:\n");
-//            printInstructions((tDLList*)instruction->address_src1);
-//            debugPrintf("     *****End of true branch:\n\n");
-//            debugPrintf("     *****Instructions for false branch:\n");
-//            printInstructions((tDLList*)instruction->address_src2);
-//            debugPrintf("     *****End of false branch:\n\n");
             break;
         } ;
         case Instruction_WHILE:                             {
             debugPrintf("\nInstruction_WHILE, result in var: %s\n", (char*)instruction->address_dst);
-//            debugPrintf("     *****Instructions for condition:\n");
-//            printInstructions((tDLList*)instruction->address_src1);
-//            debugPrintf("     *****End of instructions for condition:\n");
-//
-//            debugPrintf("     *****Instructions for body:\n");
-//            printInstructions((tDLList*)instruction->address_src2);
-//            debugPrintf("     *****End of instructions for body:\n\n");
             break;
         }
         case Instruction_Bool_Equals:                       debugPrintf("Instruction_Bool_Equals: %s = %s == %s \n", (char*)instruction->address_dst, (char*)instruction->address_src1,(char*)instruction->address_src2); break;

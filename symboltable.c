@@ -163,7 +163,7 @@ SYMBOL_TABLE_VARIABLE* getVariableFromTable(SYMBOL_TABLE_NODEPtr *symbolTable, c
     }
 
     if (nodeData->type != TREE_NODE_VARIABLE) {
-        debugPrintf("internal error, requested %s is not a variable", name);
+        fprintf(stderr, "internal error, requested %s is not a variable", name);
         exit(99);
     }
 
@@ -179,7 +179,7 @@ SYMBOL_TABLE_FUNCTION* getFunctionFromTable(SYMBOL_TABLE_NODEPtr *symbolTable, c
     }
 
     if (nodeData->type != TREE_NODE_FUNCTION) {
-        debugPrintf("internal error, requested %s is not a function", name);
+        fprintf(stderr, "internal error, requested %s is not a function", name);
         exit(99);
     }
 
@@ -329,7 +329,7 @@ SYMBOL_TABLE_FUNCTION* createAndInsertFunction(SYMBOL_TABLE_NODEPtr *symbolTable
     debugPrintf("inserting a function %s\n", name);
 
     if (NULL != getNodeDataFromTable(symbolTable, name)) {
-        debugPrintf("redeclaration of function or variable %s", name);
+        fprintf(stderr, "redeclaration of function or variable %s", name);
         exit(3);
     }
 
@@ -386,7 +386,7 @@ void checkIfVariableIsInitialized(SYMBOL_TABLE_NODEPtr *symbolTable, char *name)
     SYMBOL_TABLE_VARIABLE* foundVariable = getVariableFromTable(symbolTable, name);
 
     if (foundVariable == NULL) {
-        debugPrintf("checkIfVariableIsInitialized: variable %s was not found", name);
+        fprintf(stderr, "variable %s was not found", name);
         exit(99);
     }
 

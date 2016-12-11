@@ -3,7 +3,7 @@
 
 class Main 
 {
-    static int x;
+    static double x;
     static void run() {
     Main.x = ifj16.readDouble();
    }

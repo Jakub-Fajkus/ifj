@@ -20,7 +20,6 @@ int instrCounter = 0;
 
 bool returningPromFunction = false;
 
-//TODO: solve execution of insertVar into ActualLocalFrame, and the new CopyToUpcomingFrame instruction
 VARIABLE *getVariableFromFrames(tDLList *actualFrame, tDLList *globalFrame, SYMBOL_TABLE_FUNCTION *activeFunction, char *variableName);
 
 /**
@@ -73,8 +72,6 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
         printInstruction(Instr);
 
         if (Instr->type == Instruction_End_Interpret) { debugPrintf("Instruction_End_Interpret\n");
-            //TODO: return value, free all resources used by interpret (stack & globalframe)
-
             debugPrintf("----- I am ending!\n");
             return 0;
         }
@@ -484,14 +481,13 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                     }
 
                     if (!(dst != NULL && src1 != NULL && src2 == NULL)){
-                        //TODO: free?
                         return 99;
                     }
                     debugPrintf("Instruction_Assign\n");
 
 
                     if (src1->initialized == false) {
-                        debugPrintf("Newly implemented: working with uninitialised variable.name: %s in function %s\n", src1->name, activeFunction->name);
+                        fprintf(stderr, "working with uninitialised variable.name: %s in function %s\n", src1->name, activeFunction->name);
                         return 8;
                     }
 
@@ -508,17 +504,14 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                 case Instruction_Divide:
                     ;
                     if ( dst ==NULL || src1 == NULL || src2 == NULL ){
-                        //TODO: dst, src1 or src2 not found
-                        //free resources
                         return 99;
                     }
 
                     if (src1->initialized == false || src2->initialized == false) {
 
-                        debugPrintf("Newly implemented: working with uninitialised variable.name: %s %s\n", src1->name, src2->name);
+                        fprintf(stderr, "Newly implemented: working with uninitialised variable.name: %s %s\n", src1->name, src2->name);
                         return 8;
                     }
-                    //TODO: correct? i just want to set the dst as initialised.
                     dst->initialized = true;
                     int mathRetValue = executeInstructionMathOperation(Instr->type, dst, src1, src2);
                     if ( mathRetValue != 0 ){
@@ -539,11 +532,10 @@ int Interpret( tDLList *InstructionList, tDLList *globalFrame, tStack *stackOfLo
                     }
 
                     if (src1->initialized == false || src2->initialized == false) {
-                        debugPrintf("Newly implemented: working with uninitialised variable.name: %s %s\n", src1->name, src2->name);
+                        fprintf(stderr, "working with uninitialised variable.name: %s %s\n", src1->name, src2->name);
                         return 8;
                     }
-                    //TODO: correct? i just want to set the dst as initialised.
-//                    dst->initialized = true;
+
                     int evalRetValue = executeInstructionExpressionEvaluation(Instr->type, dst, src1, src2);
                     if ( evalRetValue != 0 ){
                         debugPrintf("Expression evaluation failed.\n");
@@ -1256,7 +1248,6 @@ char* getClassNameWithDotFromFullIdentifier(char *fullIdentifier) {
     int find = ifj16_find(fullIdentifier, ".");
 
     if(find == -1) {
-        //todo change
         exit(99);
     }
 

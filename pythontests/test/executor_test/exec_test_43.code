@@ -10,8 +10,10 @@ class Main
 		a = test();
 	}
 
-	static void test()
+	static double test()
 	{
-		return;
+	    double sedm = 7;
+
+		return 22 / sedm;
 	}
 }

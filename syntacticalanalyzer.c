@@ -21,8 +21,6 @@ struct tDLListStruct *actualInstructionList;
 struct STACK_STR *returnToVariables;
 char* actualClass;
 
-//todo: osetrit datovy typ vyrazu v prikazu return
-
 bool firstPass = true;
 
 /**
@@ -289,7 +287,7 @@ bool ruleDefinition(char *className, DATA_TYPE type, char *functionOrPropertyNam
 }
 
 //only for static variables
-bool rulePropDef(bool *variableInitialized, DATA_TYPE variableType, char *variableName, char *className){
+bool rulePropDef(bool *variableInitialized, DATA_TYPE variableType, char *variableName, char *className) {
     tDLElemPtr activeElementRuleApplication = globalTokens->Act;
     TOKEN *token = getCachedToken();
     *variableInitialized = false;
@@ -320,7 +318,7 @@ bool rulePropDef(bool *variableInitialized, DATA_TYPE variableType, char *variab
                     semanticCreateAndInsertVariable(&globalSymbolTable, fullyQualifiedVariableName, variableType, true);
                 } else{
                     if(!canConvertTypes(variableType, resultVariableType)) {
-                        debugPrintf("Incompatible types for assigned");
+                        fprintf(stderr, "Incompatible types for assign");
                         exit(4);
                     }
 
@@ -509,13 +507,12 @@ bool ruleDecl(DATA_TYPE declaredType, char *variableName){
                     ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createActualLocalVariable(variableName, declaredType)));
 
                     if(!canConvertTypes(declaredType, resultVariableType)) {
-                        debugPrintf("Incompatible types for assigned");
+                        fprintf(stderr, "Incompatible types for assign");
                         exit(4);
                     }
 
                     //create instruction to assign the temporal variable created by expAnalyzer to the local variable which was defined right now
                     ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createInstrAssign(variableName, resultVariableName)));
-                    //todo: check type of the result variable with variable declaration resultVariableType == declaredType or is convertible to type
                 }
 
                 return true;
@@ -576,7 +573,7 @@ bool ruleStat(){
                 debugPrintf("calling analyzeExpression from ruleStat <STAT> -> while ( <EXP> ) { <ST_LIST> }\n");
                 if (analyzeExpression(actualInstructionList, &resultVariableName, &resultVariableType)) {
                     if(!firstPass && resultVariableType != TYPE_BOOL) {
-                        debugPrintf("variable used in the confition of an while statement must be of type bool, type: %d given", resultVariableType);
+                        fprintf(stderr, "variable used in the confition of an while statement must be of type bool, type: %d given", resultVariableType);
                         exit(4);
                     }
 
@@ -623,12 +620,11 @@ bool ruleStat(){
                     //result of expression, temp which would be used in createInsIf
                     if(!firstPass){
                         if(resultVariableType != TYPE_BOOL) {
-                            debugPrintf("variable used in the confition of an if statement must be of type bool, type: %d given", resultVariableType);
+                            fprintf(stderr, "variable used in the confition of an if statement must be of type bool, type: %d given", resultVariableType);
                             exit(4);
                         }
 
                         ListInsertLast(actualInstructionList, wrapInstructionIntoListElement(createActualLocalVariable(resultVariableName, resultVariableType)));
-                        //todo: test resultVariableType with bool
                     }
 
                     token = getCachedToken();
@@ -681,9 +677,8 @@ bool ruleStat(){
                 stackPop(returnToVariables);
                 if(!firstPass) {
                     if(tempVariableName != NULL) {
-                        //todo: check for datatypes(typeo f func and type of the result, possible implicit conversions)
                         if (actualFunction->type != tempVariableType) {
-                            debugPrintf("incompatible return type of function: %s", actualFunction->name);
+                            fprintf(stderr, "incompatible return type of function: %s", actualFunction->name);
                             exit(4);
                         }
 
@@ -759,7 +754,6 @@ bool ruleFuncCall(char *calledFunctionName, char *assignReturnValueToVariable){
 
                 //you have a list of PARAM *
                 if(isFunctionFromIfj16(calledFunctionName)) {
-                    //todo: check return types of the funciton - need to add parameter to this function and to the createInstructionsToCallIfj16Function
                     createInstructionsToCallIfj16Function(calledFunctionName, actualInstructionList, parameters, assignReturnValueToVariable);
                 } else {
                     ListFirst(parameters);
@@ -1042,16 +1036,15 @@ bool ruleStatBeginningId(char *functionOrPropertyName) {
             //function call
             if (-1 == code) {
                 if(ruleId(&functionName)) {
-//                  push return variable name to stack
-                    STACK_ELEMENT stackElement;
-                    stackElement.type =FUNCTION_RETURN_NAME;
-                    char *functionReturnName = (char*)malloc(sizeof(char)*(strlen(functionOrPropertyName)+1));
-                    strcpy(functionReturnName,functionOrPropertyName);
-                    stackElement.data.functionReturnName = functionReturnName;
-                    stackPush(returnToVariables,stackElement);
-
                     if (ruleFuncCall(functionName, functionOrPropertyName)) {
                         if(!firstPass) {
+                            SYMBOL_TABLE_VARIABLE *varToAssign = semantic_getVariable(functionOrPropertyName);
+                            SYMBOL_TABLE_FUNCTION *calledFunction = semantic_getFunction(functionName);
+                            if(!canConvertTypes(varToAssign->type, calledFunction->type) || calledFunction->type == TYPE_VOID) {
+                                exit(8);
+                            }
+
+
                             initializeVariable(functionOrPropertyName);
 
                             //add functionOrPropertyName
@@ -1179,7 +1172,7 @@ int analyzeExpression(tDLList *instructionList, char **resultVariableName, DATA_
         return -1;
     }
     else {
-        debugPrintf("exiting with code %d returned from expressionAnalyzer", code);
+        fprintf(stderr, "exiting with code %d returned from expressionAnalyzer", code);
         exit(code);
     }
 }

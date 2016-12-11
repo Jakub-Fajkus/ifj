@@ -1,6 +1,4 @@
-//
-// Created by Jakub Fajkus on 14.11.16.
-//
+
 
 #ifndef IFJ_BASICSTRUCTURES_H
 #define IFJ_BASICSTRUCTURES_H

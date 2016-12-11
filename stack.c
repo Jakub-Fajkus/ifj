@@ -9,7 +9,7 @@
 
 void stackInit ( struct STACK_STR* s) {
     if (s == NULL) {
-        debugPrintf("stack is null!");
+        fprintf(stderr, ("stack is null!"));
         exit(99);
     }
 

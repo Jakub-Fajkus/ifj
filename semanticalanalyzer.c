@@ -389,7 +389,7 @@ SYMBOL_TABLE_VARIABLE* semanticCreateAndInsertVariable(SYMBOL_TABLE_NODEPtr *sym
         node = getNodeDataFromTable(symbolTable, name);
 
         if(node != NULL && node->type != TREE_NODE_VARIABLE) {
-            debugPrintf("this is brand new stuff for variables! top\n");
+            fprintf(stderr, "the variable name can not have a name as a static function in the same class\n");
             exit(3);
         }
         //covers the 2. case
@@ -398,7 +398,7 @@ SYMBOL_TABLE_VARIABLE* semanticCreateAndInsertVariable(SYMBOL_TABLE_NODEPtr *sym
         node = getNodeDataFromTable(&globalSymbolTable, newName);
 
         if(node != NULL && node->type != TREE_NODE_VARIABLE) {
-            debugPrintf("this is brand new stuff for variables! bottom\n");
+            fprintf(stderr, "the variable name can not have a name as a static function in the same class\n");
             exit(3);
         }
     }
@@ -418,6 +418,7 @@ SYMBOL_TABLE_FUNCTION* semanticCreateAndInsertFunction(SYMBOL_TABLE_NODEPtr *sym
         node = getNodeDataFromTable(symbolTable, name);
 
         if(node != NULL) {
+            fprintf(stderr, "the variable name can not have a name as a static function in the same class\n");
             exit(3);
         }
 
@@ -429,6 +430,7 @@ SYMBOL_TABLE_FUNCTION* semanticCreateAndInsertFunction(SYMBOL_TABLE_NODEPtr *sym
     }
 
     if(node != NULL) {
+        fprintf(stderr, "the variable name can not have a name as a static function in the same class\n");
         exit(3);
     }
 

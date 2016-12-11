@@ -80,20 +80,6 @@ void quickSort(char *arr, int left, int right){
     }
 }
 
-//todo: @DavidCzernin unused?
-char medianIndex(char *s){
-    char pole[3] = {s[0],s[ifj16_length(s)/2],s[ifj16_length(s)-1]};
-    for (int i = 0; i < 3; ++i) {
-        if(pole[i] > pole[i+1]){
-            char tmp = pole[i];
-            pole[i] = pole[i+1];
-            pole[i+1] = tmp;
-        }
-    }
-
-    return pole[1];
-}
-
 void swap(char *arr, int left, int right){
     char tmp = arr[right];
     arr[right] = arr[left];

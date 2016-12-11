@@ -10,7 +10,6 @@
 
 #ifndef NOT_DEBUG
     #define debugPrintf(...) printf(__VA_ARGS__)
-//    #define debugPrintf(...)
 #else
     #define debugPrintf(...)
 #endif

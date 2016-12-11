@@ -249,13 +249,13 @@ int parseExpression(tDLList *threeAddressCode, char **returnValName, DATA_TYPE *
                             terminalData.type = EA_EMPTY;
                             break;
                         case 'X':
-                            return 2;//tODO check error
+                            fprintf(stderr, "Invalid expression");
+                            return 2;
                         case 'S':
                             returnCachedTokens(1);
                             debugPrintf("\nDEBUG expression END\n");
                             //reset globals
                             stopNow = false;
-                            //TODO
                             if(!firstPass) {
                                 (*returnValName) = stringConcat(varName, "");
                                 (*returnValType) = returnType;
@@ -461,7 +461,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                 debugPrintf("generate: E->E-E\n");
                 stackElement1.data.notTerminalData.type = outputType;
                 stackElement1.type = EA_NOT_TERMINAL;
-            } else return 2; //todo check
+            } else return 2;
             break;
         case EA_MUL:
             if (stackElement1.type == EA_NOT_TERMINAL &&
@@ -494,7 +494,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
 
                 stackElement1.data.notTerminalData.type = outputType;
                 stackElement1.type = EA_NOT_TERMINAL;
-            } else return 2; //todo check
+            } else return 2;
 
             break;
         case EA_DIV:
@@ -613,7 +613,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
 
                 stackElement2.type = EA_NOT_TERMINAL;
                 stackElement1 = stackElement2;
-            } else return 2; //todo check
+            } else return 2;
             break;
         case EA_IS_LESS:
         case EA_IS_MORE:
@@ -646,7 +646,7 @@ int generate3AddressCode(tDLList *threeAddressCode, tStack *stack, tStack *backS
                 stackElement1.data.notTerminalData.type = TYPE_BOOL;
                 stackElement1.type = EA_NOT_TERMINAL;
                 debugPrintf("generate: E->E_LOGIC_E\n");
-            } else return 2; //todo check
+            } else return 2;
             break;
         default:
             exit(99);

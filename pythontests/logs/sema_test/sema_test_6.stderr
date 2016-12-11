@@ -1,0 +1,1 @@
+variable used in the confition of an while statement must be of type bool, type: 1002 given
