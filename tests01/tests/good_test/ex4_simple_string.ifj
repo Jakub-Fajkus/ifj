@@ -1,0 +1,28 @@
+class Main {
+    static void run() {
+        String str1;
+        String str2;
+        String str3;
+        int int1;
+
+        str1 = "Testovaci text";
+        str2 = str1 + ", pokracovanie";
+        str3 = str2;
+
+        ifj16.print(str1 + " " + str2 + " " + str3);
+        str1 = ifj16.substr(str1, 1, 5); // estov
+        ifj16.print(str1);
+
+        int a = ifj16.compare(str1, str1);
+        ifj16.print(a);
+
+        int1 = ifj16.find("aci", str1);
+        ifj16.print(int1);
+
+        str3 = ifj16.sort(str3);
+        ifj16.print(str3);
+
+        String s1 = ifj16.sort("edcba");
+        ifj16.print(s1);
+    }
+}

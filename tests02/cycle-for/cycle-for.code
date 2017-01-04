@@ -1,0 +1,14 @@
+class Main
+{
+  static void run()
+  {
+    int b;
+
+    b = 0;
+    for (int a = 1; a < 15; a = a + 1)
+    {
+        b = b + 2;
+    }
+    ifj16.print("b = " + b + "\n");
+  }
+}

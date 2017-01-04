@@ -1,0 +1,11 @@
+class Main
+{
+  static void run()
+  {
+    String str1;
+    str1 = "Ahoj\nSve'te\\\042";
+    
+    ifj16.print(str1);
+    ifj16.print("\nAhoj\nSve'te\\\042"); 
+  }
+}

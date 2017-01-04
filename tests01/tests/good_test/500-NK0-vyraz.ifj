@@ -1,0 +1,11 @@
+/* Program 3: Prace s retezci a vestavenymi funkcemi */
+class Main
+{
+	static int x;
+  
+	static void run()
+	{
+		int a=7;int c=5;
+		int i = (a*(4+1))*(2+c);
+	} // end of static void run()
+} // end of class Main

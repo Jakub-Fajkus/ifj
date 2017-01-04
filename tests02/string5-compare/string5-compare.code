@@ -1,0 +1,29 @@
+// TEST 12
+class Main
+{
+  static void run()
+  {
+    String str1;
+    String str2;
+    int n;
+
+    ifj16.print("Zadejte prvni retezec\n");
+    str1 = "ahoj";
+
+    ifj16.print("Zadejte druhy retezec\n");
+    str2 = "hello";
+    n = ifj16.compare(str1, str2);
+
+    if(n == 0){
+        ifj16.print("Retezce jsou stejna\n");
+    }
+    else{
+        if(n == 1){
+            ifj16.print("Prvni retezec je vetsi nez druhy\n");
+        }
+        else{
+            ifj16.print("Druhy retezec je vetsi nez prvni\n");
+        }
+    }
+  }
+}

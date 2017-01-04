@@ -1,0 +1,28 @@
+class Main
+{
+  static void run()
+  {
+    int z;
+    
+    z = recursion.recur();
+    ifj16.print("Recurtion: " + z + "\n");
+  }
+}
+
+class recursion
+{
+  static int x = 15;
+  static int recur()
+  {
+    int y;
+    if(x > 10)
+    {
+      x = x - 1;
+      ifj16.print("x: " + x + "\n");
+      y = recur();
+      return y;
+    }
+    
+    return 333;
+  }    
+}

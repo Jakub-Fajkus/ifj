@@ -1,0 +1,37 @@
+class Main
+{
+  static void run()
+  {
+    double x;
+    double answer;
+    int n;
+        double helpful;
+        double numerator;
+        double denumerator;
+
+    x = 1.0;
+    n = 40;
+
+    answer = 0.0;
+
+    if (n < 0 || (x < 0 && x > 1)) { // nacitani zaporneho cisla nemusite podporovat
+      ifj16.print("Logarithmu nelze spocitat!\n");
+    }
+    else {
+        // log(1-x) = -x - (x^2)/2 - (x^3)/3 - (x^4)/4 - ...
+
+
+        helpful = 1.0-x;
+        numerator = -helpful;
+        denumerator = 1.0;
+
+        for(int i = n; i >= 1; i = i - 1)
+        {
+            answer = answer + numerator/denumerator;
+            numerator = numerator*helpful;
+            denumerator = denumerator + 1;
+        }
+      ifj16.print("Vysledek je: " + answer + "\n");
+    }
+    }
+  }

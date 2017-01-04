@@ -1,0 +1,13 @@
+class Main
+{
+  static void run()
+  {
+    boolean b1;
+    boolean b2;
+
+    b1 = true;
+    b2 = false;
+
+    ifj16.print("b1: " + b1 + " b2: " + b2 + "\n");
+  }
+}

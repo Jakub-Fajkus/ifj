@@ -1,0 +1,15 @@
+// TEST 18
+// class Main{ static void run(){...}}} --> class Main{ static void run(){...}}
+class Main
+{
+  static void run()
+  {
+    int a = 5;
+    if (true)
+    {
+        a = 1;
+    }
+    ifj16.print("a=" + a +"\n");
+  }
+  }
+}

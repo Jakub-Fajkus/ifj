@@ -1,0 +1,23 @@
+class Main
+{
+  static void run()
+  {
+    int x;
+    double y;
+
+    x = 4;
+    y = 4.12;
+
+    if(x > y) {
+        ifj16.print("Prvni cislo je vetsi nez druhe\n");
+    }
+    else {
+        if(x < y){
+        ifj16.print("Druhe cislo je vetsi nez prvni\n");
+        }
+        else {
+            ifj16.print("Cisla jsou stejna\n");
+        }
+    }
+  }
+}

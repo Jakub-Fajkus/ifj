@@ -1,0 +1,28 @@
+  1. KEYWORD class
+  2. ID Main
+  3. {
+  4. KEYWORD static
+  5. KEYWORD void
+  6. ID run
+  7. (
+  8. )
+  9. {
+ 10. KEYWORD int
+ 11. ID a
+ 12. ;
+ 13. SPECIALID ifj16.print
+ 14. (
+ 15. LITERAL 'za@@dej' 
+ 16. )
+ 17. ;
+ 18. KEYWORD if
+ 19. (
+ 20. ID a
+ 21. <
+ 22. NUM 0
+ 23. )
+ 24. {
+ 25. }
+ 26. }
+ 27. }
+ 28. EOF

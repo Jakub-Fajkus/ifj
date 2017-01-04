@@ -1,0 +1,7 @@
+//string error #10
+class Main {
+    static void run() {
+        String a = "42";
+        String b = ifj16.substr(a, 3, 1);
+    }
+}

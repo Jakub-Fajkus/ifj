@@ -1,0 +1,37 @@
+class Main {
+    static void run() {
+        double d1 = 15.006;
+        int i1 = 10;
+	double tmp; //hodnota pretoze nemame rozsirenia	
+
+        ifj16.print(i1);
+	ifj16.print("\n");
+        ifj16.print(d1);
+	ifj16.print("\n");
+
+	tmp = i1/d1;
+        ifj16.print(tmp);
+	ifj16.print("\n");
+
+	tmp = i1*d1*110000*0.2218931;
+        ifj16.print(tmp);
+
+	ifj16.print("\n");
+	tmp = d1-i1;
+        ifj16.print(tmp);
+	ifj16.print("\n");
+
+        if(d1 != i1) 
+	{
+            ifj16.print(d1);
+        } 
+	else 
+
+	{
+	   ifj16.print(i1);
+	}
+	ifj16.print("\n");
+
+        d1 = i1 * d1;
+    }
+}

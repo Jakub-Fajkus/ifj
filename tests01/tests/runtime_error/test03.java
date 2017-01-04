@@ -1,0 +1,18 @@
+//using not initialized variable #8
+
+class Main
+{
+    static void run()
+    {
+    	int v;
+        int c = Second.variable(v);
+    }
+}
+
+class Second
+{
+	static int variable(int b)
+	{
+        return b;
+    }
+}

@@ -1,0 +1,13 @@
+//chybi prvni slozena zavorka mainu
+class Main
+
+  static void run()
+  {
+
+    int x;
+    x = 10;
+    ifj16.print("Vysledek je: " + x + "\n");
+
+
+  }
+}

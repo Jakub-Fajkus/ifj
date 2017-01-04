@@ -1,0 +1,10 @@
+class Main
+{
+  static void run()
+  {
+    int a;
+	a = 2147483646;
+
+    ifj16.print("Dobre\n");
+  }
+}

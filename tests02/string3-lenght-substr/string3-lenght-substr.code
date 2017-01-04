@@ -1,0 +1,32 @@
+class Main
+{
+  static void run()
+  {
+    String str1;
+    String str2;
+    int i = 0;
+    int n;
+    int c;
+
+    str1 = "ahoooo\nooooj!!!";
+    ifj16.print("str1 je: " + str1 + "\n");
+
+    n = ifj16.length(str1); // n = 15
+    ifj16.print("n je: " + n + "\n");
+
+    ifj16.print("Zadejte libovolne cislo < n: ");
+    c = 12;
+    if (c >= 20) {
+        ifj16.print("Zadano cislo vetsi nex n!\n");
+    }
+    else {
+        while (c != n) {
+            i = i + 1;
+            c = c + 1;
+        }
+        c = n - i;
+        str2 = ifj16.substr(str1, i, c);
+       ifj16.print("str2 je: " + str2 + "\n");
+    }
+  }
+}

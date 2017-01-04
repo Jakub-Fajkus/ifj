@@ -1,0 +1,20 @@
+/* test20 tak chvalne :D  */
+class Main
+{
+	static void run()
+	{
+		int a; int b; int c; int vysl; int vysl2;
+		a = 6;
+		b=5;
+		c=2;
+		
+		vysl=a+b+c*c/4+8-b-a*c;		//vysledek je 3
+		vysl2=(a+b+((c*c)/4)+8-b-(a*c));	//pro kontrolu
+		
+		ifj16.print("Vysledek bez zavorek: " + vysl + "\n");
+		ifj16.print("Vysledek se zavorkama: " + vysl2 + "\n");
+		
+
+	}
+	
+}

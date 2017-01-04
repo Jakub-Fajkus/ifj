@@ -1,0 +1,15 @@
+// b1 = TrUe; --> b1 = true;
+// b2 = FalSe; --> b2 = false;
+class Main
+{
+  static void run()
+  {
+    boolean b1;
+    boolean b2;
+
+    b1 = TrUe;
+    b2 = FalSe;
+
+    ifj16.print("b1: " + b1 + "b2:" + b2 + "\n");
+  }
+}

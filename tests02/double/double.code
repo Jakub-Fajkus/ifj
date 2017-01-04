@@ -1,0 +1,11 @@
+class Main
+{
+  static void run()
+  {
+    double a;
+
+    a = 1.7e+307;
+    
+    ifj16.print("Dobre\n");
+  }
+}

@@ -1,0 +1,12 @@
+// Comment 1
+class Main
+{
+  /* Comment 2
+  */
+  static void run()
+  {
+    int a; // Comment 3
+    a = 5;
+    ifj16.print(a);
+  }
+}

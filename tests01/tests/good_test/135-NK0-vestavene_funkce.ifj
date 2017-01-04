@@ -1,0 +1,10 @@
+class Main
+{
+	static void run()
+	{
+		int delka = ifj16.length("Toto je muj string.");
+		
+		String str1 = "Druhy string";
+		delka = ifj16.length(str1);
+	}
+}

@@ -1,0 +1,33 @@
+// b = function3(a, b); --> b = function2(a, b);
+class Main
+{
+  static void run()
+  {
+    int a;
+    int b;
+
+    a = 10;
+    b = 5;
+
+    a = funtion1(a);
+
+    // 100
+    ifj16.print("a: " + a + "\n");
+
+    b = function3(a, b);
+    // 0
+    ifj16.print("b: " + b + "\n");
+  }
+
+  static int function1(int x)
+  {
+      x = x + 90;
+      return x;
+  }
+  static int function2(int x, int y)
+  {
+      y = y*20;
+      y = -y;
+      return x + y;
+  }
+}

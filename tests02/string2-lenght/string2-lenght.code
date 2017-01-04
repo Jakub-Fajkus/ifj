@@ -1,0 +1,18 @@
+class Main
+{
+  static void run()
+  {
+    String str1;
+    String str2;
+    int n;
+
+    str1 = "ahoooo\nooooj!!!";
+    str2 = str1;
+
+    ifj16.print("str2 je: " + str2 + "\n");
+
+    n = ifj16.length(str2); // n = 15
+    ifj16.print("n je: " + n + "\n");
+
+  }
+}

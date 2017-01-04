@@ -1,0 +1,12 @@
+//chyba stredniku
+class Main
+{
+  static void run()
+  {
+
+    int i
+    i = 10;
+    ifj16.print("Vysledek je: " + i + "\n");
+
+  }
+}

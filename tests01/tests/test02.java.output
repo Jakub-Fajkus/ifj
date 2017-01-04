@@ -1,0 +1,150 @@
+  1. KEYWORD class
+  2. ID Main
+  3. {
+  4. KEYWORD static
+  5. KEYWORD int
+  6. ID x
+  7. ;
+  8. KEYWORD static
+  9. KEYWORD void
+ 10. ID run
+ 11. (
+ 12. )
+ 13. {
+ 14. KEYWORD String
+ 15. ID str1
+ 16. ;
+ 17. ID str1
+ 18. =
+ 19. LITERAL 'Toto je nejaky text' 
+ 20. ;
+ 21. KEYWORD String
+ 22. ID str2
+ 23. ;
+ 24. ID str2
+ 25. =
+ 26. ID str1
+ 27. Operator +
+ 28. LITERAL ', ktery jeste trochu obohatime' 
+ 29. ;
+ 30. SPECIALID Main.x
+ 31. =
+ 32. SPECIALID ifj16.find
+ 33. (
+ 34. ID str2
+ 35. ,
+ 36. LITERAL 'text' 
+ 37. )
+ 38. ;
+ 39. SPECIALID ifj16.print
+ 40. (
+ 41. LITERAL 'Pozice retezce "text" v retezci str2: ' 
+ 42. Operator +
+ 43. ID x
+ 44. Operator +
+ 45. LITERAL '
+' 
+ 46. )
+ 47. ;
+ 48. SPECIALID Game.play
+ 49. (
+ 50. ID str1
+ 51. )
+ 52. ;
+ 53. }
+ 54. }
+ 55. KEYWORD class
+ 56. ID Game
+ 57. {
+ 58. KEYWORD static
+ 59. KEYWORD void
+ 60. ID play
+ 61. (
+ 62. KEYWORD String
+ 63. ID str
+ 64. )
+ 65. {
+ 66. SPECIALID ifj16.print
+ 67. (
+ 68. LITERAL 'Zadejte nejakou posloupnost vsech malych pismen a-h, ' 
+ 69. )
+ 70. ;
+ 71. SPECIALID ifj16.print
+ 72. (
+ 73. LITERAL 'pricemz se pismena nesmeji v posloupnosti opakovat:' 
+ 74. )
+ 75. ;
+ 76. ID str
+ 77. =
+ 78. SPECIALID ifj16.readString
+ 79. (
+ 80. )
+ 81. ;
+ 82. ID str
+ 83. =
+ 84. SPECIALID ifj16.sort
+ 85. (
+ 86. ID str
+ 87. )
+ 88. ;
+ 89. KEYWORD int
+ 90. ID cmp
+ 91. =
+ 92. SPECIALID ifj16.compare
+ 93. (
+ 94. ID str
+ 95. ,
+ 96. LITERAL 'abcdefgh' 
+ 97. )
+ 98. ;
+ 99. KEYWORD if
+100. (
+101. ID cmp
+102. !=
+103. NUM 0
+104. )
+105. {
+106. KEYWORD while
+107. (
+108. ID cmp
+109. !=
+110. NUM 0
+111. )
+112. {
+113. SPECIALID ifj16.print
+114. (
+115. LITERAL 'Spatne zadana posloupnost, zkuste znovu:' 
+116. )
+117. ;
+118. ID str
+119. =
+120. SPECIALID ifj16.readString
+121. (
+122. )
+123. ;
+124. ID str
+125. =
+126. SPECIALID ifj16.sort
+127. (
+128. ID str
+129. )
+130. ;
+131. ID cmp
+132. =
+133. SPECIALID ifj16.compare
+134. (
+135. ID str
+136. ,
+137. LITERAL 'abcdefgh' 
+138. )
+139. ;
+140. }
+141. }
+142. KEYWORD else
+143. {
+144. }
+145. KEYWORD return
+146. ;
+147. }
+148. }
+149. EOF

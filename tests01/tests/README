@@ -1,0 +1,20 @@
+// Last revision: Roman on 5th Oct
+=======================================
+	HOW TO TEST LEXER
+=======================================
+
+1. In the main directory:
+	gcc scanner.c scanner-unit.c -o scanner -std=c99
+2. ./scanner ./tests/xxx.java
+3. Compare the output with xxx.java.result
+
+=======================================
+	HOW TO COMPARE TWO PROGRAMS
+=======================================
+
+1. Enter ./tests/ (current dir)
+2. chmod +x compare.sh
+3. ./compare.sh FIRST_FILE SECOND_FILE
+	will automatically run lexical analysis of both programs
+	and compare the results
+	=> useful for finding small bugs and misinterpretations

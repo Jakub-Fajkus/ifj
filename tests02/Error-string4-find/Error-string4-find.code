@@ -1,0 +1,22 @@
+// char search; --> string
+class Main
+{
+  static void run()
+  {
+    string s1;
+    char search;
+    int n;
+
+    s1 = "ahojahoooojahooooojahojjjahooaahooojajjsjs";
+    search = "ahoooj";
+
+    n = ifj16.find(s1, search);
+
+    if (n = -1) {
+        ifj16.print("Retezec search nenalezen\n");
+    }
+    else {
+        ifj16.print("Retezec search nalezen na pozicie " + n + "\n");
+    }
+  }
+}

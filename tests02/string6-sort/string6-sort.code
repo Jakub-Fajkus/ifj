@@ -1,0 +1,15 @@
+class Main
+{
+  static void run()
+  {
+    String str1;
+    String str2;
+
+    ifj16.print("Zadejte retezec pro rozklad podle ordinalni hodnoty\n");
+    str1 = "gga";
+    ifj16.print("Bylo zadano:\n" + str1 + "\n");
+
+    str2 = ifj16.sort(str1);
+    ifj16.print("A dostaneme z toho\n:" + str2 + "\n");
+  }
+}

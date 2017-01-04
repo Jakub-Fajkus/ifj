@@ -1,0 +1,28 @@
+  1. KEYWORD class
+  2. ID Main
+  3. {
+  4. KEYWORD static
+  5. KEYWORD int
+  6. ID x
+  7. ;
+  8. KEYWORD static
+  9. KEYWORD void
+ 10. ID run
+ 11. (
+ 12. )
+ 13. {
+ 14. KEYWORD String
+ 15. ID str1
+ 16. ;
+ 17. ID str1
+ 18. =
+ 19. LITERAL 'Toto je nejaky text' 
+ 20. ;
+ 21. KEYWORD String
+ 22. ID str2
+ 23. ;
+ 24. ID str2
+ 25. =
+ 26. ID str1
+ 27. Operator +
+Lexical error has occured.

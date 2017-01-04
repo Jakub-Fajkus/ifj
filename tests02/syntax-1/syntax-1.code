@@ -1,0 +1,9 @@
+// chyba bez static
+class Main
+{
+  void run()
+
+  {
+    print("Hello, world!\n");
+  }
+}

@@ -1,0 +1,28 @@
+/* Program 3: Prace s retezci a vestavenymi funkcemi */
+class Main
+{
+	static int x;
+	static void run()
+	{
+    int jedna = 2;
+    int dva = 3;
+		 Main.x = Game.play(jedna, dva);
+     
+    
+    
+    
+	} // end of static void run()
+} // end of class Main
+class Game
+{
+	static int play(int c, int a)
+	{
+		
+     int i;
+     
+     i = (a*(4+1))*(2+c);
+    
+    
+		return i;
+	} // end of static void play(String)
+} // end of class Game

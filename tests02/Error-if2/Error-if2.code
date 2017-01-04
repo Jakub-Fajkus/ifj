@@ -1,0 +1,13 @@
+// ifj16.print("a=" + b +"\n"); --> ifj16.print("a=" + a +"\n");
+class Main
+{
+  static void run()
+  {
+    int a = 5;
+    if (false)
+    {
+        a = 1;
+    }
+    ifj16.print("a = " + b +"\n");
+  }
+}

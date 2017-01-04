@@ -1,0 +1,14 @@
+// Chyba 2
+
+class Main
+{
+  static void run()
+  {
+    if(true)
+    {
+      string b;
+      
+      b = "Hello";
+    }
+  }
+}

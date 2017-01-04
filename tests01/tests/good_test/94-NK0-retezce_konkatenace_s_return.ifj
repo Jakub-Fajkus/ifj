@@ -1,0 +1,18 @@
+class Main
+{
+	static void run()
+	{
+		String str1;
+		str1 = Game.play();
+		str1 = "Toto je nejaky text " + str1;
+		ifj16.print(str1);
+	} // end of static void run()
+} // end of class Main
+class Game
+{
+	static String play()
+	{
+		String str1 = "475";
+		return str1;
+	} // end of static void play(String)
+} // end of class Game

@@ -1,0 +1,22 @@
+/**/
+class Main
+{
+	static void run()
+	{
+		int x = 5;
+		int y = 12000;
+		double z = 5234;
+		
+		double a = x + y * z;
+		int b = x * y;
+		b = x + y;
+		b = x / y;
+		b = x - y;
+		a = x + z;
+		a = x - z;
+		a = x * z;
+		a = y * z;
+		a = x / z;
+		a = y / x;
+	}
+}

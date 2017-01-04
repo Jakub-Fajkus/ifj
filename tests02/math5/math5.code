@@ -1,0 +1,22 @@
+class Main
+{
+  static void run()
+  {
+      int x;
+      int y;
+      int a;
+      int b;
+
+      x = -4;
+      a = 10;
+      b = 6;
+
+      y = 0.0;
+      // Here we will got always 0, except (x = -b || b = -x || x = -a || a = -x) because we cannot divide by 0
+      y = ((a + b) - (a + b))*6*((a-x)/(a+x))/(x+b);
+      // x != 0, x != -10 - will be dividing by 0
+      y = ((a + b/(x + 10)*a) - b/6) + y*(x*x)*10;
+
+      ifj16.print("Vysledek je: " + y + "\n");
+  }
+}

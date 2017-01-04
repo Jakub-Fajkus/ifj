@@ -1,0 +1,19 @@
+// double str2; --> string str2;
+class Main
+{
+  static void run()
+  {
+    string str1;
+    double str2;
+    int n;
+
+    str1 = "ahoooo\nooooj!!!";
+    str1 = str2;
+
+    ifj16.print("str2 je: " + str2 + "\n");
+
+    n = ifj16.length(str2); // n = 15
+    ifj16.print("n je: " + n + "\n");
+
+  }
+}

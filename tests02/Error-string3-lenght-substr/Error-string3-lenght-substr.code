@@ -1,0 +1,33 @@
+// str1 = 'ahoooo\nooooj!!!'; --> str1 = "ahoooo\nooooj!!!";
+class Main
+{
+  static void run()
+  {
+    string str1;
+    string str2;
+    int i;
+    int n;
+    int c;
+
+    str1 = 'ahoooo\nooooj!!!';
+    ifj16.print("str1 je: " + str1 + "\n");
+
+    n = ifj16.length(str2); // n = 15
+    ifj16.print("n je: " + n + "\n");
+
+    ifj16.print("Zadejte libovolne cislo < n: ");
+    c = ifj16.readInt();
+    if (c >= n) {
+        ifj16.print("Zadano cislo vetsi nex n!\n");
+    }
+    else {
+        while (c != n) {
+            i = i + 1;
+            c = c + 1;
+        }
+        c = n - i;
+        str2 = ifj16.substr(str1, i, c);
+        ifj16.print("str2 je: " + str2 + "\n");
+    }
+  }
+}

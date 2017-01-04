@@ -1,0 +1,38 @@
+// static void run(){static void run(){ ... }} --> static void run(){...}
+class Main
+{
+   static void run()
+  {
+  static void run()
+  {
+    double x;
+    double answer;
+    int n;
+
+    ifj16.print("Zadejte cisla pro vypocet logarithmu: ");
+    x = ifj16.readDouble();
+    n = ifj16.readInt();
+
+    answer = 0.0;
+
+    if (n < 0 || x < 1) { // nacitani zaporneho cisla nemusite podporovat
+      ifj16.print("Logarithmu nelze spocitat!\n");
+    }
+    else {
+        // log(x) = sum((((x-1)/x)^n)/n)
+        double numerator;
+        double helpful;
+
+        numerator = ((x-1.0)/x);
+        helpful = ((x-1.0)/x);
+
+        for(unsigned int i = 1; i <= n; i = i + 1)
+        {
+            answer=answer+numerator/i;
+            numerator=numerator*helpful;
+        }
+      ifj16.print("Vysledek je: " + answer + "\n");
+    }
+    }
+    }
+  }

@@ -1,0 +1,8 @@
+// \ddd <001, 377>
+class Main
+{
+  static void run()
+  {
+    String str1 = "\000 and \378";
+  }
+}

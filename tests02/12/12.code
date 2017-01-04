@@ -1,0 +1,13 @@
+class Main
+{
+  static void run()
+  {
+    double x;
+    double y;
+    
+    x = 0.123;
+    y = 123;
+    
+    y = y/x;
+  }
+}

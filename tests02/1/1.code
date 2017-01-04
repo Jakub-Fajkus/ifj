@@ -1,0 +1,9 @@
+class Main
+{
+  static String str1 = "Hello, world
+";
+  static void run()
+  {
+    ifj16.print("Retezec: " + str1 + "\n"); 
+  }
+}

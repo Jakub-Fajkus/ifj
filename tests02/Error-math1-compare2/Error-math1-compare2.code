@@ -1,0 +1,24 @@
+// else ifj16.print("Cisla jsou stejna\n"); --> else{ ifj16.print("Cisla jsou stejna\n");}
+class Main
+{
+  static void run()
+  {
+    int x;
+    double y;
+
+    ifj16.print("Zadejte cisla dva libovolnych cisla: ");
+    x = ifj16.readInt();
+    y = ifj16.readDouble();
+
+    if(x > y) {
+        ifj16.print("Prvni cislo je vetsi nez druhe\n");
+    }
+    else {
+        if(x < y){
+        ifj16.print("Druhe cislo je vetsi nez prvni\n");
+        }
+        else
+            ifj16.print("Cisla jsou stejna\n");
+    }
+  }
+}

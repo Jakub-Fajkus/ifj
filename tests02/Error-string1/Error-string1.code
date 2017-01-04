@@ -1,0 +1,8 @@
+// print("Hello, world!\n"); --> ifj16.print("Hello, world!\n");
+class Main
+{
+  static void run()
+  {
+    print("Hello, world!\n");
+  }
+}

@@ -1,0 +1,20 @@
+class Main
+{
+  static void run()
+  {
+    double x;
+    double y;
+    x = 5.123;
+    
+    if(x != 5)
+    {
+      y = x*1000;
+    }
+    else
+    {
+      y = x/10;
+    }
+    
+    ifj16.print("y: " + y + "\n");
+  }
+}
