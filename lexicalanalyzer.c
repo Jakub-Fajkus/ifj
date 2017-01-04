@@ -84,7 +84,7 @@ void start(TOKEN *token) { // public function to get token
         num(token, c);
     } else if (c == '"') {
         stringfn(token);
-    } else if (c == '\t' || c == '\n' || c == ' ') {
+    } else if (c == '\t' || c == '\n' || c == ' ' || c == '\r') {
         start(token);
     } else if (c == '/') {
         slash(token);
@@ -551,7 +551,7 @@ bool keywordRecognizer(TOKEN *token, char *str, bool getOnlyBool) { //is ky word
 
 bool testValid(int c) {
     if (c == EOF || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' ||
-        c == '$' || (c >= '0' && c <= '9') || c == '"' || c == '\t' || c == '\n' ||
+        c == '$' || (c >= '0' && c <= '9') || c == '"' || c == '\t' || c == '\n' || c == '\r' ||
         c == ' ' || c == '/' || c == '*' || c == '+' || c == '-' || c == '<' ||
         c == '>' || c == '=' || c == '!' || c == ';' || c == '(' || c == '{' ||
         c == ')' || c == '}' || c == ',') {
