@@ -26,7 +26,7 @@ do
     echo
     echo "Expected error:" `cat $i | grep //`
     expected_ret=`cat $i | grep // | cut -f2 -d'#' | head -n1`
-    ./../../$run $i > /dev/null
+    ./../../../ifj16 $i > /dev/null
     ret=$?
     if [ $ret -eq 0 ]
         then
@@ -58,7 +58,7 @@ do
     echo
     echo "Expected error:" `cat $i | grep //`
     expected_ret=`cat $i | grep // | cut -f2 -d'#' | head -n1`
-    ./../../$run $i > /dev/null < $i.in
+    ./../../../ifj16 $i > /dev/null < $i.in
     ret=$?
     if [ $ret -eq 0 ]
         then
@@ -91,7 +91,7 @@ echo
 for i in `ls | grep -v 'in' | grep -v 'out'`
 do
     echo
-    ./../../$run $i > stdout < $i.in
+    ./../../../ifj16 $i > stdout < $i.in
     ret=$?
     if [ $ret -eq 0 ]
         then
