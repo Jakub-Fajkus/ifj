@@ -735,7 +735,11 @@ bool ruleFuncCall(char *calledFunctionName, char *assignReturnValueToVariable){
 
         if (ruleFuncParams(functionToCall, parameters)) {
             if(!firstPass) {
-                semantical_checkFunctionCall(functionToCall->parameters, parameters);
+                //if the called function is ifj16.print
+                //the function can accept int, double, string which is all datatypes
+                if(!(stringEquals(functionToCall->name, "ifj16.print") && DLSize(parameters) == 1)) {
+                    semantical_checkFunctionCall(functionToCall->parameters, parameters);
+                }
 
                 //you have a list of PARAM *
                 if(isFunctionFromIfj16(calledFunctionName)) {

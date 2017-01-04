@@ -248,9 +248,10 @@ void createInstructionsToCallIfj16Function(char *functionName, tDLList *instruct
         }
 
         instruction->type = Instruction_Function_Print;
-        if(givenParameters->First->element.data.parameter->type != TYPE_STRING) {
-            exit(4);
-        }
+//        if(givenParameters->First->element.data.parameter->type != TYPE_STRING) {
+//            exit(4);
+//        }
+
         instruction->address_dst = givenParameters->First->element.data.parameter->name;
 
         ListInsertLast(instructions, wrapInstructionIntoListElement(instruction));

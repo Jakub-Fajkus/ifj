@@ -1154,14 +1154,14 @@ int executeInstructionBuiltInFunction(INSTRUCTION_TYPE instrType, VARIABLE *dst,
                 char *printString = NULL;
 
 
-                if ( src1->type == TYPE_INT ) {
-                    sprintf(tmp,"%d", src1->value.intValue);
+                if ( dst->type == TYPE_INT ) {
+                    sprintf(tmp,"%d", dst->value.intValue);
                     int len = (int)strlen(tmp);
                     printString = malloc( sizeof(char)*len+1 );
                     strcpy(printString, tmp);
                 }
-                else if ( src1->type == TYPE_DOUBLE ) {
-                    sprintf(tmp,"%g", src1->value.doubleValue);
+                else if ( dst->type == TYPE_DOUBLE ) {
+                    sprintf(tmp,"%g", dst->value.doubleValue);
                     int len = (int)strlen(tmp) +1;
                     printString = malloc( sizeof(char)*len );
                     strcpy(printString, tmp);
