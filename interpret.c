@@ -1146,7 +1146,29 @@ int executeInstructionBuiltInFunction(INSTRUCTION_TYPE instrType, VARIABLE *dst,
             }
             // void ifj16_print(char *s);
 
-            ifj16_print(dst->value.stringValue);
+            if ( dst->type == TYPE_STRING ) {
+                ifj16_print(dst->value.stringValue);
+            }
+            else if ( dst->type == TYPE_INT || dst->type == TYPE_DOUBLE ) { // only 1 param
+                char tmp[100];
+                char *printString = NULL;
+
+
+                if ( src1->type == TYPE_INT ) {
+                    sprintf(tmp,"%d", src1->value.intValue);
+                    int len = (int)strlen(tmp);
+                    printString = malloc( sizeof(char)*len+1 );
+                    strcpy(printString, tmp);
+                }
+                else if ( src1->type == TYPE_DOUBLE ) {
+                    sprintf(tmp,"%g", src1->value.doubleValue);
+                    int len = (int)strlen(tmp) +1;
+                    printString = malloc( sizeof(char)*len );
+                    strcpy(printString, tmp);
+                }
+                ifj16_print(printString);
+            }
+
             break;
         case Instruction_Function_Length:   debugPrintf("Instruction_Function_Length\n");
             ;
